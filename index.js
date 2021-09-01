@@ -27,10 +27,13 @@ const {
 } = require('@adiwajshing/baileys')
 
 // LOAD ADDITIONAL NPM PACKAGES
-const fs = require('fs')
+const fs, { createWriteStream, readFileSync, statSync } = require('fs')
 const ffmpeg = require('fluent-ffmpeg')
 const WSF = require('wa-sticker-formatter')
 const fetch = require('node-fetch')
+const YTDL = require("ytdl-core")
+const puppeteer = require("puppeteer")
+const http = require('https') // or 'https' for https:// URLs
 
 // LOAD SOURCES
 const pesan = require('./src/pesan')
@@ -525,9 +528,6 @@ async function main() {
           break;
 
         case 'twd':
-          const puppeteer = require("puppeteer")
-          const http = require('https') // or 'https' for https:// URLs
-
           try {
             (async () => {
               const browser = await puppeteer.launch({
@@ -586,8 +586,6 @@ async function main() {
           break;
         
         case 'ytmp3':
-          const YTDL = require("ytdl-core")
-          const { createWriteStream, readFileSync, statSync } = require('fs')
 
           if(!YTDL.validateURL(args[0])){
             reply(`*⛔ Maaf*\n\nUrl video tidak valid atau kami tidak menemukan apapun!`)
@@ -632,8 +630,6 @@ async function main() {
           break
 
         case 'ytmp4':
-          const YTDL = require("ytdl-core")
-          const { createWriteStream, readFileSync, statSync } = require('fs')
 
           if(!YTDL.validateURL(args[0])){
             reply(`*⛔ Maaf*\n\nUrl video tidak valid atau kami tidak menemukan apapun!`)
