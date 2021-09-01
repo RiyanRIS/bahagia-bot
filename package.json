@@ -1,7 +1,7 @@
 {
   "name": "ryn-bot-whatsapp",
   "version": "1.0.0",
-  "description": "Simple Whatsapp Bot using Baileys Node Js hosted on Heroku",
+  "description": "Simple Whatsapp Bot using Baileys Node Js hosted on Heroku by riyanris",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -17,6 +17,7 @@
     "fluent-ffmpeg": "^2.1.2",
     "fs": "0.0.1-security",
     "pg": "^8.5.1",
+    "puppeteer": "^10.2.0",
     "wa-sticker-formatter": "^3.6.0"
   }
 }
