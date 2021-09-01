@@ -1,8 +1,5 @@
 FROM buildkite/puppeteer:latest
 
-RUN apt install ffmpeg -y
-RUN apt install tesseract-ocr -y
-
 WORKDIR /app
 COPY . /app
 RUN npm install
