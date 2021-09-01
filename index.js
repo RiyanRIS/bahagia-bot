@@ -30,6 +30,7 @@ const {
 const fs = require('fs')
 const ffmpeg = require('fluent-ffmpeg')
 const WSF = require('wa-sticker-formatter')
+const fetch = require('node-fetch')
 
 // LOAD SOURCES
 const pesan = require('./src/pesan')
@@ -95,6 +96,27 @@ const adminHelp = (prefix, groupName) => {
 }
 const getRandom = (ext) => {
   return `${Math.floor(Math.random() * 10000)}${ext}`
+}
+const shortlink = (url, options) => new Promise(async (resolve, reject) => {
+  fetch(`https://tinyurl.com/api-create.php?url=${url}`, options)
+      .then(response => response.text())
+      .then(text => {
+          resolve(text)
+      })
+      .catch((err) => {
+          reject(err)
+      })
+})
+const formatBytes = (bytes, decimals = 2) => {
+  if (bytes === 0) return '0 Bytes';
+
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
 // MAIN FUNCTION
@@ -510,6 +532,7 @@ async function main() {
             (async () => {
               const browser = await puppeteer.launch({
                 headless: false,
+                args: ['--no-sandbox','--disable-setuid-sandbox']
               })
               const page = await browser.newPage();
               await page
@@ -561,11 +584,106 @@ async function main() {
             reply(`error`)
           }
           break;
+        
+        case 'ytmp3':
+          const YTDL = require("ytdl-core")
+          const { createWriteStream, readFileSync, statSync } = require('fs')
+
+          if(!YTDL.validateURL(args[0])){
+            reply(`*⛔ Maaf*\n\nUrl video tidak valid atau kami tidak menemukan apapun!`)
+            return
+          }
+        
+          const filename = getRandom(".mp3")
+          const path = `./public/${filename}`
+        
+          const videoID = YTDL.getURLVideoID(args[0])
+          const info = await YTDL.getInfo(videoID)
+        
+          reply(`*⏳ Tunggu Sebentar*\n\nDownload musik sedang kami proses.`)
+        
+          let stream = YTDL(args[0], {quality: 'highestaudio', format: 'audioonly'})
+        
+          let simp = createWriteStream(path);
+          let simpen = stream.pipe(simp)
+        
+          simpen.on("finish", async () => {
+            let stats = statSync(path)
+            let url_download = config.url + "/public/"+ filename
+        
+            if(stats.size < 29999999){ // jika ukuran file kurang dari 30 mb
+              reply(`*🙇‍♂️ Berhasil*\n\n*Judul:* ${info.videoDetails.title}\n*Size:* ${formatBytes(stats.size)}\n\n_kami mencoba mengirimkanya ke anda_`)
+              try {
+                const musiknya = readFileSync(path)
+                await conn.sendMessage(from, musiknya, audio)
+              } catch (e) {
+                console.error(e)
+                reply(`*⛔ Maaf*\n\nTerjadi kesalahan saat mengirimkan file, anda dapat mengunduhnya secara manual melalui link berikut.\n\n${await shortlink(url_download)}`)
+              }
+            } else {
+              reply(`*🙇‍♂️ Berhasil*\n\n*Judul:* ${info.videoDetails.title}\n*Size:* ${formatBytes(stats.size)}\n\n*Link:* ${await shortlink(url_download)}`)
+            }
+          });
+        
+          simpen.on("error", (e) => {
+            console.error(e)
+            reply(`*⛔ Maaf*\n\nTerjadi kesalahan pada server kami!`)
+          })
+          break
+
+        case 'ytmp4':
+          const YTDL = require("ytdl-core")
+          const { createWriteStream, readFileSync, statSync } = require('fs')
+
+          if(!YTDL.validateURL(args[0])){
+            reply(`*⛔ Maaf*\n\nUrl video tidak valid atau kami tidak menemukan apapun!`)
+            return
+          }
+        
+          let videoID = YTDL.getURLVideoID(args[0])
+          let info = await YTDL.getInfo(videoID)
+        
+          reply(`*⏳ Tunggu Sebentar*\n\nDownload video sedang kami proses.`)
+        
+          let stream = YTDL(args[0], {quality: 'highest', format: 'audioandvideo'})
+        
+          const filename = getRandom(".mp4")
+          let path = `./public/${filename}`
+        
+          let simp = createWriteStream(path);
+          let simpen = stream.pipe(simp)
+        
+          simpen.on("finish", async () => {
+            
+            let stats = statSync(path)
+            let url_download = config.url + "/public/"+ filename
+        
+            if(stats.size < 79999999){ // jika ukuran file kurang dari 80 mb || batas max whatsapp
+              reply(`*🙇‍♂️ Berhasil*\n\n*Judul:* ${info.videoDetails.title}\n*Size:* ${formatBytes(stats.size)}\n\n_kami mencoba mengirimkanya ke anda_`)
+              try {
+                const videonya = readFileSync(path)
+                await conn.sendMessage(from, videonya, video)
+              } catch (error) {
+                console.error(error)
+                reply(`*⛔ Maaf*\n\nTerjadi kesalahan saat mengirimkan file, anda dapat mengunduhnya secara manual melalui link berikut.\n\n${await shortlink(url_download)}`)
+                
+              }
+            } else {
+              reply(`*🙇‍♂️ Berhasil*\n\n*Judul:* ${info.videoDetails.title}\n*Size:* ${formatBytes(stats.size)}\n\n*Link:* ${await shortlink(url_download)}`)
+            }
+          });
+        
+          simpen.on("error", (e) => {
+            console.error(e)
+            reply(`*⛔ Maaf*\n\nTerjadi kesalahan pada server kami!`)
+          })
+          break
+
         default:
           break;
       }
     } catch (e) {
-      console.log('Error : %s', e)
+      console.error('Error : %s', e)
     }
   })
 }

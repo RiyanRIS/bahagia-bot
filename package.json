@@ -16,8 +16,10 @@
     "express": "^4.17.1",
     "fluent-ffmpeg": "^2.1.2",
     "fs": "0.0.1-security",
+    "node-fetch": "^3.0.0",
     "pg": "^8.5.1",
     "puppeteer": "^10.2.0",
-    "wa-sticker-formatter": "^3.6.0"
+    "wa-sticker-formatter": "^3.6.0",
+    "ytdl-core": "^4.9.1"
   }
 }

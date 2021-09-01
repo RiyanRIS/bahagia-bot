@@ -2,7 +2,6 @@ FROM node:14
 
 RUN apt update
 RUN apt install ffmpeg -y
-RUN apt install tesseract-ocr -y
 
 WORKDIR /app
 COPY . /app
