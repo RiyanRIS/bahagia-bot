@@ -603,17 +603,17 @@ async function main() {
         
           let stream = YTDL(args[0], {quality: 'highestaudio', format: 'audioonly'})
         
-          let simp = createWriteStream(path);
+          let simp = fs.createWriteStream(path);
           let simpen = stream.pipe(simp)
         
           simpen.on("finish", async () => {
-            let stats = statSync(path)
+            let stats = fs.statSync(path)
             let url_download = config.url + "/public/"+ filename
         
             if(stats.size < 29999999){ // jika ukuran file kurang dari 30 mb
               reply(`*🙇‍♂️ Berhasil*\n\n*Judul:* ${info.videoDetails.title}\n*Size:* ${formatBytes(stats.size)}\n\n_kami mencoba mengirimkanya ke anda_`)
               try {
-                const musiknya = readFileSync(path)
+                const musiknya = fs.readFileSync(path)
                 await conn.sendMessage(from, musiknya, audio)
               } catch (e) {
                 console.error(e)
@@ -647,18 +647,18 @@ async function main() {
           const mfilename = getRandom(".mp4")
           let mpath = `./public/${mfilename}`
         
-          let msimp = createWriteStream(mpath);
+          let msimp = fa.createWriteStream(mpath);
           let msimpen = mstream.pipe(msimp)
         
           msimpen.on("finish", async () => {
             
-            let stats = statSync(mpath)
+            let stats = fs.statSync(mpath)
             let url_download = config.url + "/public/"+ mfilename
         
             if(stats.size < 79999999){ // jika ukuran file kurang dari 80 mb || batas max whatsapp
               reply(`*🙇‍♂️ Berhasil*\n\n*Judul:* ${minfo.videoDetails.title}\n*Size:* ${formatBytes(stats.size)}\n\n_kami mencoba mengirimkanya ke anda_`)
               try {
-                const videonya = readFileSync(mpath)
+                const videonya = fs.readFileSync(mpath)
                 await conn.sendMessage(from, videonya, video)
               } catch (error) {
                 console.error(error)
