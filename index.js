@@ -6,7 +6,7 @@ server.get('/', (req, res) => {
   res.send('Server running...')
 })
 server.listen(port, () => {
-  console.clear()
+  // console.clear()
   console.log('\nWeb-server running!\n')
 })
 
@@ -111,7 +111,7 @@ const randomString = (length) => {
 	return str
 }
 const shortlink = async (url) => {
-  const getdt = await axios.get(`https://tinyurl.com/api-create.php?url=${url}&alias=riyanbot-${getRandom('')}`)
+  const getdt = await axios.get(`https://tinyurl.com/api-create.php?url=${url}`)
 	return getdt.data
 }
 const formatBytes = (bytes, decimals = 2) => {
@@ -161,7 +161,7 @@ async function main() {
     console.log('Connecting...')
   })
   conn.on('open', () => {
-    console.clear()
+    // console.clear()
     console.log('Connected!')
   })
   await conn.connect({
@@ -554,7 +554,7 @@ async function main() {
           try {
             (async () => {
               const browser = await puppeteer.launch({
-                headless: false,
+                headless: true,
                 args: ['--no-sandbox','--disable-setuid-sandbox']
               })
               const page = await browser.newPage();
@@ -637,12 +637,11 @@ async function main() {
               try {
                 const musiknya = fs.readFileSync(path)
                 await conn.sendMessage(from, musiknya, audio)
-                fs.unlinkSync(path)
               } catch (e) {
                 console.error(e)
                 reply(`*⛔ Maaf*\n\nTerjadi kesalahan saat mengirimkan file, anda dapat mengunduhnya secara manual melalui link berikut.\n\n${await shortlink(url_download)}`)
-                fs.unlinkSync(path)
               }
+              fs.unlinkSync(path)
             } else {
               reply(`*🙇‍♂️ Berhasil*\n\n*Judul:* ${info.videoDetails.title}\n*Size:* ${formatBytes(stats.size)}\n\n*Link:* ${await shortlink(url_download)}`)
             }
@@ -684,13 +683,11 @@ async function main() {
               try {
                 const videonya = fs.readFileSync(mpath)
                 await conn.sendMessage(from, videonya, video)
-                fs.unlinkSync(path)
               } catch (error) {
                 console.error(error)
                 reply(`*⛔ Maaf*\n\nTerjadi kesalahan saat mengirimkan file, anda dapat mengunduhnya secara manual melalui link berikut.\n\n${await shortlink(url_download)}`)
-                fs.unlinkSync(path)
-                
               }
+              fs.unlinkSync(path)
             } else {
               reply(`*🙇‍♂️ Berhasil*\n\n*Judul:* ${minfo.videoDetails.title}\n*Size:* ${formatBytes(stats.size)}\n\n*Link:* ${await shortlink(url_download)}`)
             }
