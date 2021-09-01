@@ -1,4 +1,4 @@
-FROM buildkite/puppeteer:latest
+FROM node:14
 
 RUN apt update
 RUN apt install ffmpeg -y
