@@ -1,6 +1,6 @@
 FROM buildkite/puppeteer:latest
 
-RUN apt-get update
+RUN apt update
 RUN apt install ffmpeg -y
 RUN apt install tesseract-ocr -y
 

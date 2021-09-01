@@ -32,7 +32,7 @@ const fs = require('fs')
 const ffmpeg = require('fluent-ffmpeg')
 const WSF = require('wa-sticker-formatter')
 const YTDL = require("ytdl-core")
-// const fetch = require('node-fetch')
+const axios = require('axios')
 const puppeteer = require("puppeteer")
 const http = require('https') // or 'https' for https:// URLs
 
@@ -99,18 +99,21 @@ const adminHelp = (prefix, groupName) => {
     _Get bot source code!_`
 }
 const getRandom = (ext) => {
-  return `${Math.floor(Math.random() * 10000)}${ext}`
+  return `${Math.floor(Math.random() * 1000000)}${ext}`
 }
-const shortlink = (url, options) => new Promise(async (resolve, reject) => {
-  fetch(`https://tinyurl.com/api-create.php?url=${url}`, options)
-      .then(response => response.text())
-      .then(text => {
-          resolve(text)
-      })
-      .catch((err) => {
-          reject(err)
-      })
-})
+const randomString = (length) => {
+  let chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyzsadw'
+  let str = '';
+	lengt = length || 9
+    for (let i = 0; i < length; i++) {
+        str += chars[Math.floor(Math.random() * 65)];
+    }
+	return str
+}
+const shortlink = async (url) => {
+  const getdt = await axios.get(`https://tinyurl.com/api-create.php?url=${url}&alias=riyanbot-${getRandom('')}`)
+	return getdt.data
+}
 const formatBytes = (bytes, decimals = 2) => {
   if (bytes === 0) return '0 Bytes';
 
@@ -122,6 +125,24 @@ const formatBytes = (bytes, decimals = 2) => {
 
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
+const getBuffer = async (url, opts) => {
+	try {
+		const reqdata = await axios({
+      method: "get",
+      url,
+      headers: {
+        'DNT': 1,
+        'Upgrade-Insecure-Requests': 1,
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
+      },
+      ...opts,
+      responseType: 'arraybuffer'
+    });
+		return reqdata.data
+	} catch (e) {
+     throw e
+	}
+}
 
 // MAIN FUNCTION
 async function main() {
@@ -131,7 +152,8 @@ async function main() {
   const dotenv = require('dotenv')
   dotenv.config()
   const {
-    SESSION_WA
+    SESSION_WA,
+    URL
   } = process.env
   const sessionData = JSON.parse(SESSION_WA)
   conn.loadAuthInfo(sessionData)
@@ -608,16 +630,18 @@ async function main() {
         
           simpen.on("finish", async () => {
             let stats = fs.statSync(path)
-            let url_download = config.url + "/public/"+ filename
+            let url_download = URL + "/public/"+ filename
         
             if(stats.size < 29999999){ // jika ukuran file kurang dari 30 mb
               reply(`*🙇‍♂️ Berhasil*\n\n*Judul:* ${info.videoDetails.title}\n*Size:* ${formatBytes(stats.size)}\n\n_kami mencoba mengirimkanya ke anda_`)
               try {
                 const musiknya = fs.readFileSync(path)
                 await conn.sendMessage(from, musiknya, audio)
+                fs.unlinkSync(path)
               } catch (e) {
                 console.error(e)
                 reply(`*⛔ Maaf*\n\nTerjadi kesalahan saat mengirimkan file, anda dapat mengunduhnya secara manual melalui link berikut.\n\n${await shortlink(url_download)}`)
+                fs.unlinkSync(path)
               }
             } else {
               reply(`*🙇‍♂️ Berhasil*\n\n*Judul:* ${info.videoDetails.title}\n*Size:* ${formatBytes(stats.size)}\n\n*Link:* ${await shortlink(url_download)}`)
@@ -647,22 +671,24 @@ async function main() {
           const mfilename = getRandom(".mp4")
           let mpath = `./public/${mfilename}`
         
-          let msimp = fa.createWriteStream(mpath);
+          let msimp = fs.createWriteStream(mpath);
           let msimpen = mstream.pipe(msimp)
         
           msimpen.on("finish", async () => {
             
             let stats = fs.statSync(mpath)
-            let url_download = config.url + "/public/"+ mfilename
+            let url_download = URL + "/public/"+ mfilename
         
             if(stats.size < 79999999){ // jika ukuran file kurang dari 80 mb || batas max whatsapp
               reply(`*🙇‍♂️ Berhasil*\n\n*Judul:* ${minfo.videoDetails.title}\n*Size:* ${formatBytes(stats.size)}\n\n_kami mencoba mengirimkanya ke anda_`)
               try {
                 const videonya = fs.readFileSync(mpath)
                 await conn.sendMessage(from, videonya, video)
+                fs.unlinkSync(path)
               } catch (error) {
                 console.error(error)
                 reply(`*⛔ Maaf*\n\nTerjadi kesalahan saat mengirimkan file, anda dapat mengunduhnya secara manual melalui link berikut.\n\n${await shortlink(url_download)}`)
+                fs.unlinkSync(path)
                 
               }
             } else {
