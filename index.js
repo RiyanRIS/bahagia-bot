@@ -2,7 +2,7 @@
 const express = require('express')
 const server = express()
 const port = process.env.PORT || 8000;
-server.get('/', (req, res) => {res.send('K-Bot server running...')})
+server.get('/', (req, res) => {res.send('Server running...')})
 server.listen(port, () => {
     console.clear()
     console.log('\nWeb-server running!\n')
