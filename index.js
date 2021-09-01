@@ -1,5 +1,6 @@
 const express = require('express')
 const server = express()
+
 const port = process.env.PORT || 8000;
 server.get('/', (req, res) => {
   res.send('Server running...')
@@ -27,11 +28,11 @@ const {
 } = require('@adiwajshing/baileys')
 
 // LOAD ADDITIONAL NPM PACKAGES
-const fs, { createWriteStream, readFileSync, statSync } = require('fs')
+const { fs, createWriteStream, readFileSync, statSync } = require('fs')
 const ffmpeg = require('fluent-ffmpeg')
 const WSF = require('wa-sticker-formatter')
-const fetch = require('node-fetch')
 const YTDL = require("ytdl-core")
+// const fetch = require('node-fetch')
 const puppeteer = require("puppeteer")
 const http = require('https') // or 'https' for https:// URLs
 
@@ -636,28 +637,28 @@ async function main() {
             return
           }
         
-          let videoID = YTDL.getURLVideoID(args[0])
-          let info = await YTDL.getInfo(videoID)
+          let mvideoID = YTDL.getURLVideoID(args[0])
+          let minfo = await YTDL.getInfo(mvideoID)
         
           reply(`*⏳ Tunggu Sebentar*\n\nDownload video sedang kami proses.`)
         
-          let stream = YTDL(args[0], {quality: 'highest', format: 'audioandvideo'})
+          let mstream = YTDL(args[0], {quality: 'highest', format: 'audioandvideo'})
         
-          const filename = getRandom(".mp4")
-          let path = `./public/${filename}`
+          const mfilename = getRandom(".mp4")
+          let mpath = `./public/${mfilename}`
         
-          let simp = createWriteStream(path);
-          let simpen = stream.pipe(simp)
+          let msimp = createWriteStream(mpath);
+          let msimpen = mstream.pipe(msimp)
         
-          simpen.on("finish", async () => {
+          msimpen.on("finish", async () => {
             
-            let stats = statSync(path)
-            let url_download = config.url + "/public/"+ filename
+            let stats = statSync(mpath)
+            let url_download = config.url + "/public/"+ mfilename
         
             if(stats.size < 79999999){ // jika ukuran file kurang dari 80 mb || batas max whatsapp
-              reply(`*🙇‍♂️ Berhasil*\n\n*Judul:* ${info.videoDetails.title}\n*Size:* ${formatBytes(stats.size)}\n\n_kami mencoba mengirimkanya ke anda_`)
+              reply(`*🙇‍♂️ Berhasil*\n\n*Judul:* ${minfo.videoDetails.title}\n*Size:* ${formatBytes(stats.size)}\n\n_kami mencoba mengirimkanya ke anda_`)
               try {
-                const videonya = readFileSync(path)
+                const videonya = readFileSync(mpath)
                 await conn.sendMessage(from, videonya, video)
               } catch (error) {
                 console.error(error)
@@ -665,11 +666,11 @@ async function main() {
                 
               }
             } else {
-              reply(`*🙇‍♂️ Berhasil*\n\n*Judul:* ${info.videoDetails.title}\n*Size:* ${formatBytes(stats.size)}\n\n*Link:* ${await shortlink(url_download)}`)
+              reply(`*🙇‍♂️ Berhasil*\n\n*Judul:* ${minfo.videoDetails.title}\n*Size:* ${formatBytes(stats.size)}\n\n*Link:* ${await shortlink(url_download)}`)
             }
           });
         
-          simpen.on("error", (e) => {
+          msimpen.on("error", (e) => {
             console.error(e)
             reply(`*⛔ Maaf*\n\nTerjadi kesalahan pada server kami!`)
           })
