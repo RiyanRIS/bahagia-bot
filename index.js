@@ -28,7 +28,7 @@ const {
 } = require('@adiwajshing/baileys')
 
 // LOAD ADDITIONAL NPM PACKAGES
-const { fs, createWriteStream, readFileSync, statSync } = require('fs')
+const fs = require('fs')
 const ffmpeg = require('fluent-ffmpeg')
 const WSF = require('wa-sticker-formatter')
 const YTDL = require("ytdl-core")
