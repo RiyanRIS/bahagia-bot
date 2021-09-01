@@ -35,6 +35,8 @@ const YTDL = require("ytdl-core")
 const axios = require('axios')
 const puppeteer = require("puppeteer")
 const http = require('https') // or 'https' for https:// URLs
+const log = console.debug
+const exec = require("child_process").exec
 
 // LOAD SOURCES
 const pesan = require('./src/pesan')
@@ -51,9 +53,23 @@ const getGroupAdmins = (participants) => {
   return admins
 }
 
+const helpBiasa = (prefix) => {
+  return `
+🎀 *Bahagia-Bot* 🎀\n
+\n
+🔥 *${prefix}ytmp3* - _Download lagu dari YouTube_\n
+🔥 *${prefix}ytmp4* - _Download video dari YouTube_\n
+🔥 *${prefix}twd* - _Twitter Video Downloader_\n
+🔥 *${prefix}ocr* - _Mengubah gambar menjadi teks_\n
+🔥 *${prefix}carbon* - _Mengubah teks menjadi gambar keren_\n
+🔥 *${prefix}qr* - _Membuat QR kode dari text tertentu_\n
+\n
+🛡 _Semua data yang kamu kirim, nggak kami simpen kok, dijamin aman deh_`
+}
+
 const adminHelp = (prefix, groupName) => {
   return `
-─「 *${groupName} Admin Commands* 」─
+  🎀 *RiyanBot* 🎀
 
 *${prefix}add <phone number>*
     _Add any new member!_
@@ -93,10 +109,7 @@ const adminHelp = (prefix, groupName) => {
         _${prefix}sticker nometadata_
 
 *${prefix}removebot*
-    _Remove bot from group!_
-
-*${prefix}source*
-    _Get bot source code!_`
+    _Remove bot from group!_`
 }
 const getRandom = (ext) => {
   return `${Math.floor(Math.random() * 1000000)}${ext}`
@@ -248,17 +261,24 @@ async function main() {
       const isQuotedImage = type === 'extendedTextMessage' && content.includes('imageMessage')
       const isQuotedVideo = type === 'extendedTextMessage' && content.includes('videoMessage')
       const isQuotedSticker = type === 'extendedTextMessage' && content.includes('stickerMessage')
-      if (isCmd && isGroup) console.log('[COMMAND]', command, '[FROM]', sender.split('@')[0], '[IN]', groupName, '[AT]')
+      if (isCmd && isGroup){
+        console.log('[COMMAND]', command, '[FROM]', sender.split('@')[0], '[IN]', groupName)
+      } else if (isCmd){ 
+        console.log('[COMMAND]', command, '[FROM]', sender.split('@')[0])
+      }
 
       /////////////// COMMANDS \\\\\\\\\\\\\\\
 
       switch (command) {
 
-        /////////////// HELP \\\\\\\\\\\\\\\
+        /////////////// GROUP COMMAND \\\\\\\\\\\\\\\
 
         case 'help':
         case 'acmd':
-          if (!isGroup) return;
+          if (!isGroup) {
+            await reply(helpBiasa(prefix))
+            return
+          }
           await costum(adminHelp(prefix, groupName), text);
           break
 
@@ -274,164 +294,7 @@ async function main() {
             detectLinks: true
           })
           break;
-
-        case 'source':
-          if (!isGroup) return;
-          conn.sendMessage(from, source_link, text, {
-            quoted: mek,
-            detectLinks: true
-          })
-          break;
-
-        case 'sticker':
-          if (!isGroup) return;
-
-          // Format should be <prefix>sticker pack <pack_name> author <author_name>
-          var packName = ""
-          var authorName = ""
-
-          // Check if pack keyword is found in args!
-          if (args.includes('pack') == true) {
-            packNameDataCollection = false;
-            for (let i = 0; i < args.length; i++) {
-              // Enables data collection when keyword found in index!
-              if (args[i].includes('pack') == true) {
-                packNameDataCollection = true;
-              }
-              if (args[i].includes('author') == true) {
-                packNameDataCollection = false;
-              }
-              // If data collection is enabled and args length is more then one it will start appending!
-              if (packNameDataCollection == true) {
-                packName = packName + args[i] + ' '
-              }
-            }
-            // Check if variable contain unnecessary startup word!
-            if (packName.startsWith('pack ')) {
-              packName = `${packName.split('pack ')[1]}`
-            }
-          }
-
-          // Check if author keyword is found in args!
-          if (args.includes('author') == true) {
-            authorNameDataCollection = false;
-            for (let i = 0; i < args.length; i++) {
-              // Enables data collection when keyword found in index!
-              if (args[i].includes('author') == true) {
-                authorNameDataCollection = true;
-              }
-              // If data collection is enabled and args length is more then one it will start appending!
-              if (authorNameDataCollection == true) {
-                authorName = authorName + args[i] + ' '
-              }
-              // Check if variable contain unnecessary startup word!
-              if (authorName.startsWith('author ')) {
-                authorName = `${authorName.split('author ')[1]}`
-              }
-            }
-          }
-
-          // Check if packName and authorName is empty it will pass default values!
-          if (packName == "") {
-            packName = "simple-whatsapp-bot"
-          }
-          if (authorName == "") {
-            authorName = "github.com/karmaisgreat/simple-whatsapp-bot"
-          }
-
-          outputOptions = [`-vcodec`, `libwebp`, `-vf`, `scale='min(320,iw)':min'(320,ih)':force_original_aspect_ratio=decrease,fps=15, pad=320:320:-1:-1:color=white@0.0, split [a][b]; [a] palettegen=reserve_transparent=on:transparency_color=ffffff [p]; [b][p] paletteuse`];
-          if (args.includes('crop') == true) {
-            outputOptions = [
-              `-vcodec`,
-              `libwebp`,
-              `-vf`,
-              `crop=w='min(min(iw\,ih)\,500)':h='min(min(iw\,ih)\,500)',scale=500:500,setsar=1,fps=15`,
-              `-loop`,
-              `0`,
-              `-ss`,
-              `00:00:00.0`,
-              `-t`,
-              `00:00:10.0`,
-              `-preset`,
-              `default`,
-              `-an`,
-              `-vsync`,
-              `0`,
-              `-s`,
-              `512:512`
-            ];
-          }
-
-          if ((isMedia && !mek.message.videoMessage || isQuotedImage)) {
-            const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
-            const media = await conn.downloadAndSaveMediaMessage(encmedia)
-            ran = getRandom('.webp')
-            reply('⌛ Processing image... ⏳')
-            await ffmpeg(`./${media}`)
-              .input(media)
-              .on('error', function (err) {
-                fs.unlinkSync(media)
-                console.log(`Error : ${err}`)
-                reply('_❌ ERROR: Failed to convert image into sticker! ❌_')
-              })
-              .on('end', function () {
-                buildSticker()
-              })
-              .addOutputOptions(outputOptions)
-              .toFormat('webp')
-              .save(ran)
-
-            async function buildSticker() {
-              if (args.includes('nometadata') == true) {
-                conn.sendMessage(from, fs.readFileSync(ran), sticker, {
-                  quoted: mek
-                })
-                fs.unlinkSync(media)
-                fs.unlinkSync(ran)
-              } else {
-                const webpWithMetadata = await WSF.setMetadata(packName, authorName, ran)
-                conn.sendMessage(from, webpWithMetadata, MessageType.sticker)
-                fs.unlinkSync(media)
-                fs.unlinkSync(ran)
-              }
-            }
-
-          } else if ((isMedia && mek.message.videoMessage.seconds < 11 || isQuotedVideo && mek.message.extendedTextMessage.contextInfo.quotedMessage.videoMessage.seconds < 11)) {
-            const encmedia = isQuotedVideo ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
-            const media = await conn.downloadAndSaveMediaMessage(encmedia)
-            ran = getRandom('.webp')
-            reply('⌛ Processing animation... ⏳')
-            await ffmpeg(`./${media}`)
-              .inputFormat(media.split('.')[1])
-              .on('error', function (err) {
-                fs.unlinkSync(media)
-                mediaType = media.endsWith('.mp4') ? 'video' : 'gif'
-                reply(`_❌ ERROR: Failed to convert ${mediaType} to sticker! ❌_`)
-              })
-              .on('end', function () {
-                buildSticker()
-              })
-              .addOutputOptions(outputOptions)
-              .toFormat('webp')
-              .save(ran)
-
-            async function buildSticker() {
-              if (args.includes('nometadata') == true) {
-                conn.sendMessage(from, fs.readFileSync(ran), sticker, {
-                  quoted: mek
-                })
-                fs.unlinkSync(media)
-                fs.unlinkSync(ran)
-              } else {
-                const webpWithMetadata = await WSF.setMetadata(packName, authorName, ran)
-                conn.sendMessage(from, webpWithMetadata, MessageType.sticker)
-                fs.unlinkSync(media)
-                fs.unlinkSync(ran)
-              }
-            }
-          }
-          break;
-
+        
           /////////////// ADMIN COMMANDS \\\\\\\\\\\\\\\
 
         case 'add':
@@ -549,14 +412,163 @@ async function main() {
           if (!isGroupAdmins) return;
           conn.groupLeave(from)
           break;
+        
+        /////////////// USERS COMMANDS \\\\\\\\\\\\\\\
+        
+        case 'sticker':
+
+        // Format should be <prefix>sticker pack <pack_name> author <author_name>
+          var packName = ""
+          var authorName = ""
+
+          // Check if pack keyword is found in args!
+          if (args.includes('pack') == true) {
+            packNameDataCollection = false;
+            for (let i = 0; i < args.length; i++) {
+              // Enables data collection when keyword found in index!
+              if (args[i].includes('pack') == true) {
+                packNameDataCollection = true;
+              }
+              if (args[i].includes('author') == true) {
+                packNameDataCollection = false;
+              }
+              // If data collection is enabled and args length is more then one it will start appending!
+              if (packNameDataCollection == true) {
+                packName = packName + args[i] + ' '
+              }
+            }
+            // Check if variable contain unnecessary startup word!
+            if (packName.startsWith('pack ')) {
+              packName = `${packName.split('pack ')[1]}`
+            }
+          }
+
+          // Check if author keyword is found in args!
+          if (args.includes('author') == true) {
+            authorNameDataCollection = false;
+            for (let i = 0; i < args.length; i++) {
+              // Enables data collection when keyword found in index!
+              if (args[i].includes('author') == true) {
+                authorNameDataCollection = true;
+              }
+              // If data collection is enabled and args length is more then one it will start appending!
+              if (authorNameDataCollection == true) {
+                authorName = authorName + args[i] + ' '
+              }
+              // Check if variable contain unnecessary startup word!
+              if (authorName.startsWith('author ')) {
+                authorName = `${authorName.split('author ')[1]}`
+              }
+            }
+          }
+
+          // Check if packName and authorName is empty it will pass default values!
+          if (packName == "") {
+            packName = "bahagia-bot"
+          }
+          if (authorName == "") {
+            authorName = "riyanris"
+          }
+
+          outputOptions = [`-vcodec`, `libwebp`, `-vf`, `scale='min(320,iw)':min'(320,ih)':force_original_aspect_ratio=decrease,fps=15, pad=320:320:-1:-1:color=white@0.0, split [a][b]; [a] palettegen=reserve_transparent=on:transparency_color=ffffff [p]; [b][p] paletteuse`];
+          if (args.includes('crop') == true) {
+            outputOptions = [
+              `-vcodec`,
+              `libwebp`,
+              `-vf`,
+              `crop=w='min(min(iw\,ih)\,500)':h='min(min(iw\,ih)\,500)',scale=500:500,setsar=1,fps=15`,
+              `-loop`,
+              `0`,
+              `-ss`,
+              `00:00:00.0`,
+              `-t`,
+              `00:00:10.0`,
+              `-preset`,
+              `default`,
+              `-an`,
+              `-vsync`,
+              `0`,
+              `-s`,
+              `512:512`
+            ];
+          }
+
+          if ((isMedia && !mek.message.videoMessage || isQuotedImage)) {
+            const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+            const media = await conn.downloadAndSaveMediaMessage(encmedia)
+            ran = getRandom('.webp')
+            reply('⌛ Processing image... ⏳')
+            await ffmpeg(`./${media}`)
+              .input(media)
+              .on('error', function (err) {
+                fs.unlinkSync(media)
+                console.log(`Error : ${err}`)
+                reply('_❌ ERROR: Failed to convert image into sticker! ❌_')
+              })
+              .on('end', function () {
+                buildSticker()
+              })
+              .addOutputOptions(outputOptions)
+              .toFormat('webp')
+              .save(ran)
+
+            async function buildSticker() {
+              if (args.includes('nometadata') == true) {
+                conn.sendMessage(from, fs.readFileSync(ran), sticker, {
+                  quoted: mek
+                })
+                fs.unlinkSync(media)
+                fs.unlinkSync(ran)
+              } else {
+                const webpWithMetadata = await WSF.setMetadata(packName, authorName, ran)
+                conn.sendMessage(from, webpWithMetadata, MessageType.sticker)
+                fs.unlinkSync(media)
+                fs.unlinkSync(ran)
+              }
+            }
+
+          } else if ((isMedia && mek.message.videoMessage.seconds < 11 || isQuotedVideo && mek.message.extendedTextMessage.contextInfo.quotedMessage.videoMessage.seconds < 11)) {
+            const encmedia = isQuotedVideo ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+            const media = await conn.downloadAndSaveMediaMessage(encmedia)
+            ran = getRandom('.webp')
+            reply('⌛ Processing animation... ⏳')
+            await ffmpeg(`./${media}`)
+              .inputFormat(media.split('.')[1])
+              .on('error', function (err) {
+                fs.unlinkSync(media)
+                mediaType = media.endsWith('.mp4') ? 'video' : 'gif'
+                reply(`_❌ ERROR: Failed to convert ${mediaType} to sticker! ❌_`)
+              })
+              .on('end', function () {
+                buildSticker()
+              })
+              .addOutputOptions(outputOptions)
+              .toFormat('webp')
+              .save(ran)
+
+            async function buildSticker() {
+              if (args.includes('nometadata') == true) {
+                conn.sendMessage(from, fs.readFileSync(ran), sticker, {
+                  quoted: mek
+                })
+                fs.unlinkSync(media)
+                fs.unlinkSync(ran)
+              } else {
+                const webpWithMetadata = await WSF.setMetadata(packName, authorName, ran)
+                conn.sendMessage(from, webpWithMetadata, MessageType.sticker)
+                fs.unlinkSync(media)
+                fs.unlinkSync(ran)
+              }
+            }
+          }
+          break;
 
         case 'twd':
           try {
             (async () => {
               const browser = await puppeteer.launch({
                 headless: true,
-                args: ['--no-sandbox','--disable-setuid-sandbox'],
-                ignoreDefaultArgs: ['--disable-extensions']
+                args: ['--no-sandbox','--disable-setuid-sandbox']
               })
               const page = await browser.newPage();
               await page
@@ -660,12 +672,12 @@ async function main() {
             reply(`*⛔ Maaf*\n\nUrl video tidak valid atau kami tidak menemukan apapun!`)
             return
           } 
-        
+
           let mvideoID = YTDL.getURLVideoID(args[0])
           let minfo = await YTDL.getInfo(mvideoID)
         
           reply(`*⏳ Tunggu Sebentar*\n\nDownload video sedang kami proses.`)
-        
+          
           let mstream = YTDL(args[0], {quality: 'highest', format: 'audioandvideo'})
         
           const mfilename = getRandom(".mp4")
@@ -699,7 +711,59 @@ async function main() {
             reply(`*⛔ Maaf*\n\nTerjadi kesalahan pada server kami!`)
           })
           break
+        
+        case "ocr":
+          if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
+            const media = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
+            
+            const filePath = await conn.downloadAndSaveMediaMessage(media, `./public/${getRandom()}`)
 
+            await recognize(filePath, {lang: 'eng+ind', oem: 1, psm: 3})
+              .then(teks => {
+                reply(teks.trim())
+                fs.unlinkSync(filePath)
+            })
+            .catch(err => {
+              reply("OCR gagal")
+              console.error("OCR error: ", err)
+              fs.unlinkSync(filePath)
+            })
+
+            function recognize(filename, config = {}) {
+              const options = getOptions(config)
+              const binary = config.binary || "tesseract"
+            
+              const command = [binary, `"${filename}"`, "stdout", ...options].join(" ")
+              if (config.debug) log("command", command)
+            
+              return new Promise((resolve, reject) => {
+                exec(command, (error, stdout, stderr) => {
+                  if (config.debug) log(stderr)
+                  if (error) reject(error)
+                  resolve(stdout)
+                })
+              })
+            }
+            
+            function getOptions(config) {
+              const ocrOptions = ["tessdata-dir", "user-words", "user-patterns", "psm", "oem", "dpi"]
+            
+              return Object.entries(config)
+                .map(([key, value]) => {
+                  if (["debug", "presets", "binary"].includes(key)) return
+                  if (key === "lang") return `-l ${value}`
+                  if (ocrOptions.includes(key)) return `--${key} ${value}`
+            
+                  return `-c ${key}=${value}`
+                })
+                .concat(config.presets)
+                .filter(Boolean)
+            }
+          } else {
+            reply(`Kamu belum melampirkan foto yang akan discan.!`)
+            return
+          }
+          break
         default:
           break;
       }
