@@ -635,7 +635,7 @@ async function main() {
           if(!YTDL.validateURL(args[0])){
             reply(`*⛔ Maaf*\n\nUrl video tidak valid atau kami tidak menemukan apapun!`)
             return
-          }
+          } 
         
           let mvideoID = YTDL.getURLVideoID(args[0])
           let minfo = await YTDL.getInfo(mvideoID)
