@@ -3,14 +3,11 @@
   "version": "1.0.0",
   "description": "Simple Whatsapp Bot using Baileys Node Js hosted on Heroku",
   "main": "index.js",
-  "directories": {
-    "lib": "lib"
-  },
   "scripts": {
     "start": "node index.js"
   },
   "keywords": [],
-  "author": "riyan",
+  "author": "riyanris",
   "dependencies": {
     "@adiwajshing/baileys": "github:adiwajshing/baileys",
     "async": "^3.2.0",
