@@ -37,6 +37,7 @@ const puppeteer = require("puppeteer")
 const http = require('https') // or 'https' for https:// URLs
 const log = console.debug
 const exec = require("child_process").exec
+const qr = require('qr-image')
 
 // LOAD SOURCES
 const pesan = require('./src/pesan')
@@ -57,8 +58,11 @@ const helpBiasa = (prefix) => {
   return `
 🎀 *Bahagia-Bot* 🎀\n
 \n
+🔥 *${prefix}sticker* - _Membuat Sticker dari foto/video_\n
 🔥 *${prefix}ytmp3* - _Download lagu dari YouTube_\n
 🔥 *${prefix}ytmp4* - _Download video dari YouTube_\n
+🔥 *${prefix}yts* - _Download lagu dari YouTube(HD Audio)_\n
+🔥 *${prefix}yt* - _Download video dari YouTube(HD Video)_\n
 🔥 *${prefix}twd* - _Twitter Video Downloader_\n
 🔥 *${prefix}ocr* - _Mengubah gambar menjadi teks_\n
 🔥 *${prefix}carbon* - _Mengubah teks menjadi gambar keren_\n
@@ -852,7 +856,50 @@ async function main() {
             return
           }
           break
-
+        
+        case 'carbon':
+          let txt_carbon = args.join(' ')
+          console.log(txt_carbon)
+          // Special thanks to Sumanjay for his carbon api
+          const cb = async (txt_carbon) => {
+            console.log("memproses")
+            await axios({
+              method: 'post',
+              url: 'https://carbonara.vercel.app/api/cook',
+              data: {  
+                "code": txt_carbon
+              },
+              responseType: 'arraybuffer'
+            })
+              .then(async (res) => {
+                console.log("mengirim")
+                await conn.sendMessage(from, Buffer.from(res.data), image, { caption: `Hasil untuk 👇\n` + "```" + txt_carbon + "```" })
+                  .then(() => {
+                    console.log("terkirim")
+                  })
+                  .catch((e) => {
+                    console.error(e)
+                    reply(`*⛔ Maaf*\n\n` + "```Terjadi kesalahann pada saat memproses data.```")
+                  })
+              })
+              .catch((e) => {
+                console.error(e)
+                reply(`*⛔ Maaf*\n\n` + "```Terjadi kesalahann pada saat memproses data.```")
+              })
+          }
+          cb(txt_carbon)
+          break
+          
+        case 'qr':
+          const data = ({
+            mimetype: "image/png",
+            data: await (qr.imageSync(text, { type: 'png' })),
+            filename: text + ".png"
+        })
+    
+        await wa.sendImage(sender, data.data, `QR code for 👇\n` + "```" + text + "```");
+        
+          break
 
         default:
           break;
