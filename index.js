@@ -117,15 +117,15 @@ const getRandom = (ext) => {
 const randomString = (length) => {
   let chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyzsadw'
   let str = '';
-	lengt = length || 9
-    for (let i = 0; i < length; i++) {
-        str += chars[Math.floor(Math.random() * 65)];
-    }
-	return str
+  lengt = length || 9
+  for (let i = 0; i < length; i++) {
+    str += chars[Math.floor(Math.random() * 65)];
+  }
+  return str
 }
 const shortlink = async (url) => {
   const getdt = await axios.get(`https://tinyurl.com/api-create.php?url=${url}`)
-	return getdt.data
+  return getdt.data
 }
 const formatBytes = (bytes, decimals = 2) => {
   if (bytes === 0) return '0 Bytes';
@@ -139,8 +139,8 @@ const formatBytes = (bytes, decimals = 2) => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 const getBuffer = async (url, opts) => {
-	try {
-		const reqdata = await axios({
+  try {
+    const reqdata = await axios({
       method: "get",
       url,
       headers: {
@@ -151,10 +151,10 @@ const getBuffer = async (url, opts) => {
       ...opts,
       responseType: 'arraybuffer'
     });
-		return reqdata.data
-	} catch (e) {
-     throw e
-	}
+    return reqdata.data
+  } catch (e) {
+    throw e
+  }
 }
 
 // MAIN FUNCTION
@@ -261,9 +261,9 @@ async function main() {
       const isQuotedImage = type === 'extendedTextMessage' && content.includes('imageMessage')
       const isQuotedVideo = type === 'extendedTextMessage' && content.includes('videoMessage')
       const isQuotedSticker = type === 'extendedTextMessage' && content.includes('stickerMessage')
-      if (isCmd && isGroup){
+      if (isCmd && isGroup) {
         console.log('[COMMAND]', command, '[FROM]', sender.split('@')[0], '[IN]', groupName)
-      } else if (isCmd){ 
+      } else if (isCmd) {
         console.log('[COMMAND]', command, '[FROM]', sender.split('@')[0])
       }
 
@@ -294,7 +294,7 @@ async function main() {
             detectLinks: true
           })
           break;
-        
+
           /////////////// ADMIN COMMANDS \\\\\\\\\\\\\\\
 
         case 'add':
@@ -412,12 +412,12 @@ async function main() {
           if (!isGroupAdmins) return;
           conn.groupLeave(from)
           break;
-        
-        /////////////// USERS COMMANDS \\\\\\\\\\\\\\\
-        
+
+          /////////////// USERS COMMANDS \\\\\\\\\\\\\\\
+
         case 'sticker':
 
-        // Format should be <prefix>sticker pack <pack_name> author <author_name>
+          // Format should be <prefix>sticker pack <pack_name> author <author_name>
           var packName = ""
           var authorName = ""
 
@@ -567,8 +567,8 @@ async function main() {
           try {
             (async () => {
               const browser = await puppeteer.launch({
-                headless: true,
-                args: ['--no-sandbox','--disable-setuid-sandbox']
+                headless: false,
+                args: ['--no-sandbox', '--disable-setuid-sandbox']
               })
               const page = await browser.newPage();
               await page
@@ -594,8 +594,10 @@ async function main() {
 
                     file.on("finish", async () => {
                       const videonya = fs.readFileSync(path)
-                      try { 
-                        await conn.sendMessage(from, videonya, video, { caption: `*🙇‍♂️ Berhasil*\n\n${text}` })
+                      try {
+                        await conn.sendMessage(from, videonya, video, {
+                          caption: `*🙇‍♂️ Berhasil*\n\n${text}`
+                        })
                         fs.unlinkSync(path)
                       } catch (e) {
                         console.error(e)
@@ -620,32 +622,34 @@ async function main() {
             reply(`error`)
           }
           break;
-        
+
         case 'ytmp3':
 
-          if(!YTDL.validateURL(args[0])){
+          if (!YTDL.validateURL(args[0])) {
             reply(`*⛔ Maaf*\n\nUrl video tidak valid atau kami tidak menemukan apapun!`)
             return
           }
-        
+
           const filename = getRandom(".mp3")
           const path = `./public/${filename}`
-        
+
           const videoID = YTDL.getURLVideoID(args[0])
           const info = await YTDL.getInfo(videoID)
-        
+
           reply(`*⏳ Tunggu Sebentar*\n\nDownload musik sedang kami proses.`)
-        
-          let stream = YTDL(args[0], {quality: 'highestaudio', format: 'audioonly'})
-        
+
+          let stream = YTDL(args[0], {
+            filter: info => info.audioBitrate == 160 || info.audioBitrate == 128
+          })
+
           let simp = fs.createWriteStream(path);
           let simpen = stream.pipe(simp)
-        
+
           simpen.on("finish", async () => {
             let stats = fs.statSync(path)
-            let url_download = URL + "/public/"+ filename
-        
-            if(stats.size < 29999999){ // jika ukuran file kurang dari 30 mb
+            let url_download = URL + "/public/" + filename
+
+            if (stats.size < 29999999) { // jika ukuran file kurang dari 30 mb
               reply(`*🙇‍♂️ Berhasil*\n\n*Judul:* ${info.videoDetails.title}\n*Size:* ${formatBytes(stats.size)}\n\n_kami mencoba mengirimkanya ke anda_`)
               try {
                 const musiknya = fs.readFileSync(path)
@@ -659,7 +663,7 @@ async function main() {
               reply(`*🙇‍♂️ Berhasil*\n\n*Judul:* ${info.videoDetails.title}\n*Size:* ${formatBytes(stats.size)}\n\n*Link:* ${await shortlink(url_download)}`)
             }
           });
-        
+
           simpen.on("error", (e) => {
             console.error(e)
             reply(`*⛔ Maaf*\n\nTerjadi kesalahan pada server kami!`)
@@ -668,30 +672,32 @@ async function main() {
 
         case 'ytmp4':
 
-          if(!YTDL.validateURL(args[0])){
+          if (!YTDL.validateURL(args[0])) {
             reply(`*⛔ Maaf*\n\nUrl video tidak valid atau kami tidak menemukan apapun!`)
             return
-          } 
+          }
 
           let mvideoID = YTDL.getURLVideoID(args[0])
           let minfo = await YTDL.getInfo(mvideoID)
-        
+
           reply(`*⏳ Tunggu Sebentar*\n\nDownload video sedang kami proses.`)
-          
-          let mstream = YTDL(args[0], {quality: 'highest', format: 'audioandvideo'})
-        
+
+          let mstream = YTDL(args[0], {
+            filter: info => info.itag == 22 || info.itag == 18
+          })
+
           const mfilename = getRandom(".mp4")
           let mpath = `./public/${mfilename}`
-        
+
           let msimp = fs.createWriteStream(mpath);
           let msimpen = mstream.pipe(msimp)
-        
+
           msimpen.on("finish", async () => {
-            
+
             let stats = fs.statSync(mpath)
-            let url_download = URL + "/public/"+ mfilename
-        
-            if(stats.size < 79999999){ // jika ukuran file kurang dari 80 mb || batas max whatsapp
+            let url_download = URL + "/public/" + mfilename
+
+            if (stats.size < 79999999) { // jika ukuran file kurang dari 80 mb || batas max whatsapp
               reply(`*🙇‍♂️ Berhasil*\n\n*Judul:* ${minfo.videoDetails.title}\n*Size:* ${formatBytes(stats.size)}\n\n_kami mencoba mengirimkanya ke anda_`)
               try {
                 const videonya = fs.readFileSync(mpath)
@@ -705,37 +711,119 @@ async function main() {
               reply(`*🙇‍♂️ Berhasil*\n\n*Judul:* ${minfo.videoDetails.title}\n*Size:* ${formatBytes(stats.size)}\n\n*Link:* ${await shortlink(url_download)}`)
             }
           });
-        
+
           msimpen.on("error", (e) => {
             console.error(e)
             reply(`*⛔ Maaf*\n\nTerjadi kesalahan pada server kami!`)
           })
           break
-        
+
+        case 'yt':
+          var urlyt = args[0];
+          console.log(urlyt)
+          const dm = async (url) => {
+            let info = YTDL.getInfo(url)
+            const stream = YTDL(url, {
+                filter: info => info.itag == 22 || info.itag == 18
+              })
+              .pipe(fs.createWriteStream('./public/video.mp4'));
+            console.log("video downloading")
+            await new Promise((resolve, reject) => {
+              stream.on('error', reject)
+              stream.on('finish', resolve)
+            }).then(async (res) => {
+              console.log("video sending")
+              await conn.sendMessage(
+                from,
+                fs.readFileSync('./public/video.mp4'),
+                video, {
+                  mimetype: Mimetype.mp4
+                }
+              ).then((res) => {
+                console.log("Sent")
+              })
+              .catch((e) => {
+                reply `Enable to download send a valid req`
+              })
+              .finally(() => {
+                fs.unlinkSync("./public/video.mp4")
+              })
+
+            }).catch((err) => {
+              reply `Unable to download,contact dev.`;
+            });
+
+          }
+          dm(urlyt)
+          break
+
+        case 'yts':
+          var url1 = args[0];
+          console.log(`${url1}`)
+          const am = async (url1) => {
+            let info = YTDL.getInfo(url1)
+            const stream = YTDL(url1, {
+                filter: info => info.audioBitrate == 160 || info.audioBitrate == 128
+              })
+              .pipe(fs.createWriteStream('./public/audio.mp3'));
+            console.log("audio downloading")
+            await new Promise((resolve, reject) => {
+              stream.on('error', reject)
+              stream.on('finish', resolve)
+            }).then(async (res) => {
+              console.log("audio sending")
+              await conn.sendMessage(
+                  from,
+                  fs.readFileSync('./public/audio.mp3'),
+                  MessageType.audio, {
+                    mimetype: Mimetype.mp4Audio
+                  }
+                ).then((resolved) => {
+                  console.log("Sent")
+                })
+                .catch((reject) => {
+                  reply `Enable to download send a valid req`
+                })
+                .finally(() => {
+                  fs.unlinkSync("./public/audio.mp3")
+                })
+
+            }).catch((err) => {
+              reply `Unable to download,contact dev.`;
+            });
+
+          }
+          am(url1)
+          break
+
         case "ocr":
           if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
-            const media = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
-            
+            const media = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+
             const filePath = await conn.downloadAndSaveMediaMessage(media, `./public/${getRandom()}`)
 
-            await recognize(filePath, {lang: 'eng+ind', oem: 1, psm: 3})
+            await recognize(filePath, {
+                lang: 'eng+ind',
+                oem: 1,
+                psm: 3
+              })
               .then(teks => {
                 reply(teks.trim())
                 fs.unlinkSync(filePath)
-            })
-            .catch(err => {
-              reply("OCR gagal")
-              console.error("OCR error: ", err)
-              fs.unlinkSync(filePath)
-            })
+              })
+              .catch(err => {
+                reply("OCR gagal")
+                console.error("OCR error: ", err)
+                fs.unlinkSync(filePath)
+              })
 
             function recognize(filename, config = {}) {
               const options = getOptions(config)
               const binary = config.binary || "tesseract"
-            
+
               const command = [binary, `"${filename}"`, "stdout", ...options].join(" ")
               if (config.debug) log("command", command)
-            
+
               return new Promise((resolve, reject) => {
                 exec(command, (error, stdout, stderr) => {
                   if (config.debug) log(stderr)
@@ -744,16 +832,16 @@ async function main() {
                 })
               })
             }
-            
+
             function getOptions(config) {
               const ocrOptions = ["tessdata-dir", "user-words", "user-patterns", "psm", "oem", "dpi"]
-            
+
               return Object.entries(config)
                 .map(([key, value]) => {
                   if (["debug", "presets", "binary"].includes(key)) return
                   if (key === "lang") return `-l ${value}`
                   if (ocrOptions.includes(key)) return `--${key} ${value}`
-            
+
                   return `-c ${key}=${value}`
                 })
                 .concat(config.presets)
@@ -764,6 +852,8 @@ async function main() {
             return
           }
           break
+
+
         default:
           break;
       }
