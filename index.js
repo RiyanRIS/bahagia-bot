@@ -64,6 +64,7 @@ const helpBiasa = (prefix) => {
 🔥 *${prefix}ytmp4* - _Download video dari YouTube_\n
 🔥 *${prefix}yts* - _Download lagu dari YouTube(HD Audio)_\n
 🔥 *${prefix}yt* - _Download video dari YouTube(HD Video)_\n
+🔥 *${prefix}igdl* - _Download video dari Instagram_\n
 🔥 *${prefix}twd* - _Twitter Video Downloader_\n
 🔥 *${prefix}ocr* - _Mengubah gambar menjadi teks_\n
 🔥 *${prefix}carbon* - _Mengubah teks menjadi gambar keren_\n
@@ -419,6 +420,11 @@ async function main() {
 
           /////////////// USERS COMMANDS \\\\\\\\\\\\\\\
 
+        case 'st':
+        case 'stic':
+        case 'stik':
+        case 'stickers':
+        case 'stiker':
         case 'sticker':
 
           // Format should be <prefix>sticker pack <pack_name> author <author_name>
@@ -568,12 +574,16 @@ async function main() {
           break;
 
         case 'twd':
-          try {
             (async () => {
-              const browser = await puppeteer.launch({
-                headless: false,
-                args: ['--no-sandbox', '--disable-setuid-sandbox']
-              })
+              let browser
+              try {
+                browser = await puppeteer.launch({
+                  headless: false,
+                  args: ['--no-sandbox', '--disable-setuid-sandbox']
+                })
+              } catch(e) {
+                reply('error')
+              }
               const page = await browser.newPage();
               await page
                 .goto("https://id.savefrom.net/download-from-twitter", {
@@ -621,10 +631,6 @@ async function main() {
                 });
               browser.close();
             })();
-          } catch (err) {
-            console.log(err);
-            reply(`error`)
-          }
           break;
 
         case 'ytmp3':
@@ -800,6 +806,7 @@ async function main() {
           am(url1)
           break
         
+        // https://github.com/haxzie-xx/instagram-downloader
         case 'igdl':
         case 'igdown':
         case 'igdownloader':
