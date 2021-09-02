@@ -35,6 +35,8 @@ const YTDL = require("ytdl-core")
 const axios = require('axios')
 const puppeteer = require("puppeteer")
 const http = require('https') // or 'https' for https:// URLs
+const request = require('request')
+const cheerio = require('cheerio')
 const log = console.debug
 const exec = require("child_process").exec
 const qr = require('qr-image')
@@ -53,7 +55,6 @@ const getGroupAdmins = (participants) => {
   }
   return admins
 }
-
 const helpBiasa = (prefix) => {
   return `
 🎀 *Bahagia-Bot* 🎀\n
@@ -70,7 +71,6 @@ const helpBiasa = (prefix) => {
 \n
 🛡 _Semua data yang kamu kirim, nggak kami simpen kok, dijamin aman deh_`
 }
-
 const adminHelp = (prefix, groupName) => {
   return `
   🎀 *RiyanBot* 🎀
@@ -799,6 +799,72 @@ async function main() {
           }
           am(url1)
           break
+        
+        case 'igdl':
+        case 'igdown':
+        case 'igdownloader':
+          const ig_downloader = async (url) => {
+            console.log("igdl process", url)
+          
+            if (url.substring(0, 8) === 'https://' || url.substring(0, 7) === 'http://'|| url.substring(0,21) === 'https://www.instagram' || url.substring(0,20) === 'http://www.instagram.com'){
+              request(url, (error, response, html) => {
+                if (!error) {
+                  let $ = cheerio.load(html);
+          
+                  //basic data from the meta tags
+                  // let image_link = $('meta[property="og:image"]').attr('content');
+                  let video_link = $('meta[property="og:video"]').attr('content')
+                  // let type = $('meta[property="og:type"]').attr('content');
+                  // let url = $('meta[property="og:url"]').attr('content');
+                  let title = $('meta[property="og:title"]').attr('content');
+
+                  if(!video_link){
+                    reply(`url yang kamu kirim tidak mengandung video`)
+                    return
+                  }
+                  
+                  console.log('downloading')
+                  const path = `./public/ig_video.mp4`;
+                  const file = fs.createWriteStream(path);
+                  const request = http.get(video_link, function (response) {
+                    response.pipe(file)
+                  })
+          
+                  file.on("finish", async (res) => {
+                    console.log('sending')
+                    await conn.sendMessage(
+                      from,
+                      fs.readFileSync('./public/ig_video.mp4'),
+                      video, {
+                        mimetype: Mimetype.mp4,
+                        caption: "```" + title + "```"
+                      }
+                    ).then((res) => {
+                      console.log("sent")
+                    })
+                  })
+
+                  request.on("error", (e) => {
+                    console.error("request error", e)
+                    reply(`terjadi kesalahan saat mengunduh media`)
+                  })
+
+                  file.on("error", (e) => {
+                    console.error(e)
+                    reply(`terjadi kesalahan saat mengunduh media`)
+                  })
+          
+                } else {
+                  reply(`terjadi kesalahan saat mengunduh media`)
+                }
+              });
+            } else {
+              reply('URL yang kamu berikan tidak valid')
+            }
+          }
+          
+          ig_downloader(args[0])
+          break
 
         case "ocr":
           if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
@@ -856,24 +922,24 @@ async function main() {
             return
           }
           break
-        
+
+        case 'cb':
         case 'carbon':
-          let txt_carbon = args.join(' ')
-          console.log(txt_carbon)
+          let carbon_txt = args.join(' ')
           // Special thanks to Sumanjay for his carbon api
-          const cb = async (txt_carbon) => {
-            console.log("memproses")
+          const cb = async (carbon_txt) => {
+            console.log("memproses carbon" + carbon_txt)
             await axios({
               method: 'post',
               url: 'https://carbonara.vercel.app/api/cook',
               data: {  
-                "code": txt_carbon
+                "code": carbon_txt
               },
               responseType: 'arraybuffer'
             })
               .then(async (res) => {
                 console.log("mengirim")
-                await conn.sendMessage(from, Buffer.from(res.data), image, { caption: `Hasil untuk 👇\n` + "```" + txt_carbon + "```" })
+                await conn.sendMessage(from, Buffer.from(res.data), image, { caption: `Hasil untuk 👇\n` + "```" + carbon_txt + "```" })
                   .then(() => {
                     console.log("terkirim")
                   })
@@ -887,18 +953,25 @@ async function main() {
                 reply(`*⛔ Maaf*\n\n` + "```Terjadi kesalahann pada saat memproses data.```")
               })
           }
-          cb(txt_carbon)
+          cb(carbon_txt)
           break
-          
+
         case 'qr':
-          const data = ({
-            mimetype: "image/png",
-            data: await (qr.imageSync(text, { type: 'png' })),
-            filename: text + ".png"
-        })
-    
-        await wa.sendImage(sender, data.data, `QR code for 👇\n` + "```" + text + "```");
-        
+        case 'qr-code':
+          const qr_txt = args.join(" ")
+          const qr_fun = async (qr_txt) => {
+            console.log("memproses qr: " + qr_txt)
+            const hasil = qr.imageSync(qr_txt, { ec_level: 'H', type: 'png' })
+            await conn.sendMessage(from, hasil, image, { caption: `QR code untuk 👇\n` + "```" + qr_txt + "```" })
+              .then(() => {
+                console.log("terkirim")
+              })
+              .catch((e) => {
+                console.error(e)
+                reply(`*⛔ Maaf*\n\n` + "```Terjadi kesalahann pada saat memproses data.```")
+              })
+          }
+          qr_fun(qr_txt)
           break
 
         default:
