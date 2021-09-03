@@ -40,6 +40,9 @@ const cheerio = require('cheerio')
 const log = console.debug
 const exec = require("child_process").exec
 const qr = require('qr-image')
+const Jimp = require("jimp")
+const qrCode = require('qrcode-reader')
+
 
 // LOAD SOURCES
 const pesan = require('./src/pesan')
@@ -57,23 +60,56 @@ const getGroupAdmins = (participants) => {
 }
 const helpBiasa = (prefix) => {
   return `
-🎀 *Bahagia-Bot* 🎀\n
-\n
-🔥 *${prefix}sticker* - _Membuat Sticker dari foto/video_\n
-🔥 *${prefix}ytmp3* - _Download lagu dari YouTube_\n
-🔥 *${prefix}ytmp4* - _Download video dari YouTube_\n
-🔥 *${prefix}yts* - _Download lagu dari YouTube(HD Audio)_\n
-🔥 *${prefix}yt* - _Download video dari YouTube(HD Video)_\n
-🔥 *${prefix}igdl* - _Download video dari Instagram_\n
-🔥 *${prefix}twd* - _Twitter Video Downloader_\n
-🔥 *${prefix}ocr* - _Mengubah gambar menjadi teks_\n
-🔥 *${prefix}carbon* - _Mengubah teks menjadi gambar keren_\n
-🔥 *${prefix}qr* - _Membuat QR kode dari text tertentu_\n
-🔥 *${prefix}katacinta* - _Kata cinta random_\n
-🔥 *${prefix}katamotivasi* - _Kata motivasi random_\n
-🔥 *${prefix}faktaunik* - _Fakta unik random_\n
-\n
-🛡 _Semua data yang kamu kirim, nggak kami simpen kok, dijamin aman deh_`
+  🎀 *Bahagia-Bot* 🎀
+
+*${prefix}sticker*
+    _Membuat Sticker dari foto/video_
+
+*${prefix}ytmp3 <Link-YT>*
+    _Download lagu dari YouTube_
+
+*${prefix}ytmp4 <Link-YT>*
+    _Download video dari YouTube_
+
+*${prefix}yts <Link-YT>*
+    _Download lagu dari YouTube(HD Audio)_
+
+*${prefix}yt <Link-YT>*
+    _Download video dari YouTube(HD Video)_
+
+*${prefix}igdl <Link-IG>*
+    _Download video dari Instagram_
+
+*${prefix}twd <Link-TW>*
+    _Twitter Video Downloader_
+
+*${prefix}tiktok <Link-Tiktok>*
+    _Tiktok Video Downloader_
+
+*${prefix}ocr*
+    _Mengubah gambar menjadi teks_
+    _Kirim gambar dan beri ${prefix}ocr_
+
+*${prefix}carbon <Teks>*
+    _Mengubah teks menjadi gambar keren_
+
+*${prefix}qr <Teks>*
+    _Membuat QR kode dari text tertentu_
+
+*${prefix}qrr*
+    _Membaca hasil QR kode dari gambar_
+
+*${prefix}katacinta*
+    _Kata cinta random_
+
+*${prefix}katamotivasi*
+    _Kata motivasi random_
+
+*${prefix}faktaunik*
+    _Fakta unik random_
+
+🛡 _Semua data yang kamu kirim, nggak kami simpen kok, dijamin aman deh_\n
+🛠 _Request fitur atau ada masalah pada bot ini, hubungi Developer_`
 }
 const adminHelp = (prefix) => {
   return `
@@ -285,9 +321,9 @@ async function main() {
         case 'acmd':
           if (!isGroup) {
             reply(helpBiasa(prefix))
-            return
+          }else{
+            costum(adminHelp(prefix), text);
           }
-          await costum(adminHelp(prefix, groupName), text);
           break
 
         case 'link':
@@ -576,68 +612,125 @@ async function main() {
           }
           break;
 
+        // https://github.com/abaykan
+        case 'tw':
         case 'twd':
-            (async () => {
-              let browser
-              try {
-                browser = await puppeteer.launch({
-                  headless: false,
-                  args: ['--no-sandbox', '--disable-setuid-sandbox']
-                })
-              } catch(e) {
-                reply('error')
-              }
-              const page = await browser.newPage();
-              await page
-                .goto("https://id.savefrom.net/download-from-twitter", {
-                  waitUntil: "networkidle2",
-                })
-                .then(async () => {
-                  await page.type("#sf_url", args[0]);
-                  await page.click("#sf_submit");
-                  await new Promise(resolve => setTimeout(resolve, 5000));
-                  try {
-                    await page.waitForSelector("#sf_result");
-                    const element = await page.$("a.link-download");
-                    const link = await (await element.getProperty("href")).jsonValue();
-                    const text = await (await element.getProperty("download")).jsonValue();
-
-                    const filename = new Date().getTime()
-                    const path = `./public/${filename}.mp4`;
-                    const file = fs.createWriteStream(path);
-                    const request = http.get(link, function (response) {
-                      response.pipe(file);
-                    })
-
-                    file.on("finish", async () => {
-                      const videonya = fs.readFileSync(path)
-                      try {
-                        await conn.sendMessage(from, videonya, video, {
-                          caption: `*🙇‍♂️ Berhasil*\n\n${text}`
-                        })
-                        fs.unlinkSync(path)
-                      } catch (e) {
+        case 'twdl':
+          let url_tw = args[0]
+          const twd1 = async (url_tw) => {
+            console.log("twd1 processing", url_tw)
+            const url_base = "http://sosmeeed.herokuapp.com:80/api/twitter/video"
+            axios.post(url_base, {
+              url: url_tw.split("?")[0]
+            })
+              .then(async (res) => {
+                if(res.data.success){
+                  console.log("downloading")
+                  const path = "./public/tw_video.mp4"
+                  const link_download = res.data.data.data[0].link
+                  const file = fs.createWriteStream(path)
+                  const request = http.get(link_download, function (response) {
+                    response.pipe(file);
+                  })
+          
+                  file.on("finish", async () => {
+                    console.log("sending")
+                    const videonya = fs.readFileSync(path)
+                    await conn.sendMessage(from, videonya, video)
+                      .then(() => {
+                        console.log("sent")
+                      })
+                      .catch(async (e) => {
                         console.error(e)
-                        reply(`Error waktu kirim file ke kamu, namun kami masih memiliki linknya: ${link}, silahkan download sendiri ya.`)
+                        reply(`Error waktu kirim videonya ke kamu, namun kami masih memiliki linknya: \n_${await shortlink(link_download)}_\n\nSilahkan download sendiri ya.`)
+                      })
+                      .finally(() => {
                         fs.unlinkSync(path)
-                      }
-                    })
+                      })
+                  })
 
-                  } catch (error) {
-                    console.log(error);
-                    reply(`error`)
-                  }
-                })
-                .catch((err) => {
-                  console.log(err);
-                  reply(`error`)
-                });
-              browser.close();
-            })();
+                  file.on("error", (e) => {
+                    console.error(e)
+                    reply("maaf terjadi kesalahan saat menunduh media.")
+                  })
+
+                  request.on("error", (e) => {
+                    console.error(e)
+                    reply("maaf terjadi kesalahaan saat mengunduh media.")
+                  })
+                }else{
+                  reply("Link yang anda berikan tidak valid atau tidak mengandung video.")
+                }
+              })
+              .catch((e) => {
+                console.log("error:", e)
+                reply("Maaf, terjadi kesalahan pada server, ulangi beberapa saat lagi.")
+              })
+          }
+          
+          twd1(url_tw)
           break;
 
-        case 'ytmp3':
+        case 'tiktok':
+        case 'ttdl':
+          let url_tiktok = args[0]
+          const tiktokk = async (url_tiktok) => {
+            console.log("tiktok processing", url_tiktok)
+            const url_base = "http://sosmeeed.herokuapp.com:80/api/tiktok/video"
+            axios.post(url_base, {
+              url: url_tiktok.split("?")[0]
+            })
+              .then(async (res) => {
+                if(res.data.success){
+                  console.log("downloading")
+                  const path = "./public/tt_video.mp4"
+                  const link_download = res.data.data.video
+                  const file = fs.createWriteStream(path)
+                  const request = http.get(link_download, function (response) {
+                    response.pipe(file);
+                  })
+          
+                  file.on("finish", async () => {
+                    console.log("sending")
+                    const videonya = fs.readFileSync(path)
+                    await conn.sendMessage(from, videonya, video)
+                      .then(() => {
+                        console.log("sent")
+                      })
+                      .catch(async (e) => {
+                        console.error(e)
+                        reply(`Error waktu kirim videonya ke kamu, namun kami masih memiliki linknya: \n_${await shortlink(link_download)}_\n\nSilahkan download sendiri ya.`)
+                      })
+                      .finally(() => {
+                        fs.unlinkSync(path)
+                      })
+                  })
 
+                  file.on("error", (e) => {
+                    console.error(e)
+                    reply("maaf terjadi kesalahan saat menunduh media.")
+                  })
+
+                  request.on("error", (e) => {
+                    console.error(e)
+                    reply("maaf terjadi kesalahaan saat mengunduh media.")
+                  })
+                }else{
+                  reply("Link yang anda berikan tidak valid atau tidak mengandung video.")
+                }
+              })
+              .catch((e) => {
+                console.log("error:", e)
+                reply("Maaf, terjadi kesalahan pada server, ulangi beberapa saat lagi.")
+              })
+            }
+            
+            tiktokk(url_tiktok)
+            break;
+    
+          break
+        
+        case 'ytmp3':
           if (!YTDL.validateURL(args[0])) {
             reply(`*⛔ Maaf*\n\nUrl video tidak valid atau kami tidak menemukan apapun!`)
             return
@@ -842,15 +935,20 @@ async function main() {
           
                   file.on("finish", async (res) => {
                     console.log('sending')
-                    await conn.sendMessage(
-                      from,
-                      fs.readFileSync('./public/ig_video.mp4'),
-                      video, {
+                    const videonya = fs.readFileSync(path)
+                    await conn.sendMessage(from, videonya, video, {
                         mimetype: Mimetype.mp4,
                         caption: "```" + title + "```"
                       }
                     ).then((res) => {
                       console.log("sent")
+                    })
+                    .catch(async (e) => {
+                      console.error(e)
+                      reply(`Error waktu kirim videonya ke kamu, namun kami masih memiliki linknya: \n_${await shortlink(video_link)}_\n\nSilahkan download sendiri ya.`)
+                    })
+                    .finally(() => {
+                      fs.unlinkSync(path)
                     })
                   })
 
@@ -986,7 +1084,40 @@ async function main() {
           qr_fun(qr_txt)
           break
         
-        // THANKS TO JAGOKATA.COM
+        // https://www.codegrepper.com/code-examples/javascript/read+qr+code+from+image+nodejs
+        case 'qr-read':
+        case 'qrr':
+        case 'qrread':
+          console.log("qrread processing")
+          if ((isMedia && !mek.message.videoMessage || isQuotedImage)) {
+            const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+            const media = await conn.downloadAndSaveMediaMessage(encmedia, "./public/qrreader_img")
+            console.log("media downloaded", media)
+
+            let buffer = fs.readFileSync(media)
+            Jimp.read(buffer, function(err, image) {
+              if (err) {
+                console.error(err)
+                reply("maaf terjadi kesalahan saat membaca data.")
+                return
+              }
+              let qrcode = new qrCode()
+              qrcode.callback = function(err, value) {
+                if (err) {
+                  console.error(err)
+                  reply("maaf terjadi kesalahan saat membaca data.")
+                }
+                console.log("sent")
+                reply(value.result)
+              }
+              qrcode.decode(image.bitmap)
+            })
+          }else{
+            reply("Kamu lupa melampirkan gambar yang akan di scan.")
+          }
+          break
+        
+          // THANKS TO JAGOKATA.COM
         case 'bucin':
         case 'katacinta':
         case 'quotescinta':
@@ -1063,6 +1194,9 @@ async function main() {
           }
           faktaunik()
           break
+        
+
+        
         default:
           break;
       }
