@@ -69,52 +69,55 @@ const helpBiasa = (prefix) => {
 🔥 *${prefix}ocr* - _Mengubah gambar menjadi teks_\n
 🔥 *${prefix}carbon* - _Mengubah teks menjadi gambar keren_\n
 🔥 *${prefix}qr* - _Membuat QR kode dari text tertentu_\n
+🔥 *${prefix}katacinta* - _Kata cinta random_\n
+🔥 *${prefix}katamotivasi* - _Kata motivasi random_\n
+🔥 *${prefix}faktaunik* - _Fakta unik random_\n
 \n
 🛡 _Semua data yang kamu kirim, nggak kami simpen kok, dijamin aman deh_`
 }
-const adminHelp = (prefix, groupName) => {
+const adminHelp = (prefix) => {
   return `
-  🎀 *RiyanBot* 🎀
+  🎀 *Bahagia-Bot* 🎀
 
-*${prefix}add <phone number>*
-    _Add any new member!_
+*${prefix}add <nomor hp>*
+    _Tambah member kedalam group!_
 
-*${prefix}kick <@mention>*
-    _Kick any member out from group!_
-    _Alias with ${prefix}remove, ${prefix}ban_
+*${prefix}kick <@mention-user>*
+    _Kick out member!_
+    _Bisa juga menggunakan ${prefix}remove, ${prefix}ban_
 
-*${prefix}promote <@mention>*
-    _Give admin permission to a member!_
+*${prefix}promote <@mention-user>*
+    _Mempromosikan user menjadi admin group!_
 
-*${prefix}demote <@mention>*
-    _Remove admin permission of a member!_
+*${prefix}demote <@mention-user>*
+    _Menurunkan user dari admin group!_
 
-*${prefix}rename <new-subject>*
-    _Change group subject!_
+*${prefix}rename <nama-baru>*
+    _Mengubah nama group!_
 
 *${prefix}chat <on/off>*
-    _Enable/disable group chat_
-    _/chat on - for everyone!_
-    _/chat off - for admin only!_
+    _Enable/disable group_
+    _/chat on - semua bisa ngirim pesan!_
+    _/chat off - hanya admin yang ngirim pesan!_
 
 *${prefix}link*
-    _Get group invite link!_
-    _Alias with ${prefix}getlink, ${prefix}grouplink_
+    _Memunculkan link undangan group!_
+    _Perintah lain: ${prefix}getlink, ${prefix}grouplink_
 
 *${prefix}sticker*
-    _Create a sticker from different media types!_
-    *Properties of sticker:*
-        _crop_ - Used to crop the sticker size!
-        _author_ - Add metadata in sticker!
-        _pack_ - Add metadata in sticker!
-        _nometadata_ - Remove all metadata from sticker!
+    _Membuat stiker!_
+    *Parameter:*
+        _crop_ - Memperkecil ukuran stiker!
+        _author_ - Memberi metadata author pada stiker!
+        _pack_ - Memberi metadata pack pada stiker!
+        _nometadata_ - Menghapus semua metadata pada stiker!
     *Examples:*
-        _${prefix}sticker pack simple-k-bot author Karma_
+        _${prefix}sticker pack bahagia-bot author riyanris_
         _${prefix}sticker crop_
         _${prefix}sticker nometadata_
 
 *${prefix}removebot*
-    _Remove bot from group!_`
+    _Mengeluarkan bot dari group!_`
 }
 const getRandom = (ext) => {
   return `${Math.floor(Math.random() * 1000000)}${ext}`
@@ -281,7 +284,7 @@ async function main() {
         case 'help':
         case 'acmd':
           if (!isGroup) {
-            await reply(helpBiasa(prefix))
+            reply(helpBiasa(prefix))
             return
           }
           await costum(adminHelp(prefix, groupName), text);
@@ -873,6 +876,7 @@ async function main() {
           ig_downloader(args[0])
           break
 
+        // https://github.com/tesseract-ocr/tesseract
         case "ocr":
           if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
             const media = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
@@ -929,11 +933,12 @@ async function main() {
             return
           }
           break
-
+        
+        // Special thanks to Sumanjay for his carbon api
         case 'cb':
         case 'carbon':
           let carbon_txt = args.join(' ')
-          // Special thanks to Sumanjay for his carbon api
+          
           const cb = async (carbon_txt) => {
             console.log("memproses carbon" + carbon_txt)
             await axios({
@@ -980,7 +985,84 @@ async function main() {
           }
           qr_fun(qr_txt)
           break
-
+        
+        // THANKS TO JAGOKATA.COM
+        case 'bucin':
+        case 'katacinta':
+        case 'quotescinta':
+          const katacinta = async () => {
+            console.log("katacinta processing")
+            const ran1 = Math.floor(Math.random() * 100)
+            const ran2 = Math.floor(Math.random() * 10)
+            request.get({
+              headers: { 'user-agent' : 'Mozilla/5.0 (Linux; Android 8.1.0; vivo 1820) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Mobile Safari/537.36'
+              },
+              url: 'https://jagokata.com/kata-bijak/kata-cinta.html?page=' + ran1,
+            }, function(error, response, body){
+              if(!error){
+                const $ = cheerio.load(body);
+                let author = $('a[class="auteurfbnaam"]').contents()[ran2]['data']
+                let kata = $('q[class="fbquote"]').contents()[ran2]['data']
+                reply(`_${kata}_\n\n~*${author}*`)
+              } else {
+                console.error("error", error)
+                reply("maaf terjadi kesalahan pada sistem kami.")
+              }
+            })
+          }
+          
+          katacinta()
+          break
+          
+        case 'motivasi':
+        case 'katamotivasi':
+        case 'katabijak':
+          const katamotivasi = async () => {
+            console.log("katamotivasi processing")
+            const ran1 = Math.floor(Math.random() * 10)
+            const ran2 = Math.floor(Math.random() * 10)
+            request.get({
+              headers: { 'user-agent' : 'Mozilla/5.0 (Linux; Android 8.1.0; vivo 1820) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Mobile Safari/537.36'
+              },
+              url: 'https://jagokata.com/kata-bijak/popular.html?page=' + ran1,
+            }, function(error, response, body){
+              if(!error){
+                let $ = cheerio.load(body);
+                let author = $('a[class="auteurfbnaam"]').contents()[ran2]['data']
+                let kata = $('q[class="fbquote"]').contents()[ran2]['data']
+                reply(`_${kata}_\n\n~*${author}*`)
+              }else{
+                console.error('error: ', error)
+                reply('maaf, terjadi kesalahan pada sistem kami.')
+              }
+            })  
+          }
+          katamotivasi()
+          break
+        
+        // THANKS TO github.com/pajaar
+        case 'faktaunik':
+          const faktaunik = async () => {
+            console.log("faktaunik processing")
+            const url = "https://raw.githubusercontent.com/pajaar/grabbed-results/master/pajaar-2020-fakta-unik.txt"
+            axios.get(url)
+              .then(async (res) => {
+                try {
+                  let faktas = res.data.split("\n")
+                  let faktarandom = faktas[Math.floor(Math.random() * faktas.length)]
+                  reply(faktarandom)
+                } catch(e) {
+                  console.error("error:", e)
+                  reply("maaf, terjadi kesalahan pada sistem kami.")
+                }
+              })
+              .catch((e) => {
+                console.error("error:", e)
+                reply("maaf, terjadi kesalahan pada sistem kami.")
+              })
+          }
+          faktaunik()
+          break
         default:
           break;
       }

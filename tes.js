@@ -1,17 +1,16 @@
-const fbdl = require("fbdl-core")
-const fs = require("fs")
+const axios = require('axios')
 
-let url = "https://www.facebook.com/alanwalkermusic/videos/277641643524720"
-
-const fbdl_fun = async (url) => {
-  console.log("fbdl processing", url)
-  fbdl.download(url)
-    .then(res => {
-        res.pipe(fs.createWriteStream("./public/fb_video.mp4"));
+const faktaunik = async () => {
+  const url = "https://raw.githubusercontent.com/pajaar/grabbed-results/master/pajaar-2020-fakta-unik.txt"
+  axios.get(url)
+    .then(async (res) => {
+      let faktas = res.data.split("\n")
+      let faktarandom = faktas[Math.floor(Math.random() * faktas.length)]
+      console.log(faktarandom)
     })
     .catch((e) => {
-      console.error("error", e)
+      console.log("error:", e)
     })
-};
+}
 
-fbdl_fun(url);
+faktaunik()
