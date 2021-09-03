@@ -33,7 +33,6 @@ const ffmpeg = require('fluent-ffmpeg')
 const WSF = require('wa-sticker-formatter')
 const YTDL = require("ytdl-core")
 const axios = require('axios')
-const puppeteer = require("puppeteer")
 const http = require('https') // or 'https' for https:// URLs
 const request = require('request')
 const cheerio = require('cheerio')
@@ -42,6 +41,8 @@ const exec = require("child_process").exec
 const qr = require('qr-image')
 const Jimp = require("jimp")
 const qrCode = require('qrcode-reader')
+const FormData = require('form-data')
+const qs = require('qs')
 
 
 // LOAD SOURCES
