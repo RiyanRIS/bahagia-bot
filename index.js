@@ -903,78 +903,82 @@ async function main() {
           am(url1)
           break
         
-        // https://github.com/haxzie-xx/instagram-downloader
+        // https://keeppost.com/
+        // https://github.com/Ayesh/InstagramDownload
         case 'igdl':
         case 'igdown':
         case 'igdownloader':
           const ig_downloader = async (url) => {
             console.log("igdl process", url)
-          
-            if (url.substring(0, 8) === 'https://' || url.substring(0, 7) === 'http://'|| url.substring(0,21) === 'https://www.instagram' || url.substring(0,20) === 'http://www.instagram.com'){
-              request(url, (error, response, html) => {
-                if (!error) {
-                  let $ = cheerio.load(html);
-          
-                  //basic data from the meta tags
-                  // let image_link = $('meta[property="og:image"]').attr('content');
-                  let video_link = $('meta[property="og:video"]').attr('content')
-                  // let type = $('meta[property="og:type"]').attr('content');
-                  // let url = $('meta[property="og:url"]').attr('content');
-                  let title = $('meta[property="og:title"]').attr('content');
+            axios.get("https://keeppost.com/")
+              .then(async (res) => {
+                const $ = cheerio.load(res.data)
+                const build_id = $("input[name=build_id]").attr("value")
+                const build_key = $("input[name=build_key]").attr("value")
 
-                  if(!video_link){
-                    reply(`url yang kamu kirim tidak mengandung video`)
-                    return
-                  }
-                  
-                  console.log('downloading')
-                  const path = `./public/ig_video.mp4`;
-                  const file = fs.createWriteStream(path);
-                  const request = http.get(video_link, function (response) {
-                    response.pipe(file)
-                  })
-          
-                  file.on("finish", async (res) => {
-                    console.log('sending')
-                    const videonya = fs.readFileSync(path)
-                    await conn.sendMessage(from, videonya, video, {
-                        mimetype: Mimetype.mp4,
-                        caption: "```" + title + "```"
-                      }
-                    ).then((res) => {
-                      console.log("sent")
-                    })
-                    .catch(async (e) => {
-                      console.error(e)
-                      reply(`Error waktu kirim videonya ke kamu, namun kami masih memiliki linknya: \n_${await shortlink(video_link)}_\n\nSilahkan download sendiri ya.`)
-                    })
-                    .finally(() => {
-                      fs.unlinkSync(path)
-                    })
-                  })
+                let formdata = new FormData();
 
-                  request.on("error", (e) => {
-                    console.error("request error", e)
-                    reply(`terjadi kesalahan saat mengunduh media`)
-                  })
-
-                  file.on("error", (e) => {
-                    console.error(e)
-                    reply(`terjadi kesalahan saat mengunduh media`)
-                  })
-          
-                } else {
-                  reply(`terjadi kesalahan saat mengunduh media`)
+                const tes = {
+                  url,
+                  build_id,
+                  build_key
                 }
-              });
-            } else {
-              reply('URL yang kamu berikan tidak valid')
-            }
+
+                axios.post('https://keeppost.com/process.php', qs.stringify(tes), { header: formdata.getHeaders()})
+                  .then( (res) => {
+                    console.log("downloading")
+                    const $ = cheerio.load(res.data)
+                    const link_download = $("a").attr("href")
+                    if(link_download){
+                      const path = "./public/ig_video.mp4"
+                      const file = fs.createWriteStream(path)
+                      const request = http.get(link_download, function (response) {
+                        response.pipe(file);
+                      })
+              
+                      file.on("finish", async () => {
+                        console.log("sending")
+                        const videonya = fs.readFileSync(path)
+                        await conn.sendMessage(from, videonya, video)
+                          .then(() => {
+                            console.log("sent")
+                          })
+                          .catch(async (e) => {
+                            console.error(e)
+                            reply(`Error waktu kirim videonya ke kamu, namun kami masih memiliki linknya: \n_${await shortlink(link_download)}_\n\nSilahkan download sendiri ya.`)
+                          })
+                          .finally(() => {
+                            fs.unlinkSync(path)
+                          })
+                      })
+    
+                      file.on("error", (e) => {
+                        console.error(e)
+                        reply("maaf terjadi kesalahan saat menunduh media.")
+                      })
+    
+                      request.on("error", (e) => {
+                        console.error(e)
+                        reply("maaf terjadi kesalahaan saat mengunduh media.")
+                      })
+                    }else{
+                      reply("kami tidak menemukan video dalam link ini.")
+                    }
+                  })
+                  .catch((e) => {
+                    console.error(e)
+                    reply("maaf, terjadi kesalahan saat menghubungi server, ulangi beberapa saat lagi.")
+                  })
+              })
+              .catch((e) => {
+                console.error(e)
+                reply("maaf, terjadi kesalahan saat menghubungi server, ulangi beberapa saat lagi.")
+              })
           }
           
           ig_downloader(args[0])
           break
-
+        
         // https://github.com/tesseract-ocr/tesseract
         case "ocr":
           if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
