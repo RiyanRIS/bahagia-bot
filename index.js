@@ -44,6 +44,10 @@ const qrCode = require('qrcode-reader')
 const FormData = require('form-data')
 const qs = require('qs')
 
+// LOAD LIBRARY
+const { ytmp3, ytmp4 } = require("./lib/ytdl")
+const { twdl } = require("./lib/twdl")
+const { igdl } = require("./lib/igdl")
 
 // LOAD SOURCES
 const pesan = require('./src/pesan')
@@ -80,12 +84,15 @@ const helpBiasa = (prefix) => {
 
 *${prefix}igdl <Link-IG>*
     _Download video dari Instagram_
+    _jika menggunakan igdl tidak berhasil, gunakan perintah *igdl1*_
 
-*${prefix}twd <Link-TW>*
+*${prefix}twdl <Link-TW>*
     _Twitter Video Downloader_
+    _jika menggunakan twdl tidak berhasil, gunakan perintah *twdl1*_
 
-*${prefix}tiktok <Link-Tiktok>*
+*${prefix}ttdl <Link-Tiktok>*
     _Tiktok Video Downloader_
+    _jika menggunakan ttdl tidak berhasil, gunakan perintah *ttdl1*_
 
 *${prefix}ocr*
     _Mengubah gambar menjadi teks_
@@ -300,6 +307,30 @@ async function main() {
             }
           }
         })
+      }
+
+      const sendMed = async (res, jenis) => {
+        if(res.status){
+          console.log("sending")
+          const stats = fs.statSync(res.data)
+          if(stats.size < 95999999){ // batas max upload whatsapp 99 mb
+            const media = fs.readFileSync(res.data)
+            await conn.sendMessage(from, media, jenis)
+              .then((res) => {
+                console.log("sent")
+              })
+              .catch(async (e) => {
+                console.error(e)
+                reply(`Error waktu kirim media ke kamu, namun kami masih memiliki linknya: \n_${await shortlink(res.link)}_\n\nSilahkan download sendiri ya.`)
+              })
+          } else {
+            console.log("too large")
+            reply(`Ukuran file terlalu besar silahkan download melalui link berikut: _${await shortlink(res.link)}_`)
+          }
+        } else {
+          console.log("error")
+          reply(res.msg)
+        }
       }
 
       const isMedia = (type === 'imageMessage' || type === 'videoMessage')
@@ -614,64 +645,15 @@ async function main() {
           break;
 
         // https://github.com/abaykan
+        // http://sosmeeed.herokuapp.com
         case 'tw':
         case 'twd':
         case 'twdl':
-          let url_tw = args[0]
-          const twd1 = async (url_tw) => {
-            console.log("twd1 processing", url_tw)
-            const url_base = "http://sosmeeed.herokuapp.com:80/api/twitter/video"
-            axios.post(url_base, {
-              url: url_tw.split("?")[0]
-            })
-              .then(async (res) => {
-                if(res.data.success){
-                  console.log("downloading")
-                  const path = "./public/tw_video.mp4"
-                  const link_download = res.data.data.data[0].link
-                  const file = fs.createWriteStream(path)
-                  const request = http.get(link_download, function (response) {
-                    response.pipe(file);
-                  })
-          
-                  file.on("finish", async () => {
-                    console.log("sending")
-                    const videonya = fs.readFileSync(path)
-                    await conn.sendMessage(from, videonya, video)
-                      .then(() => {
-                        console.log("sent")
-                      })
-                      .catch(async (e) => {
-                        console.error(e)
-                        reply(`Error waktu kirim videonya ke kamu, namun kami masih memiliki linknya: \n_${await shortlink(link_download)}_\n\nSilahkan download sendiri ya.`)
-                      })
-                      .finally(() => {
-                        fs.unlinkSync(path)
-                      })
-                  })
-
-                  file.on("error", (e) => {
-                    console.error(e)
-                    reply("maaf terjadi kesalahan saat menunduh media.")
-                  })
-
-                  request.on("error", (e) => {
-                    console.error(e)
-                    reply("maaf terjadi kesalahaan saat mengunduh media.")
-                  })
-                }else{
-                  reply("Link yang anda berikan tidak valid atau tidak mengandung video.")
-                }
-              })
-              .catch((e) => {
-                console.log("error:", e)
-                reply("Maaf, terjadi kesalahan pada server, ulangi beberapa saat lagi.")
-              })
-          }
-          
-          twd1(url_tw)
-          break;
-
+          const res_twdl = await twdl(args[0])
+          await sendMed(res_twdl, video)
+          break
+        
+        // http://sosmeeed.herokuapp.com
         case 'tiktok':
         case 'ttdl':
           let url_tiktok = args[0]
@@ -717,266 +699,103 @@ async function main() {
                     reply("maaf terjadi kesalahaan saat mengunduh media.")
                   })
                 }else{
-                  reply("Link yang anda berikan tidak valid atau tidak mengandung video.")
+                  reply(`Link yang anda berikan tidak valid atau tidak mengandung video atau gunakan perintah _${prefix}ttdl1_`)
                 }
               })
               .catch((e) => {
                 console.log("error:", e)
-                reply("Maaf, terjadi kesalahan pada server, ulangi beberapa saat lagi.")
+                reply(`Maaf, terjadi kesalahan pada server, ulangi beberapa saat lagi atau gunakan perintah _${prefix}ttdl1_`)
               })
             }
             
             tiktokk(url_tiktok)
             break;
-    
-          break
-        
-        case 'ytmp3':
-          if (!YTDL.validateURL(args[0])) {
-            reply(`*⛔ Maaf*\n\nUrl video tidak valid atau kami tidak menemukan apapun!`)
-            return
-          }
+          
+        // https://recoders-area.caliph.repl.co/api
+        case 'ttdl1':
+        case 'tiktok1':
+          const tt_downloader = async (url) => {
+            console.log("ttdl1 process", url)
 
-          const filename = getRandom(".mp3")
-          const path = `./public/${filename}`
-
-          const videoID = YTDL.getURLVideoID(args[0])
-          const info = await YTDL.getInfo(videoID)
-
-          reply(`*⏳ Tunggu Sebentar*\n\nDownload musik sedang kami proses.`)
-
-          let stream = YTDL(args[0], {
-            filter: info => info.audioBitrate == 160 || info.audioBitrate == 128
-          })
-
-          let simp = fs.createWriteStream(path);
-          let simpen = stream.pipe(simp)
-
-          simpen.on("finish", async () => {
-            let stats = fs.statSync(path)
-            let url_download = URL + "/public/" + filename
-
-            if (stats.size < 29999999) { // jika ukuran file kurang dari 30 mb
-              reply(`*🙇‍♂️ Berhasil*\n\n*Judul:* ${info.videoDetails.title}\n*Size:* ${formatBytes(stats.size)}\n\n_kami mencoba mengirimkanya ke anda_`)
-              try {
-                const musiknya = fs.readFileSync(path)
-                await conn.sendMessage(from, musiknya, audio)
-              } catch (e) {
-                console.error(e)
-                reply(`*⛔ Maaf*\n\nTerjadi kesalahan saat mengirimkan file, anda dapat mengunduhnya secara manual melalui link berikut.\n\n${await shortlink(url_download)}`)
-              }
-              fs.unlinkSync(path)
-            } else {
-              reply(`*🙇‍♂️ Berhasil*\n\n*Judul:* ${info.videoDetails.title}\n*Size:* ${formatBytes(stats.size)}\n\n*Link:* ${await shortlink(url_download)}`)
-            }
-          });
-
-          simpen.on("error", (e) => {
-            console.error(e)
-            reply(`*⛔ Maaf*\n\nTerjadi kesalahan pada server kami!`)
-          })
-          break
-
-        case 'ytmp4':
-
-          if (!YTDL.validateURL(args[0])) {
-            reply(`*⛔ Maaf*\n\nUrl video tidak valid atau kami tidak menemukan apapun!`)
-            return
-          }
-
-          let mvideoID = YTDL.getURLVideoID(args[0])
-          let minfo = await YTDL.getInfo(mvideoID)
-
-          reply(`*⏳ Tunggu Sebentar*\n\nDownload video sedang kami proses.`)
-
-          let mstream = YTDL(args[0], {
-            filter: info => info.itag == 22 || info.itag == 18
-          })
-
-          const mfilename = getRandom(".mp4")
-          let mpath = `./public/${mfilename}`
-
-          let msimp = fs.createWriteStream(mpath);
-          let msimpen = mstream.pipe(msimp)
-
-          msimpen.on("finish", async () => {
-
-            let stats = fs.statSync(mpath)
-            let url_download = URL + "/public/" + mfilename
-
-            if (stats.size < 79999999) { // jika ukuran file kurang dari 80 mb || batas max whatsapp
-              reply(`*🙇‍♂️ Berhasil*\n\n*Judul:* ${minfo.videoDetails.title}\n*Size:* ${formatBytes(stats.size)}\n\n_kami mencoba mengirimkanya ke anda_`)
-              try {
-                const videonya = fs.readFileSync(mpath)
-                await conn.sendMessage(from, videonya, video)
-              } catch (error) {
-                console.error(error)
-                reply(`*⛔ Maaf*\n\nTerjadi kesalahan saat mengirimkan file, anda dapat mengunduhnya secara manual melalui link berikut.\n\n${await shortlink(url_download)}`)
-              }
-              fs.unlinkSync(path)
-            } else {
-              reply(`*🙇‍♂️ Berhasil*\n\n*Judul:* ${minfo.videoDetails.title}\n*Size:* ${formatBytes(stats.size)}\n\n*Link:* ${await shortlink(url_download)}`)
-            }
-          });
-
-          msimpen.on("error", (e) => {
-            console.error(e)
-            reply(`*⛔ Maaf*\n\nTerjadi kesalahan pada server kami!`)
-          })
-          break
-
-        case 'yt':
-          var urlyt = args[0];
-          console.log(urlyt)
-          const dm = async (url) => {
-            let info = YTDL.getInfo(url)
-            const stream = YTDL(url, {
-                filter: info => info.itag == 22 || info.itag == 18
-              })
-              .pipe(fs.createWriteStream('./public/video.mp4'));
-            console.log("video downloading")
-            await new Promise((resolve, reject) => {
-              stream.on('error', reject)
-              stream.on('finish', resolve)
-            }).then(async (res) => {
-              console.log("video sending")
-              await conn.sendMessage(
-                from,
-                fs.readFileSync('./public/video.mp4'),
-                video, {
-                  mimetype: Mimetype.mp4
-                }
-              ).then((res) => {
-                console.log("Sent")
-              })
-              .catch((e) => {
-                reply `Enable to download send a valid req`
-              })
-              .finally(() => {
-                fs.unlinkSync("./public/video.mp4")
-              })
-
-            }).catch((err) => {
-              reply `Unable to download,contact dev.`;
-            });
-
-          }
-          dm(urlyt)
-          break
-
-        case 'yts':
-          var url1 = args[0];
-          console.log(`${url1}`)
-          const am = async (url1) => {
-            let info = YTDL.getInfo(url1)
-            const stream = YTDL(url1, {
-                filter: info => info.audioBitrate == 160 || info.audioBitrate == 128
-              })
-              .pipe(fs.createWriteStream('./public/audio.mp3'));
-            console.log("audio downloading")
-            await new Promise((resolve, reject) => {
-              stream.on('error', reject)
-              stream.on('finish', resolve)
-            }).then(async (res) => {
-              console.log("audio sending")
-              await conn.sendMessage(
-                  from,
-                  fs.readFileSync('./public/audio.mp3'),
-                  MessageType.audio, {
-                    mimetype: Mimetype.mp4Audio
-                  }
-                ).then((resolved) => {
-                  console.log("Sent")
-                })
-                .catch((reject) => {
-                  reply `Enable to download send a valid req`
-                })
-                .finally(() => {
-                  fs.unlinkSync("./public/audio.mp3")
-                })
-
-            }).catch((err) => {
-              reply `Unable to download,contact dev.`;
-            });
-
-          }
-          am(url1)
-          break
-        
-        // https://keeppost.com/
-        // https://github.com/Ayesh/InstagramDownload
-        case 'igdl':
-        case 'igdown':
-        case 'igdownloader':
-          const ig_downloader = async (url) => {
-            console.log("igdl process", url)
-            axios.get("https://keeppost.com/")
-              .then(async (res) => {
-                const $ = cheerio.load(res.data)
-                const build_id = $("input[name=build_id]").attr("value")
-                const build_key = $("input[name=build_key]").attr("value")
-
-                let formdata = new FormData();
-
-                const tes = {
-                  url,
-                  build_id,
-                  build_key
-                }
-
-                axios.post('https://keeppost.com/process.php', qs.stringify(tes), { header: formdata.getHeaders()})
-                  .then( (res) => {
-                    console.log("downloading")
-                    const $ = cheerio.load(res.data)
-                    const link_download = $("a").attr("href")
-                    if(link_download){
-                      const path = "./public/ig_video.mp4"
-                      const file = fs.createWriteStream(path)
-                      const request = http.get(link_download, function (response) {
-                        response.pipe(file);
-                      })
-              
-                      file.on("finish", async () => {
-                        console.log("sending")
-                        const videonya = fs.readFileSync(path)
-                        await conn.sendMessage(from, videonya, video)
-                          .then(() => {
+            axios.get('https://recoders-area.caliph.repl.co/api/tiktod/?url=' + url)
+              .then((res) => {
+                if(res.data.status == 200){
+                  console.log("downloading")
+                  const link_download = res.data.result.nowatermark
+                  if(link_download){
+                    const path = "./public/tt_video.mp4"
+                    const file = fs.createWriteStream(path)
+                    const request = http.get(link_download, function (response) {
+                      response.pipe(file);
+                    })
+            
+                    file.on("finish", async () => {
+                      console.log("sending")
+                      const videonya = fs.readFileSync(path)
+                      await conn.sendMessage(from, videonya, video)
+                        .then(() => {
+                          console.log("sent")
+                        })
+                        .catch(async (e) => {
+                          console.error("err1", e)
+                          await conn.sendMessage(from, videonya, video, {thumbnail: null}).then(() => {
                             console.log("sent")
                           })
                           .catch(async (e) => {
                             console.error(e)
                             reply(`Error waktu kirim videonya ke kamu, namun kami masih memiliki linknya: \n_${await shortlink(link_download)}_\n\nSilahkan download sendiri ya.`)
                           })
-                          .finally(() => {
-                            fs.unlinkSync(path)
-                          })
-                      })
-    
-                      file.on("error", (e) => {
-                        console.error(e)
-                        reply("maaf terjadi kesalahan saat menunduh media.")
-                      })
-    
-                      request.on("error", (e) => {
-                        console.error(e)
-                        reply("maaf terjadi kesalahaan saat mengunduh media.")
-                      })
-                    }else{
-                      reply("kami tidak menemukan video dalam link ini.")
-                    }
-                  })
-                  .catch((e) => {
-                    console.error(e)
-                    reply("maaf, terjadi kesalahan saat menghubungi server, ulangi beberapa saat lagi.")
-                  })
+                        })
+                        .finally(() => {
+                          fs.unlinkSync(path)
+                        })
+                    })
+  
+                    file.on("error", (e) => {
+                      console.error(e)
+                      reply("maaf terjadi kesalahan saat menunduh media.")
+                    })
+  
+                    request.on("error", (e) => {
+                      console.error(e)
+                      reply("maaf terjadi kesalahaan saat mengunduh media.")
+                    })
+                  }else{
+                    reply("url yang kamu berikan tidak valid atau tidak mengandung video.")
+                  }
+                } else {
+                  console.error("Terjadi kesalahan pada server api")
+                  reply("Kami tidak menemukan apapun.")
+                }
               })
               .catch((e) => {
                 console.error(e)
-                reply("maaf, terjadi kesalahan saat menghubungi server, ulangi beberapa saat lagi.")
+                reply("terjadi kesalahan saat menghubungi server, ulangi beberapa saat lagi.")
               })
           }
-          
-          ig_downloader(args[0])
+
+          tt_downloader(args[0])
+          break
+        
+        case 'yts':
+        case 'ytmp3':
+          const res_ytmp3 = await ytmp3(args[0])
+          await sendMed(res_ytmp3, audio)
+          break
+        
+        case 'yt':
+        case 'ytmp4':
+          const res_ytmp4 = await ytmp4(args[0])
+          await sendMed(res_ytmp4, video)
+          break
+  
+        // https://keeppost.com/
+        // https://github.com/Ayesh/InstagramDownload
+        case 'igdl':
+        case 'igdown':
+        case 'igdownloader':
+          const res_igdl = await igdl(args[0])
+          await sendMed(res_igdl, video)
           break
         
         // https://github.com/tesseract-ocr/tesseract
@@ -1056,7 +875,7 @@ async function main() {
                 console.log("mengirim")
                 await conn.sendMessage(from, Buffer.from(res.data), image, { caption: `Hasil untuk 👇\n` + "```" + carbon_txt + "```" })
                   .then(() => {
-                    console.log("terkirim")
+                    console.log("sent")
                   })
                   .catch((e) => {
                     console.error(e)
@@ -1110,10 +929,16 @@ async function main() {
               qrcode.callback = function(err, value) {
                 if (err) {
                   console.error(err)
-                  reply("maaf terjadi kesalahan saat membaca data.")
+                  reply("Kami tidak menemukan apapun. Silahkan ulangi dengan gambar yang jelas dan usahakan barcode tidak terpotong")
+                  return
                 }
-                console.log("sent")
-                reply(value.result)
+                try {
+                  reply(value.result)
+                  console.log("sent")
+                } catch(e) {
+                  console.log(value)
+                  reply("maaf, terjadi kesalahan saat membaca data.")
+                }
               }
               qrcode.decode(image.bitmap)
             })
