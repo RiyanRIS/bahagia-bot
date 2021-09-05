@@ -43,17 +43,20 @@ const Jimp = require("jimp")
 const qrCode = require('qrcode-reader')
 const FormData = require('form-data')
 const qs = require('qs')
+const moment = require("moment-timezone")
 
 // LOAD LIBRARY
 const { ytmp3, ytmp4 } = require("./lib/ytdl")
 const { twdl } = require("./lib/twdl")
 const { igdl } = require("./lib/igdl")
+const { ttdl } = require("./lib/ttdl")
 
 // LOAD SOURCES
 const pesan = require('./src/pesan')
 
 // BASIC SETTINGS
-prefix = '/';
+const prefix = '/'
+const time = moment.tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss")
 
 // LOAD CUSTOM FUNCTIONS
 const getGroupAdmins = (participants) => {
@@ -338,9 +341,9 @@ async function main() {
       const isQuotedVideo = type === 'extendedTextMessage' && content.includes('videoMessage')
       const isQuotedSticker = type === 'extendedTextMessage' && content.includes('stickerMessage')
       if (isCmd && isGroup) {
-        console.log('[COMMAND]', command, '[FROM]', sender.split('@')[0], '[IN]', groupName)
+        console.log(time, ' [COMMAND]', command, '[FROM]', sender.split('@')[0], '[IN]', groupName)
       } else if (isCmd) {
-        console.log('[COMMAND]', command, '[FROM]', sender.split('@')[0])
+        console.log(time, ' [COMMAND]', command, '[FROM]', sender.split('@')[0])
       }
 
       /////////////// COMMANDS \\\\\\\\\\\\\\\
@@ -644,8 +647,6 @@ async function main() {
           }
           break;
 
-        // https://github.com/abaykan
-        // http://sosmeeed.herokuapp.com
         case 'tw':
         case 'twd':
         case 'twdl':
@@ -653,130 +654,12 @@ async function main() {
           await sendMed(res_twdl, video)
           break
         
-        // http://sosmeeed.herokuapp.com
         case 'tiktok':
         case 'ttdl':
-          let url_tiktok = args[0]
-          const tiktokk = async (url_tiktok) => {
-            console.log("tiktok processing", url_tiktok)
-            const url_base = "http://sosmeeed.herokuapp.com:80/api/tiktok/video"
-            axios.post(url_base, {
-              url: url_tiktok.split("?")[0]
-            })
-              .then(async (res) => {
-                if(res.data.success){
-                  console.log("downloading")
-                  const path = "./public/tt_video.mp4"
-                  const link_download = res.data.data.video
-                  const file = fs.createWriteStream(path)
-                  const request = http.get(link_download, function (response) {
-                    response.pipe(file);
-                  })
-          
-                  file.on("finish", async () => {
-                    console.log("sending")
-                    const videonya = fs.readFileSync(path)
-                    await conn.sendMessage(from, videonya, video)
-                      .then(() => {
-                        console.log("sent")
-                      })
-                      .catch(async (e) => {
-                        console.error(e)
-                        reply(`Error waktu kirim videonya ke kamu, namun kami masih memiliki linknya: \n_${await shortlink(link_download)}_\n\nSilahkan download sendiri ya.`)
-                      })
-                      .finally(() => {
-                        fs.unlinkSync(path)
-                      })
-                  })
-
-                  file.on("error", (e) => {
-                    console.error(e)
-                    reply("maaf terjadi kesalahan saat menunduh media.")
-                  })
-
-                  request.on("error", (e) => {
-                    console.error(e)
-                    reply("maaf terjadi kesalahaan saat mengunduh media.")
-                  })
-                }else{
-                  reply(`Link yang anda berikan tidak valid atau tidak mengandung video atau gunakan perintah _${prefix}ttdl1_`)
-                }
-              })
-              .catch((e) => {
-                console.log("error:", e)
-                reply(`Maaf, terjadi kesalahan pada server, ulangi beberapa saat lagi atau gunakan perintah _${prefix}ttdl1_`)
-              })
-            }
-            
-            tiktokk(url_tiktok)
-            break;
-          
-        // https://recoders-area.caliph.repl.co/api
-        case 'ttdl1':
-        case 'tiktok1':
-          const tt_downloader = async (url) => {
-            console.log("ttdl1 process", url)
-
-            axios.get('https://recoders-area.caliph.repl.co/api/tiktod/?url=' + url)
-              .then((res) => {
-                if(res.data.status == 200){
-                  console.log("downloading")
-                  const link_download = res.data.result.nowatermark
-                  if(link_download){
-                    const path = "./public/tt_video.mp4"
-                    const file = fs.createWriteStream(path)
-                    const request = http.get(link_download, function (response) {
-                      response.pipe(file);
-                    })
-            
-                    file.on("finish", async () => {
-                      console.log("sending")
-                      const videonya = fs.readFileSync(path)
-                      await conn.sendMessage(from, videonya, video)
-                        .then(() => {
-                          console.log("sent")
-                        })
-                        .catch(async (e) => {
-                          console.error("err1", e)
-                          await conn.sendMessage(from, videonya, video, {thumbnail: null}).then(() => {
-                            console.log("sent")
-                          })
-                          .catch(async (e) => {
-                            console.error(e)
-                            reply(`Error waktu kirim videonya ke kamu, namun kami masih memiliki linknya: \n_${await shortlink(link_download)}_\n\nSilahkan download sendiri ya.`)
-                          })
-                        })
-                        .finally(() => {
-                          fs.unlinkSync(path)
-                        })
-                    })
-  
-                    file.on("error", (e) => {
-                      console.error(e)
-                      reply("maaf terjadi kesalahan saat menunduh media.")
-                    })
-  
-                    request.on("error", (e) => {
-                      console.error(e)
-                      reply("maaf terjadi kesalahaan saat mengunduh media.")
-                    })
-                  }else{
-                    reply("url yang kamu berikan tidak valid atau tidak mengandung video.")
-                  }
-                } else {
-                  console.error("Terjadi kesalahan pada server api")
-                  reply("Kami tidak menemukan apapun.")
-                }
-              })
-              .catch((e) => {
-                console.error(e)
-                reply("terjadi kesalahan saat menghubungi server, ulangi beberapa saat lagi.")
-              })
-          }
-
-          tt_downloader(args[0])
+          const res_ttdl = await ttdl(args[0])
+          await sendMed(res_ttdl, video)
           break
-        
+          
         case 'yts':
         case 'ytmp3':
           const res_ytmp3 = await ytmp3(args[0])
@@ -789,8 +672,6 @@ async function main() {
           await sendMed(res_ytmp4, video)
           break
   
-        // https://keeppost.com/
-        // https://github.com/Ayesh/InstagramDownload
         case 'igdl':
         case 'igdown':
         case 'igdownloader':
