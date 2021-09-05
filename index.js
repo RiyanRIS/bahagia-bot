@@ -947,29 +947,20 @@ async function main() {
           }
           break
         
-          // THANKS TO JAGOKATA.COM
         case 'bucin':
         case 'katacinta':
         case 'quotescinta':
           const katacinta = async () => {
-            console.log("katacinta processing")
-            const ran1 = Math.floor(Math.random() * 100)
-            const ran2 = Math.floor(Math.random() * 10)
-            request.get({
-              headers: { 'user-agent' : 'Mozilla/5.0 (Linux; Android 8.1.0; vivo 1820) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Mobile Safari/537.36'
-              },
-              url: 'https://jagokata.com/kata-bijak/kata-cinta.html?page=' + ran1,
-            }, function(error, response, body){
-              if(!error){
-                const $ = cheerio.load(body);
-                let author = $('a[class="auteurfbnaam"]').contents()[ran2]['data']
-                let kata = $('q[class="fbquote"]').contents()[ran2]['data']
-                reply(`_${kata}_\n\n~*${author}*`)
-              } else {
-                console.error("error", error)
-                reply("maaf terjadi kesalahan pada sistem kami.")
-              }
-            })
+            const reandomm = Math.floor(Math.random() * 365)
+            axios.get(`https://raw.githubusercontent.com/tulungagungcode/bot_source/master/katacinta/${reandomm}.json`)
+              .then(async (res) => {
+              const reandommm = Math.floor(Math.random() * res.data.length)
+                const data = res.data[reandommm]
+                reply(`_${data.quotes}_\n\n~*${data.author}*`)
+              })
+              .catch(() => {
+                console.error("maaf, terjadi kesalahan pada server kami.")
+              })
           }
           
           katacinta()
@@ -978,27 +969,20 @@ async function main() {
         case 'motivasi':
         case 'katamotivasi':
         case 'katabijak':
-          const katamotivasi = async () => {
-            console.log("katamotivasi processing")
-            const ran1 = Math.floor(Math.random() * 10)
-            const ran2 = Math.floor(Math.random() * 10)
-            request.get({
-              headers: { 'user-agent' : 'Mozilla/5.0 (Linux; Android 8.1.0; vivo 1820) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Mobile Safari/537.36'
-              },
-              url: 'https://jagokata.com/kata-bijak/popular.html?page=' + ran1,
-            }, function(error, response, body){
-              if(!error){
-                let $ = cheerio.load(body);
-                let author = $('a[class="auteurfbnaam"]').contents()[ran2]['data']
-                let kata = $('q[class="fbquote"]').contents()[ran2]['data']
-                reply(`_${kata}_\n\n~*${author}*`)
-              }else{
-                console.error('error: ', error)
-                reply('maaf, terjadi kesalahan pada sistem kami.')
-              }
-            })  
+          const katabijak = async () => {
+            axios.get(`https://raw.githubusercontent.com/tulungagungcode/bot_source/master/katabijak/katabijak.json`)
+              .then(async (res) => {
+                const result = res.data
+                const reandommm = Math.floor(Math.random() * result.length)
+                const data = result[reandommm]
+                reply(`_${data.quotes}_\n\n~*${data.author}*`)
+              })
+              .catch(() => {
+                console.error("maaf, terjadi kesalahan pada server kami.")
+              })
           }
-          katamotivasi()
+          
+          katabijak()
           break
         
         // THANKS TO github.com/pajaar
