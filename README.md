@@ -1,9 +1,7 @@
 
-## Simple Whatsapp Bot - Node Js - Heroku - Baileys
+## BahagiaBot - Node Js - Heroku - Baileys
 
-## prefix : `/`
-
-## Perintah :
+## List Perintah :
 
 |  Commands             |       Alias                  |       Description        |
 | :--------:            |       :----:                 | :----------------------: |
