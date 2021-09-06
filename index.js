@@ -50,9 +50,11 @@ const { ytmp3, ytmp4 } = require("./lib/ytdl")
 const { twdl } = require("./lib/twdl")
 const { igdl } = require("./lib/igdl")
 const { ttdl } = require("./lib/ttdl")
+const { tebakgambar } = require("./lib/tebakgambar")
 
 // LOAD SOURCES
-const pesan = require('./src/pesan')
+const pesan = require('./src/pesan');
+const { index } = require('cheerio/lib/api/traversing');
 
 // BASIC SETTINGS
 const prefix = '/'
@@ -274,7 +276,9 @@ async function main() {
         audio,
         product
       } = MessageType
-      body = (type === 'conversation' && mek.message.conversation.startsWith(prefix)) ? mek.message.conversation : (type == 'imageMessage') && mek.message.imageMessage.caption.startsWith(prefix) ? mek.message.imageMessage.caption : (type == 'videoMessage') && mek.message.videoMessage.caption.startsWith(prefix) ? mek.message.videoMessage.caption : (type == 'extendedTextMessage') && mek.message.extendedTextMessage.text.startsWith(prefix) ? mek.message.extendedTextMessage.text : ''
+      const body = (type === 'conversation' && mek.message.conversation.startsWith(prefix)) ? mek.message.conversation : (type == 'imageMessage') && mek.message.imageMessage.caption.startsWith(prefix) ? mek.message.imageMessage.caption : (type == 'videoMessage') && mek.message.videoMessage.caption.startsWith(prefix) ? mek.message.videoMessage.caption : (type == 'extendedTextMessage') && mek.message.extendedTextMessage.text.startsWith(prefix) ? mek.message.extendedTextMessage.text : ''
+      const kalimat = type === 'conversation' ? mek.message.conversation : (type == 'imageMessage') ? mek.message.imageMessage.caption : (type == 'videoMessage') ? mek.message.videoMessage.caption : (type == 'extendedTextMessage') ? mek.message.extendedTextMessage.text : ''
+
       const command = body.slice(1).trim().split(/ +/).shift().toLowerCase()
       const args = body.trim().split(/ +/).slice(1)
       const isCmd = body.startsWith(prefix)
@@ -344,6 +348,105 @@ async function main() {
         console.log(time, ' [COMMAND]', command, '[FROM]', sender.split('@')[0], '[IN]', groupName)
       } else if (isCmd) {
         console.log(time, ' [COMMAND]', command, '[FROM]', sender.split('@')[0])
+      }
+
+      /////////////// GAMES \\\\\\\\\\\\\\\
+
+      // TEBAK GAMBAR
+      let datatebakgambar = JSON.parse(fs.readFileSync("./src/data/tebakgambar.json"))
+
+      let isTebakgambar = false
+      let resTebakgambar = []
+
+      // cek apakah pengirim sedang mengerjakan tebak gambar
+      datatebakgambar.forEach((i, el) => {
+        if(from == i.from){
+          isTebakgambar = true
+          resTebakgambar.push(i)
+        }
+      })
+
+      function contains(target, pattern){
+        var value = 0;
+        pattern.forEach(function(word){
+          if(target.includes(word)){
+            value++
+          }
+        });
+        return value
+      }
+
+      if(isTebakgambar){ // kondisi jika pengirim sedang mengerjakan tebak gambar
+        let jawab = kalimat.toLowerCase()
+        if(jawab == resTebakgambar[0].jawaban){ // kondisi jika jawaban benar
+          reply("benar")
+          let dataakanhapus = JSON.parse(fs.readFileSync("./src/data/tebakgambar.json"))
+          let indexx
+          dataakanhapus.forEach((i, el) => {
+            if(from == i.from){
+              indexx = el
+            }
+          })
+          dataakanhapus.splice(indexx, 1)
+          fs.writeFileSync("./src/data/tebakgambar.json",JSON.stringify(dataakanhapus))
+        } else { // kondisi jika jawaban salah
+          const arr_jawaban = resTebakgambar[0].jawaban.split(" ")
+          const jumlah = arr_jawaban.length
+          const percent = Math.floor(contains(jawab, arr_jawaban) / jumlah * 100)
+          console.log(resTebakgambar[0].percobaan)
+          if(percent > 10){
+            reply("wah, ada kata yang bener, ayo dikit lagi..")
+          }else if(percent > 60) {
+            reply("hampirr bener broo, cek lagi, teliti lagi.. ayo..")
+          } else {
+            if(resTebakgambar[0].percobaan == 1){
+              reply("salah")
+            } else if(resTebakgambar[0].percobaan == 2){
+              reply("masih salah")
+            }else if(resTebakgambar[0].percobaan == 3){
+              reply("masih salah.\n_Petunjuk:_ ada *" + jumlah + "* kata nih")
+            } else if(resTebakgambar[0].percobaan == 4){
+              reply("ayo coba lagi, masih salah tuh")
+            } else if(resTebakgambar[0].percobaan <= 5){
+              reply("masih salah haha")
+            } else if(resTebakgambar[0].percobaan == 6){
+              reply("ayo dong, usaha, jangan ngasal gini..")
+            }  else if(resTebakgambar[0].percobaan == 7){
+              reply(`salah, petunjuknya ada ${jumlah} kata dan mengandung kata ${arr_jawaban[1]}`)
+            } else if(resTebakgambar[0].percobaan == 8){
+              reply("bego, udah berapa kali coba masih salah aja")
+            } else if(resTebakgambar[0].percobaan >= 9){
+              reply("dahlah.. skip aja")
+            } else if(resTebakgambar[0].percobaan > 11){
+              reply("DIBILANG SKIP AJA UDAH")
+            } else if(resTebakgambar[0].percobaan > 11){
+              reply("TULIS AJA \"skip\" BIAR GUA KASIH TAU JAWABANYA")
+            } else if(resTebakgambar[0].percobaan > 15){
+              reply("MASIH NGEYEL...")
+            }
+
+            let dataakanhapus1 = JSON.parse(fs.readFileSync("./src/data/tebakgambar.json"))
+            let indexx1
+            // Hapus dulu data lama
+            dataakanhapus1.forEach((i, el) => {
+              if(from == i.from){
+                indexx1 = el
+              }
+            })
+            dataakanhapus1.splice(indexx1, 1)
+
+            // terus masukin deh data baru
+            let data = {
+              from: resTebakgambar[0].from,
+              percobaan: resTebakgambar[0].percobaan + 1,
+              jawaban: resTebakgambar[0].jawaban,
+            }
+            dataakanhapus1.push(data)
+            fs.writeFileSync("./src/data/tebakgambar.json",JSON.stringify(dataakanhapus1))
+          
+          }
+
+        }
       }
 
       /////////////// COMMANDS \\\\\\\\\\\\\\\
@@ -890,7 +993,72 @@ async function main() {
           faktaunik()
           break
         
+        case 'teb':
+        case 'tebak':
+        case 'tebakgambar':
+          tebakgambar()
+            .then((res) => {
+              conn.sendMessage(from, {url: res[0].image}, image, {
+                caption: "_kami tunggu 2 menit mulai dari sekarang_"
+              })
+                .then((resp) => {
+                  console.log("sent")
+                  
+                  // buat perintah bahwa si x sedang mengerjakan tebak gambar
+                  const jawaban = res[0].jawaban.split("Jawaban ")[1].toLowerCase()
+                  data = {
+                    from: from,
+                    percobaan: 1,
+                    jawaban: jawaban,
+                  }
+                  let tebakgambarbaru = JSON.parse(fs.readFileSync("./src/data/tebakgambar.json"))
+                  tebakgambarbaru.push(data)
+                  fs.writeFileSync("./src/data/tebakgambar.json",JSON.stringify(tebakgambarbaru))
 
+                  // mulai hitung mundur 2 menit dari sekarang, kalo belum terjawab, munculin jawabanya
+                  let tedd = 1
+                  const intervRemind = setInterval(async () => {
+                    console.log("detik ke- ", tedd)
+
+                    let datatebakgambar = JSON.parse(fs.readFileSync("./src/data/tebakgambar.json"))
+                    let isTebakgambar = false
+
+                    datatebakgambar.forEach((i, el) => {
+                      if(from == i.from){
+                        isTebakgambar = true
+                      }
+                    })
+
+                    if(!isTebakgambar){ // kondisi jika terjawab
+                      console.log("terjawab")
+                      clearInterval(intervRemind)
+                    }
+
+                    if(tedd == 60){
+                      conn.sendMessage(from, "Udah satu menit nih, belum juga kejawab.." , text, {quoted: resp})
+                    }
+
+                    if(tedd++ == 120){ // kondisi jika sudah 2 menit belum terjawab
+                      conn.sendMessage(from, "Kamu gagal menjawab, jawaban sebenarnya adalah *" + jawaban + "*.", text, {quoted: resp})
+                      let datatsdebakgambar = JSON.parse(fs.readFileSync("./src/data/tebakgambar.json"))
+                      let inddfx 
+                      datatebakgambar.forEach((i, el) => {
+                        if(from == i.from){
+                          inddfx = el
+                        }
+                      })
+                      datatsdebakgambar.splice(inddfx, 1)
+                      fs.writeFileSync("./src/data/tebakgambar.json",JSON.stringify(datatsdebakgambar))
+                      clearInterval(intervRemind)
+                    }
+                  }, 1000);
+                })
+                .catch((e) => {
+                  console.error(e)
+                  reply("maaf terjadi kesalahan saat mengirim gambar, ulangi lagi.")
+                })
+            })
+          break
         
         default:
           break;
