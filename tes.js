@@ -1,66 +1,84 @@
-// // test cases
-// const str1 = 'hi hello, how do you do?';
-// const str2 = 'regular string';
-// const str3 = 'hello there';
+// const got = require('got');
+// const FileType = require('file-type');
 
-// // do the test strings contain these terms?
-// const conditions = ["hello", "hi", "howdy"];
+// const url = 'https://upload.wikimedia.org/wikipedia/en/a/a9/Example.jpg';
 
-// // run the tests against every element in the array
-// const test1 = conditions.some(el => str1.includes(el));
-// const test2 = conditions.some(el => str2.includes(el));
-// // strictly check that contains 1 and only one match
-// const test3 = conditions.reduce((a,c) => a + str3.includes(c), 0) == 1;
+// (async () => {
+// 	const stream = got.stream(url);
 
-// // display results
-// console.log(`Loose matching, 2 matches "${str1}" => ${test1}`);
-// console.log(`Loose matching, 0 matches "${str2}" => ${test2}`);
-// console.log(`Exact matching, 1 matches "${str3}" => ${test3}`);
+// 	console.log(await FileType.fromStream(stream));
+// 	//=> {ext: 'jpg', mime: 'image/jpeg'}
+// })();
 
-function contains(target, pattern){
-  var value = 0;
-  pattern.forEach(function(word){
-    if(target.includes(word)){
-      value++
-    }
-  });
-  return value
-}
+// const axios = require("axios")
+// const cheerio = require("cheerio")
+// const fs = require("fs")
 
-let jawab = "undangan ljaisidj"
-let jawaban = "undangan keluarga hijrah"
-
-const arr_jawaban = jawaban.split(" ")
-const jumlah = arr_jawaban.length
-const percent = contains(jawab, arr_jawaban) / jumlah * 100
-
-console.log(percent)
-
-// let str = "bonjour le monde vive le javascript"
-
-// let arr = ['bonjour','europe', 'c++'];
-
-// function contains(target, pattern){
-//     var value = 0;
-//     pattern.forEach(function(word){
-//       value = value + target.includes(word);
-//     });
-//     return (value === 1)
+// const tebakgambar = async () => {
+// 	await axios.get('https://jawabantebakgambar.net/all-answers/')
+// 		.then(({ data }) => {
+// 			const $ = cheerio.load(data)
+// 			const result = [];
+// 			let random = Math.floor(Math.random() * 2836) + 2;
+// 			let link2 = 'https://jawabantebakgambar.net'
+// 			for (let index = 2; index < 2836; index++) {
+// 				$(`#images > li:nth-child(${index}) > a`)
+// 					.each(function(a, b) {
+// 						const img = link2 + $(b).find('img').attr('data-src')
+// 						const jwb = $(b).find('img').attr('alt')
+// 						let data = {
+// 							image: img,
+// 							jawaban: jwb
+// 						}
+// 						if(index < 500){
+// 							let tebakgambarbaru = JSON.parse(fs.readFileSync("./tebakgambar/1.json"))
+// 							tebakgambarbaru.push(data)
+// 							fs.writeFileSync("./tebakgambar/1.json",JSON.stringify(tebakgambarbaru))
+// 						} else if(index < 1000){
+// 							let tebakgambarbaru = JSON.parse(fs.readFileSync("./tebakgambar/2.json"))
+// 							tebakgambarbaru.push(data)
+// 							fs.writeFileSync("./tebakgambar/2.json",JSON.stringify(tebakgambarbaru))
+// 						} else if(index < 1500){
+// 							let tebakgambarbaru = JSON.parse(fs.readFileSync("./tebakgambar/3.json"))
+// 							tebakgambarbaru.push(data)
+// 							fs.writeFileSync("./tebakgambar/3.json",JSON.stringify(tebakgambarbaru))
+// 						} else if(index < 2000){
+// 							let tebakgambarbaru = JSON.parse(fs.readFileSync("./tebakgambar/4.json"))
+// 							tebakgambarbaru.push(data)
+// 							fs.writeFileSync("./tebakgambar/4.json",JSON.stringify(tebakgambarbaru))
+// 						} else {
+// 							let tebakgambarbaru = JSON.parse(fs.readFileSync("./tebakgambar/5.json"))
+// 							tebakgambarbaru.push(data)
+// 							fs.writeFileSync("./tebakgambar/5.json",JSON.stringify(tebakgambarbaru))
+// 						}
+						
+// 				})
+// 			}
+// 		})
+// 		.catch((e) => {
+// 			console.error(e)
+// 		})
 // }
 
-// console.log(contains(str, arr));
+// tebakgambar()
 
-// function removeA(arr) {
-//   var what, a = arguments, L = a.length, ax;
-//   while (L > 1 && arr.length) {
-//       what = a[--L];
-//       while ((ax= arr.indexOf(what)) !== -1) {
-//           arr.splice(ax, 1);
-//       }
-//   }
-//   return arr;
+// const fs = require("fs")
+
+// let datanya = JSON.parse(fs.readFileSync("./tebakgambar/5.json"))
+// let datanya6 = JSON.parse(fs.readFileSync("./tebakgambar/6.json"))
+
+// for (let index = 1; index < 797; index++) {
+// 	let data = {
+// 		image: datanya[index].image,
+// 		jawaban: datanya[index].jawaban
+// 	}
+// 	if(index < 500){
+// 		let tebakgambarbaru = JSON.parse(fs.readFileSync("./tebakgambar/5.json"))
+// 		tebakgambarbaru.push(data)
+// 		fs.writeFileSync("./tebakgambar/5.json",JSON.stringify(tebakgambarbaru))
+// 	} else if(index < 1000){
+// 		let tebakgambarbaru = JSON.parse(fs.readFileSync("./tebakgambar/6.json"))
+// 		tebakgambarbaru.push(data)
+// 		fs.writeFileSync("./tebakgambar/6.json",JSON.stringify(tebakgambarbaru))
+// 	}
 // }
-// var ary = [{id: 'haha', we: 'hia'},{id: 'hadhi', we: 'h290sa'},{id: 'h123ha', we: 'hiw'}];
-// let he = {id: 'hadhi', we: 'h290sa'}
-// removeA(ary, he)
-// console.log(ary)
