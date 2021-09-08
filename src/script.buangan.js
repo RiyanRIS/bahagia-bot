@@ -144,3 +144,34 @@
 //           }
 //           dm(urlyt)
 //           break
+
+
+
+
+
+// const downloadStream = got.stream(link_download)
+//               const fileWriterStream = fs.createWriteStream(path)
+
+//               downloadStream
+//                 .on("downloadProgress", ({ transferred, total, percent }) => {
+//                   const percentage = Math.round(percent * 100)
+//                   console.error(`progress: ${transferred}/${total} (${percentage}%)`)
+//                 })
+//                 .on("error", (error) => {
+//                   console.error(`Download failed: ${error.message}`, e)
+//                 })
+
+//               fileWriterStream
+//                 .on("error", (error) => {
+//                   console.error(`Could not write file to system: ${error.message}`, e)
+//                 })
+//                 .on("finish", () => {
+//                   console.log(`File downloaded to ${path}`)
+//                   res = {
+//                     status: true,
+//                     data: path,
+//                     link: link_download
+//                   }
+//                 })
+
+//               downloadStream.pipe(fileWriterStream)
