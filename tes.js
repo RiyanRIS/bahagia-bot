@@ -1,8 +1,13 @@
+const { json } = require("express")
 const downloader = require("./helpers/downloader")
 
-downloader.twdl("https://twitter.com/jawafess/status/1435482787859992578?s=20")
+const tw1 = "https://twitter.com/jowoshitpost/status/1435836493897998339?s=20"
+const yt1 = "https://www.youtube.com/watch?v=JQnxH-JU9Bg"
+const id_invalid = "543101548994"
+
+downloader.pln(id_invalid)
   .then((res) => {
-    console.log(res[0].data)
+    console.log(res)
   })
   .catch((e) => {
     console.error(e)
