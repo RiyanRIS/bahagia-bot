@@ -279,7 +279,35 @@ async function main() {
       const body = (type === 'conversation' && mek.message.conversation.startsWith(prefix)) ? mek.message.conversation : (type == 'imageMessage') && mek.message.imageMessage.caption.startsWith(prefix) ? mek.message.imageMessage.caption : (type == 'videoMessage') && mek.message.videoMessage.caption.startsWith(prefix) ? mek.message.videoMessage.caption : (type == 'extendedTextMessage') && mek.message.extendedTextMessage.text.startsWith(prefix) ? mek.message.extendedTextMessage.text : ''
       const kalimat = type === 'conversation' ? mek.message.conversation : (type == 'imageMessage') ? mek.message.imageMessage.caption : (type == 'videoMessage') ? mek.message.videoMessage.caption : (type == 'extendedTextMessage') ? mek.message.extendedTextMessage.text : ''
 
-      const command = body.slice(1).trim().split(/ +/).shift().toLowerCase()
+      // let prefixRegEx = /^[!&z?=#.+\/]/gi;
+      let prefixRegEx = /^[\/]/gi;
+      let _chats =
+        type === "conversation" && mek.message.conversation
+          ? mek.message.conversation
+          : type == "imageMessage" && mek.message.imageMessage.caption
+          ? mek.message.imageMessage.caption
+          : type == "videoMessage" && mek.message.videoMessage.caption
+          ? mek.message.videoMessage.caption
+          : type == "extendedTextMessage" && mek.message.extendedTextMessage.text
+          ? mek.message.extendedTextMessage.text
+          : type == "buttonsResponseMessage" && mek.message[type].selectedButtonId
+          ? mek.message[type].selectedButtonId
+          : type == "stickerMessage" &&
+            getCmd(mek.message[type].fileSha256.toString("base64")) !== null &&
+            getCmd(mek.message[type].fileSha256.toString("base64")) !== undefined
+          ? getCmd(mek.message[type].fileSha256.toString("base64"))
+          : "";
+
+      // let prefix = _chats.match(prefixRegEx) ? prefixRegEx.exec(_chats)[0] : "";
+      let chats = _chats.match(prefixRegEx)
+      ? _chats
+          .split(prefixRegEx)
+          .find((v) => v === _chats.replace(prefixRegEx, ""))
+      : _chats;
+
+      // const command = body.slice(1).trim().split(/ +/).shift().toLowerCase()
+      const command = chats.split(/ +/g)[0];
+
       const args = body.trim().split(/ +/).slice(1)
       const isCmd = body.startsWith(prefix)
 
@@ -338,6 +366,46 @@ async function main() {
           console.log("error")
           reply(res.msg)
         }
+      }
+
+      const sendButMessage = (id, text1, desc1, but = [], options = {}) => {
+        const buttonMessage = {
+          contentText: text1,
+          footerText: desc1,
+          buttons: but,
+          headerType: 1,
+        };
+        conn.sendMessage(
+          id,
+          buttonMessage,
+          MessageType.buttonsMessage,
+          options
+        );
+      }
+
+      const sendButImage = async (
+        id,
+        text1,
+        desc1,
+        gam1,
+        but = [],
+        options = {}
+      ) => {
+        kma = gam1;
+        mhan = await conn.prepareMessage(from, kma, image);
+        const buttonMessages = {
+          imageMessage: mhan.message.imageMessage,
+          contentText: text1,
+          footerText: desc1,
+          buttons: but,
+          headerType: 4,
+        };
+        conn.sendMessage(
+          id,
+          buttonMessages,
+          MessageType.buttonsMessage,
+          options
+        );
       }
 
       const sendFileFromUrl = async(link, type, options) => {
@@ -1073,7 +1141,71 @@ async function main() {
                 })
             })
           break
+          
+        case 'tes':
+          sendButMessage(from, `MODE ANTILINK`, `Silahkan pilih salah satu`, [
+            {
+              buttonId: `${prefix}antilink on`,
+              buttonText: {
+                displayText: `on`,
+              },
+              type: 1,
+            },
+            {
+              buttonId: `${prefix}antilink off`,
+              buttonText: {
+                displayText: `off`,
+              },
+              type: 1,
+            },
+          ])
+          break
+
+        case 'tes1':
+          sendButImage(from, "Ini menu", "ini footer", await getBuffer("https://i.pinimg.com/originals/6a/7a/2e/6a7a2e7e6514dac87cd3bf6297473870.jpg"), [
+            {
+              buttonId: `${prefix}faktaunik`,
+              buttonText: {
+                displayText: `Fakta`,
+              },
+              type: 1,
+            },
+            {
+              buttonId: `${prefix}teb`,
+              buttonText: {
+                displayText: `Tebak`,
+              },
+              type: 1,
+            },
+          ])
+          break
         
+        case 'ls':
+          let pw = ["https://meme-api.herokuapp.com/gimme/tits",
+					"https://meme-api.herokuapp.com/gimme/BestTits",
+					"https://meme-api.herokuapp.com/gimme/boobs",
+					"https://meme-api.herokuapp.com/gimme/amazingtits",
+					"https://meme-api.herokuapp.com/gimme/TinyTits",
+          "https://meme-api.herokuapp.com/gimme/lesbians",
+          "https://meme-api.herokuapp.com/gimme/CuteLittleButts",
+					"https://meme-api.herokuapp.com/gimme/ass",
+          "https://meme-api.herokuapp.com/gimme/pussy",
+					"https://meme-api.herokuapp.com/gimme/LegalTeens"]
+					let nk = pw[Math.floor(Math.random() * pw.length)]
+          axios.get(nk)
+            .then(async ({data}) => {
+              sendButImage(from, data.title, data.subreddit, await getBuffer(data.url), [
+            {
+              buttonId: `${prefix}ls`,
+              buttonText: {
+                displayText: `💋 Lagi dong`,
+              },
+              type: 1,
+            }
+          ])
+            })
+          break
+
         default:
           break;
       }
