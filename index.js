@@ -340,6 +340,20 @@ async function main() {
         }
       }
 
+      const sendFileFromUrl = async(link, type, options) => {
+        hasil = await getBuffer(link)
+          conn.sendMessage(from, hasil, type, options).catch(e => {
+            fetch(link).then((hasil) => {
+              conn.sendMessage(from, hasil, type, options).catch(e => {
+                conn.sendMessage(from, { url : link }, type, options).catch(e => {
+                  reply('_[ ! ] Error_')
+                  console.log(e)
+                })
+              })
+            })
+          })
+      }
+
       const isMedia = (type === 'imageMessage' || type === 'videoMessage')
       const isQuotedImage = type === 'extendedTextMessage' && content.includes('imageMessage')
       const isQuotedVideo = type === 'extendedTextMessage' && content.includes('videoMessage')
