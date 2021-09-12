@@ -990,7 +990,7 @@ module.exports.ttdl = (url) => {
 
 module.exports.ttdl2 = (url) => {
   return new Promise((resolve, reject) => {
-    let baseurl = 'https://ssstik.io's
+    let baseurl = 'https://ssstik.io'
     axios.get(baseurl, {
       withCredentials: true,
       headers: {
