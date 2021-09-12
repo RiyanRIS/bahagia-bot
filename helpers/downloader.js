@@ -3,11 +3,11 @@ const axios = require("axios")
 const qs = require("qs")
 const FileType = require('file-type')
 const got = require('got')
+const {
+  reject
+} = require("async")
 
-const fs = require('fs')
-
-
-function igdl(url) {
+module.exports.igdl = (url) => {
   return new Promise(async (resolve, reject) => {
     axios.request({
         url: 'https://www.instagramsave.com/download-instagram-videos.php',
@@ -41,44 +41,114 @@ function igdl(url) {
           .then(async ({
             data
           }) => {
-            let url = data.medias[0].url
-            let thumbnail = data.medias[0].preview
-            const stream = got.stream(url)
-            let size
-
-            stream
-              .on("downloadProgress", ({
-                transferred,
-                total,
-                percent
-              }) => {
-                size = total
-              })
-
-            const filetype = await FileType.fromStream(stream)
-
-            let result = [{
-              status: true,
-              ext: filetype.ext,
-              mime: filetype.mime,
-              size: size,
-              url: url,
-              thumbnail: thumbnail
-            }]
-
-            resolve(result)
+            resolve(data.medias)
           })
       })
       .catch((e) => {
-        reject([{
-          status: false,
-          msg: e.message
-        }])
+        reject(e.message)
       })
   })
 }
 
-function igstory(username) {
+module.exports.igdl1 = (url_media) => {
+  return new Promise((resolve, reject) => {
+    url_media = url_media.replace("reel", "p")
+    axios.get(url_media).then(result => {
+      let $ = cheerio.load(result.data),
+        ig = []
+      $('script[type="text/javascript"]').each((i, element) => {
+        let cheerioElement = $(element)
+        var contentScript = cheerioElement.html()
+        if (contentScript.search("shortcode_media") != -1) {
+          contentScript = contentScript.replace("window._sharedData = ", "")
+          contentScript = contentScript.replace(";", "")
+          var jsonScript = JSON.parse(contentScript)
+          var mediaData = jsonScript.entry_data.PostPage[0].graphql.shortcode_media
+          if (!mediaData.edge_sidecar_to_children) {
+            if (mediaData.is_video) ig.push(mediaData.video_url)
+            else ig.push(mediaData.display_url)
+          } else {
+            for (var m of mediaData.edge_sidecar_to_children.edges) {
+              var data = m.node
+              if (data.is_video) ig.push(data.video_url)
+              else ig.push(data.display_url)
+            }
+          }
+        }
+      })
+      resolve({
+        results_number: ig.length,
+        url_list: ig
+      })
+    }).catch(e => {
+      reject(e.message)
+    })
+
+  })
+}
+
+module.exports.igdl2 = async (link) => {
+  return new Promise((resolve, reject) => {
+    axios.request({
+        url: "https://wayfutures.xyz/?url=" + link,
+        method: 'GET',
+        headers: {
+          "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+          'origin': 'https://insload.com',
+          'referer': 'https://insload.com/'
+        }
+      })
+      .then(({
+        data
+      }) => {
+        resolve(data)
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+module.exports.igdl3 = async (oriUrl) => {
+  return new Promise(async (resolve, reject) => {
+    let getMetaData, url, getType
+    if (oriUrl.slice(-1) != "/") {
+      oriUrl += "/"
+    }
+    url = oriUrl + "?__a=1"
+    try {
+      const metaData = await axios({
+        method: "get",
+        url: url,
+      });
+      getMetaData = metaData.data.graphql
+    } catch (e) {
+      reject(e.message)
+    }
+    getType = "image"
+    if (getMetaData.shortcode_media.is_video === true) {
+      getType = "video"
+    }
+    const result = {
+      url: '',
+      type: '',
+      thumbnail: ''
+    }
+
+    if (getType == "image") {
+      result.url = getMetaData.shortcode_media.display_url
+      result.type = 'Image'
+    } else {
+      result.url = getMetaData.shortcode_media.video_url
+      result.thumbnail = getMetaData.shortcode_media.thumbnail_src
+      result.type = 'Video'
+    }
+
+    resolve(result)
+  })
+}
+
+module.exports.igstory = (username) => {
   return new Promise(async (resolve, reject) => {
     axios.request({
         url: 'https://www.instagramsave.com/instagram-story-downloader.php',
@@ -141,7 +211,7 @@ function igstory(username) {
   })
 }
 
-function igstalk(username) {
+module.exports.igstalk = (username) => {
   return new Promise((resolve, reject) => {
     axios.get('https://www.instagram.com/' + username + '/?__a=1', {
         method: 'GET',
@@ -178,7 +248,7 @@ function igstalk(username) {
 }
 
 // https://github.com/Hexagonz/Hexa-Api
-const twdl = (link) => {
+module.exports.twdl = (link) => {
   return new Promise((resolve, reject) => {
     let config = {
       'URL': link
@@ -261,7 +331,10 @@ const twdl = (link) => {
           status: true,
           thumbnail: thumbnail,
           desc: desc,
-          data: {ksd, khd}
+          data: {
+            ksd,
+            khd
+          }
         }
         resolve(result)
       })
@@ -275,7 +348,7 @@ const twdl = (link) => {
 }
 
 // https://github.com/victorsouzaleal/twitter-direct-url
-const twdl2 = (url_media) => {
+module.exports.twdl2 = (url_media) => {
   return new Promise((resolve, reject) => {
     let twitter_url_array = url_media.split("/")
     twitter_url_array[5] = twitter_url_array[5].split("?")[0]
@@ -291,7 +364,9 @@ const twdl2 = (url_media) => {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     }
-    axios.post(url, qs.stringify(requestBody), config).then(async ({data}) => {
+    axios.post(url, qs.stringify(requestBody), config).then(async ({
+      data
+    }) => {
       let $ = cheerio.load(data)
 
       let thumbnail = $('div.result_overlay > img').attr("src")
@@ -303,9 +378,13 @@ const twdl2 = (url_media) => {
         let sizesd
 
         streamsd
-        .on("downloadProgress", ({ transferred, total, percent }) => {
-          sizesd = total
-        })
+          .on("downloadProgress", ({
+            transferred,
+            total,
+            percent
+          }) => {
+            sizesd = total
+          })
 
         const filetypesd = await FileType.fromStream(streamsd)
 
@@ -326,9 +405,13 @@ const twdl2 = (url_media) => {
         let hd = $('div.result_overlay > a:nth-child(4)').attr("href")
         let streamhd = got.stream(hd)
         let sizehd
-        
+
         streamhd
-          .on("downloadProgress", ({ transferred, total, percent }) => {
+          .on("downloadProgress", ({
+            transferred,
+            total,
+            percent
+          }) => {
             sizehd = total
           })
 
@@ -350,7 +433,10 @@ const twdl2 = (url_media) => {
         status: true,
         thumbnail: thumbnail,
         desc: desc,
-        data: {ksd, khd}
+        data: {
+          ksd,
+          khd
+        }
       }
       resolve(result)
     }).catch((e) => {
@@ -362,16 +448,18 @@ const twdl2 = (url_media) => {
   })
 }
 
-const twdl3 = (url) => {
+module.exports.twdl3 = (url) => {
   return new Promise((resolve, reject) => {
     axios.get('https://twittervideodownloader.com/', {
-      headers: {
-        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-        "cookie": "PHPSESSID=9ut8phujrprrmll6oc3bist01t; popCookie=1; _ga=GA1.2.1068750365.1625213061; _gid=GA1.2.842420949.1625213061"
-      }
-    })
-      .then(({ data }) => {
+        headers: {
+          "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+          "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+          "cookie": "PHPSESSID=9ut8phujrprrmll6oc3bist01t; popCookie=1; _ga=GA1.2.1068750365.1625213061; _gid=GA1.2.842420949.1625213061"
+        }
+      })
+      .then(({
+        data
+      }) => {
         const $ = cheerio.load(data)
         let token = $('input[name=csrfmiddlewaretoken]').attr('value')
 
@@ -382,7 +470,7 @@ const twdl3 = (url) => {
             'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36',
             'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
             'referer': 'https://twittervideodownloader.com/',
-            'cookie': 'csrftoken='+ token +';'
+            'cookie': 'csrftoken=' + token + ';'
           },
           data: {
             'csrfmiddlewaretoken': token,
@@ -390,10 +478,14 @@ const twdl3 = (url) => {
             'submit': ''
           }
         }
-        axios.post('https://twittervideodownloader.com/download', qs.stringify(config.data), { headers: config.headers })
-          .then(async ({ data }) => {
+        axios.post('https://twittervideodownloader.com/download', qs.stringify(config.data), {
+            headers: config.headers
+          })
+          .then(async ({
+            data
+          }) => {
             const $ = cheerio.load(data)
-           
+
             let thumbnail = $('center > img:nth-child(4)').attr("src")
             let desc = null
 
@@ -403,9 +495,13 @@ const twdl3 = (url) => {
               let sizesd
 
               streamsd
-              .on("downloadProgress", ({ transferred, total, percent }) => {
-                sizesd = total
-              })
+                .on("downloadProgress", ({
+                  transferred,
+                  total,
+                  percent
+                }) => {
+                  sizesd = total
+                })
 
               const filetypesd = await FileType.fromStream(streamsd)
 
@@ -428,9 +524,13 @@ const twdl3 = (url) => {
               let hd = $("center > div:nth-child(17) > div > a").attr("href")
               let streamhd = got.stream(hd)
               let sizehd
-              
+
               streamhd
-                .on("downloadProgress", ({ transferred, total, percent }) => {
+                .on("downloadProgress", ({
+                  transferred,
+                  total,
+                  percent
+                }) => {
                   sizehd = total
                 })
 
@@ -454,7 +554,10 @@ const twdl3 = (url) => {
               status: true,
               thumbnail: thumbnail,
               desc: desc,
-              data: {ksd, khd}
+              data: {
+                ksd,
+                khd
+              }
             }
             resolve(result)
           })
@@ -478,6 +581,7 @@ const twdl3 = (url) => {
   })
 }
 
+// sementara ga fungsi
 function fbdown(link) {
   return new Promise((resolve, reject) => {
 
@@ -512,94 +616,248 @@ function fbdown(link) {
   })
 }
 
-function youtube(link) {
-  return new Promise((resolve, reject) => {
+module.exports.ytdl_hd = (link) => {
+  return new Promise(async (resolve, reject) => {
+    let result, img, title, $, size, kualitas, ext, id, url_hasil
     const ytIdRegex = /(?:http(?:s|):\/\/|)(?:(?:www\.|)youtube(?:\-nocookie|)\.com\/(?:watch\?.*(?:|\&)v=|embed\/|v\/)|youtu\.be\/)([-_0-9A-Za-z]{11})/
-    if (ytIdRegex.test(link)) {
-      let url = ytIdRegex.exec(link)
-      let config = {
-        'url': 'https://www.youtube.be/' + url,
-        'q_auto': 0,
-        'ajax': 1
-      }
-      let headerss = {
-        "sec-ch-ua": '" Not;A Brand";v="99", "Google Chrome";v="91", "Chromium";v="91"',
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-        "Cookie": 'PHPSESSID=6jo2ggb63g5mjvgj45f612ogt7; _ga=GA1.2.405896420.1625200423; _gid=GA1.2.2135261581.1625200423; _PN_SBSCRBR_FALLBACK_DENIED=1625200785624; MarketGidStorage={"0":{},"C702514":{"page":5,"time":1625200846733}}'
-      }
-      axios('https://www.y2mate.com/mates/en68/analyze/ajax', {
-          method: 'POST',
-          data: new URLSearchParams(Object.entries(config)),
-          headers: headerss
-        })
-        .then(({
-          data
-        }) => {
-          const $ = cheerio.load(data.result)
-          let img = $('div.thumbnail.cover > a > img').attr('src');
-          let title = $('div.thumbnail.cover > div > b').text();
-          let size = $('#mp4 > table > tbody > tr:nth-child(3) > td:nth-child(2)').text()
-          let size_mp3 = $('#audio > table > tbody > tr:nth-child(1) > td:nth-child(2)').text()
-          let id = /var k__id = "(.*?)"/.exec(data.result)[1]
-          let configs = {
-            type: 'youtube',
-            _id: id,
-            v_id: url[1],
-            ajax: '1',
-            token: '',
-            ftype: 'mp4',
-            fquality: 480
-          }
-          axios('https://www.y2mate.com/mates/en68/convert', {
-              method: 'POST',
-              data: new URLSearchParams(Object.entries(configs)),
-              headers: headerss
-            })
-            .then(({
-              data
-            }) => {
-              const $ = cheerio.load(data.result)
-              let link = $('div > a').attr('href')
-              let configss = {
-                type: 'youtube',
-                _id: id,
-                v_id: url[1],
-                ajax: '1',
-                token: '',
-                ftype: 'mp3',
-                fquality: 128
-              }
-              axios('https://www.y2mate.com/mates/en68/convert', {
-                  method: 'POST',
-                  data: new URLSearchParams(Object.entries(configss)),
-                  headers: headerss
-                })
-                .then(({
-                  data
-                }) => {
-                  const $ = cheerio.load(data.result)
-                  let audio = $('div > a').attr('href')
-                  resolve({
-                    id: url[1],
-                    title: title,
-                    size: size,
-                    quality: '480p',
-                    thumb: img,
-                    link: link,
-                    size_mp3: size_mp3,
-                    mp3: audio
-                  })
-                })
-            })
-        })
-        .catch(reject)
-    } else {
+    if (!ytIdRegex.test(link)) {
       reject('link invalid')
     }
+    let url = ytIdRegex.exec(link)
+    let config = {
+      'url': 'https://www.youtube.be/' + url,
+      'q_auto': 0,
+      'ajax': 1
+    }
+    let headerss = {
+      "sec-ch-ua": '" Not;A Brand";v="99", "Google Chrome";v="91", "Chromium";v="91"',
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+      "Cookie": 'PHPSESSID=6jo2ggb63g5mjvgj45f612ogt7; _ga=GA1.2.405896420.1625200423; _gid=GA1.2.2135261581.1625200423; _PN_SBSCRBR_FALLBACK_DENIED=1625200785624; MarketGidStorage={"0":{},"C702514":{"page":5,"time":1625200846733}}'
+    }
+    await axios('https://www.y2mate.com/mates/en68/analyze/ajax', {
+        method: 'POST',
+        data: new URLSearchParams(Object.entries(config)),
+        headers: headerss
+      })
+      .then(({
+        data
+      }) => {
+        try {
+          $ = cheerio.load(data.result)
+          img = $('div.thumbnail.cover > a > img').attr('src')
+          title = $('div.thumbnail.cover > div > b').text()
+          kualitas = $('#mp4 > table > tbody > tr:nth-child(1) > td:nth-child(3) > a').attr("data-fquality")
+          ext = $('#mp4 > table > tbody > tr:nth-child(1) > td:nth-child(3) > a').attr("data-ftype")
+          size = $('#mp4 > table > tbody > tr:nth-child(1) > td:nth-child(2) > a').text()
+          id = /var k__id = "(.*?)"/.exec(data.result)[1]
+        } catch (e) {
+          reject('data yang diperoleh dari https://www.y2mate.com tidak lengkap, hubungi pengembang.')
+        }
+      })
+      .catch((e) => {
+        reject('gagal saat meminta akses ke https://www.y2mate.com, hubungi pengembang.')
+      })
+
+    let configs = {
+      type: 'youtube',
+      _id: id,
+      v_id: url[1],
+      ajax: '1',
+      token: '',
+      ftype: ext,
+      fquality: kualitas
+    }
+    await axios('https://www.y2mate.com/mates/en68/convert', {
+        method: 'POST',
+        data: new URLSearchParams(Object.entries(configs)),
+        headers: headerss
+      })
+      .then(({
+        data
+      }) => {
+        const $ = cheerio.load(data.result)
+        url_hasil = $('div > a').attr('href')
+      })
+      .catch((e) => {
+        url_hasil = "video tidak dapat diproses, hubungi pengembang."
+      })
+
+    result = {
+      status: true,
+      title: title,
+      thumbnail: img,
+      kualitas: kualitas,
+      ext: ext,
+      size: size,
+      url: url_hasil,
+    }
+
+    resolve(result)
   })
 }
 
-module.exports.pln = async(id) => {
+module.exports.ytdl_sd = (link) => {
+  return new Promise(async (resolve, reject) => {
+    let result, img, title, $, size, kualitas, ext, id, url_hasil
+    const ytIdRegex = /(?:http(?:s|):\/\/|)(?:(?:www\.|)youtube(?:\-nocookie|)\.com\/(?:watch\?.*(?:|\&)v=|embed\/|v\/)|youtu\.be\/)([-_0-9A-Za-z]{11})/
+    if (!ytIdRegex.test(link)) {
+      reject('link invalid')
+    }
+    let url = ytIdRegex.exec(link)
+    let config = {
+      'url': 'https://www.youtube.be/' + url,
+      'q_auto': 0,
+      'ajax': 1
+    }
+    let headerss = {
+      "sec-ch-ua": '" Not;A Brand";v="99", "Google Chrome";v="91", "Chromium";v="91"',
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+      "Cookie": 'PHPSESSID=6jo2ggb63g5mjvgj45f612ogt7; _ga=GA1.2.405896420.1625200423; _gid=GA1.2.2135261581.1625200423; _PN_SBSCRBR_FALLBACK_DENIED=1625200785624; MarketGidStorage={"0":{},"C702514":{"page":5,"time":1625200846733}}'
+    }
+    await axios('https://www.y2mate.com/mates/en68/analyze/ajax', {
+        method: 'POST',
+        data: new URLSearchParams(Object.entries(config)),
+        headers: headerss
+      })
+      .then(({
+        data
+      }) => {
+        try {
+          $ = cheerio.load(data.result)
+          img = $('div.thumbnail.cover > a > img').attr('src')
+          title = $('div.thumbnail.cover > div > b').text()
+          kualitas = $('#mp4 > table > tbody > tr:nth-child(3) > td:nth-child(3) > a').attr("data-fquality")
+          ext = $('#mp4 > table > tbody > tr:nth-child(3) > td:nth-child(3) > a').attr("data-ftype")
+          size = $('#mp4 > table > tbody > tr:nth-child(3) > td:nth-child(2)').text()
+          id = /var k__id = "(.*?)"/.exec(data.result)[1]
+        } catch (e) {
+          reject('data yang diperoleh dari https://www.y2mate.com tidak lengkap, hubungi pengembang.')
+        }
+      })
+      .catch((e) => {
+        reject('gagal saat meminta akses ke https://www.y2mate.com, hubungi pengembang.')
+      })
+
+    let configs = {
+      type: 'youtube',
+      _id: id,
+      v_id: url[1],
+      ajax: '1',
+      token: '',
+      ftype: ext,
+      fquality: kualitas
+    }
+    await axios('https://www.y2mate.com/mates/en68/convert', {
+        method: 'POST',
+        data: new URLSearchParams(Object.entries(configs)),
+        headers: headerss
+      })
+      .then(({
+        data
+      }) => {
+        const $ = cheerio.load(data.result)
+        url_hasil = $('div > a').attr('href')
+      })
+      .catch((e) => {
+        url_hasil = "video tidak dapat diproses, hubungi pengembang."
+      })
+
+    result = {
+      status: true,
+      title: title,
+      thumbnail: img,
+      kualitas: kualitas,
+      ext: ext,
+      size: size,
+      url: url_hasil,
+    }
+
+    resolve(result)
+  })
+}
+
+module.exports.ytdl_musik = (link) => {
+  return new Promise(async (resolve, reject) => {
+    let result, img, title, $, size, kualitas, ext, id, url_hasil
+    const ytIdRegex = /(?:http(?:s|):\/\/|)(?:(?:www\.|)youtube(?:\-nocookie|)\.com\/(?:watch\?.*(?:|\&)v=|embed\/|v\/)|youtu\.be\/)([-_0-9A-Za-z]{11})/
+    if (!ytIdRegex.test(link)) {
+      reject('link invalid')
+    }
+    let url = ytIdRegex.exec(link)
+    let config = {
+      'url': 'https://www.youtube.be/' + url,
+      'q_auto': 0,
+      'ajax': 1
+    }
+    let headerss = {
+      "sec-ch-ua": '" Not;A Brand";v="99", "Google Chrome";v="91", "Chromium";v="91"',
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+      "Cookie": 'PHPSESSID=6jo2ggb63g5mjvgj45f612ogt7; _ga=GA1.2.405896420.1625200423; _gid=GA1.2.2135261581.1625200423; _PN_SBSCRBR_FALLBACK_DENIED=1625200785624; MarketGidStorage={"0":{},"C702514":{"page":5,"time":1625200846733}}'
+    }
+    await axios('https://www.y2mate.com/mates/en68/analyze/ajax', {
+        method: 'POST',
+        data: new URLSearchParams(Object.entries(config)),
+        headers: headerss
+      })
+      .then(({
+        data
+      }) => {
+        try {
+          $ = cheerio.load(data.result)
+          img = $('div.thumbnail.cover > a > img').attr('src')
+          title = $('div.thumbnail.cover > div > b').text()
+          kualitas = $('#audio > table > tbody > tr:nth-child(1) > td:nth-child(3) > a:nth-child(2)').attr("data-fquality")
+          ext = $('#audio > table > tbody > tr:nth-child(1) > td:nth-child(3) > a:nth-child(2)').attr("data-ftype")
+          size = $('#audio > table > tbody > tr:nth-child(1) > td:nth-child(2)').text()
+          id = /var k__id = "(.*?)"/.exec(data.result)[1]
+        } catch (e) {
+          reject('data yang diperoleh dari https://www.y2mate.com tidak lengkap, hubungi pengembang.')
+        }
+      })
+      .catch((e) => {
+        reject('gagal saat meminta akses ke https://www.y2mate.com, hubungi pengembang.')
+      })
+
+    let configs = {
+      type: 'youtube',
+      _id: id,
+      v_id: url[1],
+      ajax: '1',
+      token: '',
+      ftype: ext,
+      fquality: kualitas
+    }
+    await axios('https://www.y2mate.com/mates/en68/convert', {
+        method: 'POST',
+        data: new URLSearchParams(Object.entries(configs)),
+        headers: headerss
+      })
+      .then(({
+        data
+      }) => {
+        const $ = cheerio.load(data.result)
+        url_hasil = $('div > a').attr('href')
+      })
+      .catch((e) => {
+        url_hasil = "audio tidak dapat diproses, hubungi pengembang."
+      })
+
+    result = {
+      status: true,
+      title: title,
+      thumbnail: img,
+      kualitas: kualitas,
+      ext: ext,
+      size: size,
+      url: url_hasil,
+    }
+
+    resolve(result)
+  })
+}
+
+// pln ambil dari hotelmurah.com
+module.exports.pln = async (id) => {
   return new Promise((resolve, reject) => {
     axios.get('https://www.hotelmurah.com/pulsa/pln/', {
         withCredentials: true,
@@ -614,11 +872,11 @@ module.exports.pln = async(id) => {
         let cookie = data.headers['set-cookie'].toString()
         let cookies = cookie.split(";")
         let csrf_cook, ses_id_cook
-        cookies.forEach((v,i) => {
-          if(i==0){
+        cookies.forEach((v, i) => {
+          if (i == 0) {
             csrf_cook = v.split("=")[1]
           }
-          if(i==4){
+          if (i == 4) {
             ses_id_cook = v.split("=")[2]
           }
         })
@@ -631,7 +889,7 @@ module.exports.pln = async(id) => {
         }
 
         let headersss = {
-          'cookie': '_ga=GA1.2.1427732230.1630150507; ci_session=r1gusav7h1k0sg913reteeofhmvo30kd; _gid=GA1.2.442278703.1631370145; hotelmurah_hm_cookie='+ ses_id_cook +'; hotelmurah_csrf_cookie_name=' + csrf_cook,
+          'cookie': '_ga=GA1.2.1427732230.1630150507; ci_session=r1gusav7h1k0sg913reteeofhmvo30kd; _gid=GA1.2.442278703.1631370145; hotelmurah_hm_cookie=' + ses_id_cook + '; hotelmurah_csrf_cookie_name=' + csrf_cook,
         }
 
         axios('https://www.hotelmurah.com/pulsa/index.php/pln/cari_id_android', {
@@ -642,11 +900,37 @@ module.exports.pln = async(id) => {
           .then(({
             data
           }) => {
-            // const $ = cheerio.load(data)
-            if(data.status == 70){
-              console.error("Pengecekan tagihan listrik tidak dilayani pada pukul 23:00 hingga 01:00 WIB sesuai ketentuan dari PLN.")
+            try {
+
+              let result
+              if (data.status == 70) {
+                result = {
+                  status: false,
+                  msg: data.data
+                }
+              }
+
+              if (data.status == 99) {
+                result = {
+                  status: false,
+                  msg: data.data
+                }
+              }
+
+              if (data.status == 2) {
+                result = {
+                  status: true,
+                  id_pel: data.no,
+                  nama_cust: data.data.info.cust_name,
+                  jum_periode: data.data.info.arrears + "(" + data.data.info.svc_period + ")",
+                  tagihan: data.data.info.amount
+                }
+              }
+
+              resolve(result)
+            } catch (e) {
+              reject(e.message)
             }
-            resolve(data)
           })
           .catch((e) => {
             // console.error(e)
@@ -661,7 +945,7 @@ module.exports.pln = async(id) => {
   })
 }
 
-function ttdownloader(url) {
+module.exports.ttdl = (url) => {
   return new Promise(async (resolve, reject) => {
     axios.get('https://ttdownloader.com/', {
         headers: {
@@ -704,12 +988,121 @@ function ttdownloader(url) {
   })
 }
 
-module.exports.igdl = igdl
-module.exports.igstory = igstory
-module.exports.igstalk = igstalk
-module.exports.twdl = twdl
-module.exports.twdl2 = twdl2
-module.exports.twdl3 = twdl3
+module.exports.ttdl2 = (url) => {
+  return new Promise((resolve, reject) => {
+    let baseurl = 'https://ssstik.io'
+    axios.get(baseurl, {
+      withCredentials: true,
+      headers: {
+        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+        'accept-encoding': 'gzip, deflate, br',
+        'accept-language': 'en-US,en;q=0.9,id;q=0.8',
+        'cache-control': 'no-cache',
+        'pragma': 'no-cache',
+        'sec-ch-ua': '"Chromium";v="92", " Not A;Brand";v="99", "Google Chrome";v="92"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-fetch-dest': 'document',
+        'sec-fetch-mode': 'navigate',
+        'sec-fetch-site': 'none',
+        'sec-fetch-user': '?1',
+        'upgrade-insecure-requests': '1',
+        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36'
+      },
+    })
+      .then((
+        data
+      ) => {
+        let cookie = data.headers['set-cookie'].toString()
+        console.log(cookie)
+
+        return
+        const $ = cheerio.load(data.data)
+        const urlPost = $('form[data-hx-target="#target"]').attr('data-hx-post')
+        const tokenJSON = $('form[data-hx-target="#target"]').attr('include-vals')
+        const tt = tokenJSON.replace(/'/g, '').replace('tt:', '').split(',')[0]
+        const ts = tokenJSON.split('ts:')[1]
+        let config = {
+          headers: {
+            'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'cookie': '__cfduid=deb9cec7a40793d1abe009bb9961a92d41617497572; PHPSESSID=7ivsp9hc6askg1qocpi8lfpn7n; __cflb=02DiuEcwseaiqqyPC5q2cQqNGembhyZ5QaychuqFzev83; _ga=GA1.2.131585469.1617497575; _gid=GA1.2.1629908100.1617497575; _gat_UA-3524196-6=1',
+            'sec-ch-ua': '"Google Chrome";v="89", "Chromium";v="89", ";Not A Brand";v="99"',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36',
+          },
+          dataPost: {
+            'id': url,
+            'locale': 'en',
+            'tt': tt,
+            'ts': ts
+          }
+        }
+        axios.post(baseurl + urlPost, qs.stringify(config.dataPost), {
+            headers: config.headers
+          })
+          .then(({
+            data
+          }) => {
+            const $ = cheerio.load(data)
+            const result = {
+              status: true,
+              text: $('div > p').text(),
+              nowm: baseurl + $('div > a.without_watermark').attr('href'),
+              nowm2: $('div > a.without_watermark_direct').attr('href'),
+              audio: $('div > a.music').attr('href')
+            }
+            if ($('div > a.without_watermark_direct').attr('href') !== undefined) {
+              resolve(result)
+            } else {
+              reject({
+                status: false,
+                message: 'Tautan ini telah terunduh sebelumnya'
+              })
+            }
+          })
+          .catch(reject)
+      })
+      .catch((e) => {
+        console.error(e.message)
+      })
+  })
+}
+
+module.exports.ttdl3 = (url) => {
+  return new Promise((resolve, reject) => {
+    axios.get('https://keeptiktok.com/?lang=ID', {
+         headers: {
+              'Cookie': '__cfduid=d5db462e7efb9bb76bcf89765dbd896c91617891082; PHPSESSID=5a017bebc34ef170ddec3b7c71a0bbe8; _ga=GA1.2.1193000489.1617891094; _gid=GA1.2.408908588.1617891094; ads=ok; __atuvc=3|14; __atuvs=606f0f171d8ce8a1002; __atssc=google;2'
+         }
+    })
+         .then(({ data }) => {
+              const $ = cheerio.load(data)
+              const token = $('input#token').attr('value')
+              const fd = new FormData()
+              fd.append('url', url)
+              fd.append('token', token)
+              Axios({
+                   method: 'POST',
+                   url: 'https://keeptiktok.com/index.php',
+                   data: fd,
+                   headers: {
+                        'Content-Type': `multipart/form-data; boundary=${fd._boundary}`,
+                        'Cookie': '__cfduid=d5db462e7efb9bb76bcf89765dbd896c91617891082; PHPSESSID=5a017bebc34ef170ddec3b7c71a0bbe8; _ga=GA1.2.1193000489.1617891094; _gid=GA1.2.408908588.1617891094; ads=ok; __atuvc=3|14; __atuvs=606f0f171d8ce8a1002; __atssc=google;2'
+                   }
+              }).then(({ data }) => {
+                   const $ = cheerio.load(data)
+                   const text = $('div.download-info > div.video_des').text()
+                   Axios.get('https://keeptiktok.com/dl.php', {
+                        responseType: 'arraybuffer',
+                        headers: {
+                             'referer': $('link[rel="canonical"]').attr('href'),
+                             'Cookie': '__cfduid=d5db462e7efb9bb76bcf89765dbd896c91617891082; PHPSESSID=5a017bebc34ef170ddec3b7c71a0bbe8; _ga=GA1.2.1193000489.1617891094; _gid=GA1.2.408908588.1617891094; ads=ok; __atuvc=3|14; __atuvs=606f0f171d8ce8a1002; __atssc=google;2'
+                        }
+                   }).then(({ data }) => {
+                        const base64 = Buffer.from(data)
+                        resolve({ status: true, result: { text: text, base64: base64.toString('base64') } })
+                   })
+              }).catch((e) => reject({ status: false, message: e.message }))
+         })
+})
+}
+
 module.exports.fbdl = fbdown
-module.exports.ytdl = youtube
-module.exports.ttdl = ttdownloader
