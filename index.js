@@ -31,18 +31,12 @@ const {
 const fs = require('fs')
 const ffmpeg = require('fluent-ffmpeg')
 const WSF = require('wa-sticker-formatter')
-const YTDL = require("ytdl-core")
 const axios = require('axios')
-const http = require('https') // or 'https' for https:// URLs
-const request = require('request')
-const cheerio = require('cheerio')
 const log = console.debug
 const exec = require("child_process").exec
 const qr = require('qr-image')
 const Jimp = require("jimp")
 const qrCode = require('qrcode-reader')
-const FormData = require('form-data')
-const qs = require('qs')
 const moment = require("moment-timezone")
 
 // LOAD LIBRARY
@@ -52,9 +46,10 @@ const { igdl } = require("./lib/igdl")
 const { ttdl } = require("./lib/ttdl")
 const { tebakgambar } = require("./lib/tebakgambar")
 
+const dl = require("./helpers/downloader")
+
 // LOAD SOURCES
 const pesan = require('./src/pesan');
-const { index } = require('cheerio/lib/api/traversing');
 
 // BASIC SETTINGS
 const prefix = '/'
@@ -111,6 +106,14 @@ const helpBiasa = (prefix) => {
 
 *${prefix}qrr*
     _Membaca hasil QR kode dari gambar_
+
+*${prefix}pln <ID-PEL>*
+    _Cek tagihan listrik pascabayar_
+
+*${prefix}sms <NO-TELP>*
+    _Bomb SMS, gunakan format 87755xxx_
+    _Misal nomor target 089677249020_
+    _Maka tulis_*${prefix}sms 89677249020*
 
 *${prefix}katacinta*
     _Kata cinta random_
@@ -1180,6 +1183,31 @@ async function main() {
           ])
           break
         
+        case 'sms':
+          reply("proses spam sms")
+          await dl.sms_oyo(args[0])
+          await new Promise(r => setTimeout(r, 3000))
+          await dl.sms_fave(args[0])
+          await new Promise(r => setTimeout(r, 3000))
+          await dl.sms_icq(args[0])
+          await new Promise(r => setTimeout(r, 3000))
+          await dl.sms_mapclub(args[0])
+          reply("dah, coba cek nomor target..")          
+          break;
+
+        case 'pln':
+          dl.pln(args[0])
+            .then((res) => {
+              let jawab
+              if(res.status){
+                jawab = `*PLN PASCABAYAR*\n\n*ID PEL: ${res.id_pel}*\n*NAMA*: ${res.nama_cust}\n*TAGIHAN*: ${res.tagihan}`
+              }else{
+                jawab = res.msg
+              }
+              reply(jawab)
+            })
+          break;
+
         case 'ls':
           let pw = ["https://meme-api.herokuapp.com/gimme/tits",
 					"https://meme-api.herokuapp.com/gimme/BestTits",
