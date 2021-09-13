@@ -1180,7 +1180,7 @@ async function main() {
           ])
           break
         
-        case 'ls':  
+        case 'ls': 
           let pw = ["https://meme-api.herokuapp.com/gimme/tits",
 					"https://meme-api.herokuapp.com/gimme/BestTits",
 					"https://meme-api.herokuapp.com/gimme/boobs",
