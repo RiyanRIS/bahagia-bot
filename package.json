@@ -23,6 +23,7 @@
     "got": "^11.8.2",
     "jimp": "^0.16.1",
     "moment-timezone": "^0.5.33",
+    "ocr-space-api": "^1.0.1",
     "pg": "^8.5.1",
     "puppeteer": "^10.2.0",
     "qr-image": "^3.2.0",

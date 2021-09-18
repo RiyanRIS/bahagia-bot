@@ -1055,7 +1055,7 @@ module.exports.sms_fave = async (no) => {
       "Accept-Language": "id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7"
       }
     
-    let config = JSON.stringify({'phone':'62'+nom})
+    let config = JSON.stringify({'phone':'62'+no})
     
     axios("https://api.myfave.com/api/fave/v3/auth", {
         method: 'POST',

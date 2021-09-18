@@ -38,6 +38,7 @@ const qr = require('qr-image')
 const Jimp = require("jimp")
 const qrCode = require('qrcode-reader')
 const moment = require("moment-timezone")
+const ocrSpaceApi = require('ocr-space-api')
 
 // LOAD LIBRARY
 const { ytmp3, ytmp4 } = require("./lib/ytdl")
@@ -106,6 +107,7 @@ const helpBiasa = (prefix) => {
 
 *${prefix}qrr*
     _Membaca hasil QR kode dari gambar_
+    _Jangan lupa lampirin gambar yang ingin di scan_
 
 *${prefix}pln <ID-PEL>*
     _Cek tagihan listrik pascabayar_
@@ -309,10 +311,13 @@ async function main() {
       : _chats;
 
       // const command = body.slice(1).trim().split(/ +/).shift().toLowerCase()
-      const command = chats.split(/ +/g)[0];
+      const command = chats.split(/ +/g)[0]
 
       const args = body.trim().split(/ +/).slice(1)
-      const isCmd = body.startsWith(prefix)
+      // const isCmd = body.startsWith(prefix)
+      const isCmd = _chats.match(prefixRegEx)
+      ? prefixRegEx.exec(_chats)["input"]
+      : _chats;
 
       const botNumber = conn.user.jid
       const isGroup = from.endsWith('@g.us')
@@ -395,7 +400,7 @@ async function main() {
         options = {}
       ) => {
         kma = gam1;
-        mhan = await conn.prepareMessage(from, kma, image);
+        mhan = await conn.prepareMessage(from, {url: kma}, image);
         const buttonMessages = {
           imageMessage: mhan.message.imageMessage,
           contentText: text1,
@@ -429,10 +434,12 @@ async function main() {
       const isQuotedImage = type === 'extendedTextMessage' && content.includes('imageMessage')
       const isQuotedVideo = type === 'extendedTextMessage' && content.includes('videoMessage')
       const isQuotedSticker = type === 'extendedTextMessage' && content.includes('stickerMessage')
-      if (isCmd && isGroup) {
-        console.log(time, ' [COMMAND]', command, '[FROM]', sender.split('@')[0], '[IN]', groupName)
-      } else if (isCmd) {
-        console.log(time, ' [COMMAND]', command, '[FROM]', sender.split('@')[0])
+      if (isCmd) {
+        if (isGroup) {
+          console.log(time, ' [COMMAND]', command, '[FROM]', sender.split('@')[0], '[IN]', groupName)
+        } else {
+          console.log(time, ' [COMMAND]', command, '[FROM]', sender.split('@')[0])
+        }
       }
 
       /////////////// GAMES \\\\\\\\\\\\\\\
@@ -925,7 +932,36 @@ async function main() {
           }
           break
         
-        // Special thanks to Sumanjay for his carbon api
+        case "ocr2":
+          if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
+            const media = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+
+            const filePath = await conn.downloadAndSaveMediaMessage(media, `./public/${getRandom()}`)
+
+            var options =  { 
+              apikey: '<your_api_key_here>',
+              language: 'por', // Português
+              imageFormat: 'image/png', // Image Type (Only png ou gif is acceptable at the moment i wrote this)
+              isOverlayRequired: true
+            };
+          
+            const imageFilePath = "imageFile.jpg";
+            
+            // Run and wait the result
+            ocrSpaceApi.parseImageFromLocalFile(imageFilePath, options)
+              .then(function (parsedResult) {
+                console.log('parsedText: \n', parsedResult.parsedText);
+                console.log('ocrParsedResult: \n', parsedResult.ocrParsedResult);
+              }).catch(function (err) {
+                console.log('ERROR:', err);
+              });
+
+          } else {
+            reply(`Kamu belum melampirkan foto yang akan discan.!`)
+          }
+          break
+        
+          // Special thanks to Sumanjay for his carbon api
         case 'cb':
         case 'carbon':
           let carbon_txt = args.join(' ')
@@ -1184,15 +1220,14 @@ async function main() {
           break
         
         case 'sms':
-          reply("proses spam sms")
+        case 'bomsms':
+          reply("Memproses..")
           await dl.sms_oyo(args[0])
-          await new Promise(r => setTimeout(r, 3000))
           await dl.sms_fave(args[0])
-          await new Promise(r => setTimeout(r, 3000))
           await dl.sms_icq(args[0])
-          await new Promise(r => setTimeout(r, 3000))
           await dl.sms_mapclub(args[0])
-          reply("dah, coba cek nomor target..")          
+          // await new Promise(r => setTimeout(r, 3000))
+          reply("Dah..")
           break;
 
         case 'pln':
@@ -1205,6 +1240,9 @@ async function main() {
                 jawab = res.msg
               }
               reply(jawab)
+            })
+            .catch((e) => {
+              reply(e)
             })
           break;
 
@@ -1222,15 +1260,32 @@ async function main() {
 					let nk = pw[Math.floor(Math.random() * pw.length)]
           axios.get(nk)
             .then(async ({data}) => {
-              sendButImage(from, data.title, data.subreddit, await getBuffer(data.url), [
-            {
-              buttonId: `${prefix}ls`,
-              buttonText: {
-                displayText: `💋 Lagi dong`,
-              },
-              type: 1,
-            }
-          ])
+              sendButImage(from, data.title, data.subreddit, data.url, [
+                {
+                  buttonId: `${prefix}ls`,
+                  buttonText: {
+                    displayText: `💋 Lagi dong`,
+                  },
+                  type: 1,
+                }
+              ])
+            })
+            .catch((e) => {
+              axios.get(nk)
+                .then(async ({data}) => {
+                  sendButImage(from, data.title, data.subreddit, data.url, [
+                    {
+                      buttonId: `${prefix}ls`,
+                      buttonText: {
+                        displayText: `💋 Lagi dong`,
+                      },
+                      type: 1,
+                    }
+                  ])
+                })
+                .catch((e) => {
+                  reply("error")
+                })
             })
           break
 

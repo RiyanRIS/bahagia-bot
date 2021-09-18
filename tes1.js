@@ -1,30 +1,19 @@
 const axios = require("axios")
-const qs = require("qs")
 
-let nom = "89677249060"
-let hd = {
-  "Host": "api.myfave.com",
-  "Connection": "keep-alive",
-  "x-user-agent": "Fave-PWA/v1.0.0",
-  "User-Agent": "Mozilla/5.0 (Linux; Android 10; SM-A107F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Mobile Safari/537.36",
-  "content-type": "application/json",
-  "Accept": "*/*",
-  "Origin": "https://m.myfave.com",
-  "Referer": "https://m.myfave.com/jakarta/auth",
-  "Accept-Encoding": "gzip, deflate, br",
-  "Accept-Language": "id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7"
-  }
-
-let config = JSON.stringify({'phone':'62'+nom})
-
-axios("https://api.myfave.com/api/fave/v3/auth", {
-    method: 'POST',
-    data: config,
-    headers: hd
-})
-  .then(async ({data}) => {
-    console.log(data)
-  })
-  .catch((e) => {
-    console.log("error: ", e.message)
-  })
+let pw = ["https://meme-api.herokuapp.com/gimme/tits",
+					"https://meme-api.herokuapp.com/gimme/BestTits",
+					"https://meme-api.herokuapp.com/gimme/boobs",
+					"https://meme-api.herokuapp.com/gimme/amazingtits",
+					"https://meme-api.herokuapp.com/gimme/TinyTits",
+          "https://meme-api.herokuapp.com/gimme/lesbians",
+          "https://meme-api.herokuapp.com/gimme/CuteLittleButts",
+					"https://meme-api.herokuapp.com/gimme/ass",
+          "https://meme-api.herokuapp.com/gimme/pussy",
+					"https://meme-api.herokuapp.com/gimme/LegalTeens"]
+for (let index = 0; index < 10; index++) {
+  let nk = pw[Math.floor(Math.random() * pw.length)]
+  axios.get(nk)
+    .then(async ({data}) => {
+      console.log(data)
+    })
+}
