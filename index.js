@@ -1113,7 +1113,7 @@ async function main() {
           }
           faktaunik()
           break
-         
+          
         case 'teb':
         case 'tebak':
         case 'tebakgambar':
