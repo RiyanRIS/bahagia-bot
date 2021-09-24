@@ -256,19 +256,10 @@ async function main() {
   })
 
   setInterval(async () => {
-    var getGMTh = new Date().getHours()
-    var getGMTm = new Date().getMinutes()
-    while (getGMTh == 08 && getGMTm == 00) {
-      return conn.sendMessage(conn.user.jid, '[ ```🔔Queen Amdi Announcements🔔``` ]\n\n' + `Username: ${conn.user.name}\nWa Version: ${conn.user.phone.wa_version}\nVersion: ${conn.user.phone.os_version}\nDevice Model: ${conn.user.phone.device_manufacturer}`, MessageType.text)
-    }
-  }, 50000);
-
-  setInterval(async () => {
-    var tz_bio = await conn.timezone(conn.user.jid)
-    var date = await conn.datebio("EN")
-    const biography = '📅 ' + date + '\n⌚ ' + tz_bio + '    🎖️ Halo Sayang'
+    const tg = moment.tz("Asia/Jakarta").format("MMMM DD, YYYY")
+    const biography = '📅 ' + tg + ' 🇮🇩 Gunakan \\help untuk melihat perintah yang tersedia.'
     await conn.setStatus(biography)
-  }, 7890);
+  }, 50000);
 
   conn.on('group-participants-update', async (anu) => {
     try {
