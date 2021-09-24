@@ -1287,7 +1287,7 @@ async function main() {
                     }
                   }, 1000);
                 })
-                .catch((e) => {
+                .catch(async (e) => {
                   const txt = `[ *ERROR* ]\n\nTime: ${time}\nFrom: ${from}\nCommand: ${command}\n---------------\nMsg: ${e.msg}\nLink img: ${res.image}\nError: ${e}`
                   await sendToOwner(txt)
                   console.error(e)
