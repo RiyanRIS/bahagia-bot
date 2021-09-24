@@ -1,19 +1,65 @@
+const {
+  WAConnection,
+  MessageType,
+  WA_DEFAULT_EPHEMERAL
+} = require('@adiwajshing/baileys')
 const axios = require("axios")
 
-let pw = ["https://meme-api.herokuapp.com/gimme/tits",
-					"https://meme-api.herokuapp.com/gimme/BestTits",
-					"https://meme-api.herokuapp.com/gimme/boobs",
-					"https://meme-api.herokuapp.com/gimme/amazingtits",
-					"https://meme-api.herokuapp.com/gimme/TinyTits",
-          "https://meme-api.herokuapp.com/gimme/lesbians",
-          "https://meme-api.herokuapp.com/gimme/CuteLittleButts",
-					"https://meme-api.herokuapp.com/gimme/ass",
-          "https://meme-api.herokuapp.com/gimme/pussy",
-					"https://meme-api.herokuapp.com/gimme/LegalTeens"]
-for (let index = 0; index < 10; index++) {
-  let nk = pw[Math.floor(Math.random() * pw.length)]
-  axios.get(nk)
-    .then(async ({data}) => {
-      console.log(data)
-    })
+const getBuffer = async (url, opts) => {
+  try {
+    const reqdata = await axios({
+      method: "get",
+      url,
+      headers: {
+        'DNT': 1,
+        'Upgrade-Insecure-Requests': 1,
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
+      },
+      ...opts,
+      responseType: 'arraybuffer'
+    });
+    return reqdata.data
+  } catch (e) {
+    throw e
+  }
 }
+
+const a = async () => {
+  const from = "15108986398@c.us"
+  const conn = new WAConnection()
+  conn.logger.level = 'warn'
+  const dotenv = require('dotenv')
+  dotenv.config()
+  const {
+    SESSION_WA,
+  } = process.env
+  const sessionData = JSON.parse(SESSION_WA)
+  conn.loadAuthInfo(sessionData)
+  conn.on('connecting', () => {
+    console.log('Connecting...')
+  })
+  conn.on('open', () => {
+    // console.clear()
+    console.log('Connected!')
+  })
+  await conn.connect({
+    timeoutMs: 30 * 1000
+  })
+
+  // turn on disappearing messages
+  await conn.toggleDisappearingMessages(
+    from, 
+    5 // this is 1 week in seconds -- how long you want messages to appear for
+  ) 
+  // will automatically send as a disappearing message
+  await conn.sendMessage(from, 'Hello poof!', MessageType.text)
+  // turn off disappearing messages
+  await conn.toggleDisappearingMessages(from, 0)
+
+
+
+}
+a()
+
+
+
