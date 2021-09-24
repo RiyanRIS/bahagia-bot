@@ -455,6 +455,10 @@ async function main() {
 
       }
 
+      const sendToOwner = async (text) => {
+        await conn.sendMessage(conn.user.jid, text, MessageType.text) 
+      }
+
       const sendFileFromUrl = async (link, type, options) => {
         hasil = await getBuffer(link)
         conn.sendMessage(from, hasil, type, options).catch(e => {
@@ -1284,8 +1288,26 @@ async function main() {
                   }, 1000);
                 })
                 .catch((e) => {
+                  const txt = `[ *ERROR* ]\n\nTime: ${time}\nFrom: ${from}\nCommand: ${command}\n---------------\nMsg: ${e.msg}\nLink img: ${res.image}\nError: ${e}`
+                  await sendToOwner(txt)
                   console.error(e)
-                  reply("maaf terjadi kesalahan saat mengirim gambar, ulangi lagi.")
+                  sendButMessage(from, "maaf terjadi kesalahan saat mengirim gambar.", `Ulangi lagi..???`, [{
+                      buttonId: `${prefix}teb`,
+                      buttonText: {
+                        displayText: `Ya`,
+                      },
+                      type: 1,
+                    },
+                    {
+                      buttonId: `sd`,
+                      buttonText: {
+                        displayText: `Tidak`,
+                      },
+                      type: 1,
+                    },
+                  ], {
+                    quoted: resp
+                  })
                 })
             })
           break
