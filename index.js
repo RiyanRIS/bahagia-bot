@@ -1231,8 +1231,6 @@ async function main() {
                   // mulai hitung mundur 2 menit dari sekarang, kalo belum terjawab, munculin jawabanya
                   let tedd = 1
                   const intervRemind = setInterval(async () => {
-                    console.log("detik ke- ", tedd)
-
                     let datatebakgambar = JSON.parse(fs.readFileSync("./src/data/tebakgambar.json"))
                     let isTebakgambar = false
 
