@@ -636,7 +636,7 @@ async function main() {
           if (!isGroup) return;
           if (!isGroupAdmins) return;
           conn.groupLeave(from)
-          break;
+          break
 
           /////////////// USERS COMMANDS \\\\\\\\\\\\\\\
 
@@ -1425,6 +1425,20 @@ async function main() {
             reply("Kamu lupa melampirkan gambar yang akan di hapus backgroundnya.")
           }
           break;
+        
+        case 'cmm':
+        case 'changemymind':
+          var ttinullimage = await axios.get(`https://nekobot.xyz/api/imagegen?type=changemymind&text=${args.join(" ").replace(/Ö/g, "%C3%96").replace(/ö/g, "%C3%B6").replace(/ü/g, "%C3%BC").replace(/Ü/g, "%C3%9C").replace(/Ğ/g, "%C4%9E").replace(/ğ/g, "%C4%9F").replace(/ş/g, "%C5%9F").replace(/Ş/g, "%C5%9E").replace(/ç/g, "%C3%A7").replace(/Ç/g, "%C3%87").replace(/ı/g, "%C4%B1").replace(/i/g, "%69").replace(/"/g, "%22").replace(/İ/g, "%C4%B0")}&raw=1`, { responseType: 'arraybuffer' })
+
+          await conn.sendMessage(from, Buffer.from(ttinullimage.data), MessageType.image, { mimetype: Mimetype.png })
+          break
+        
+          case 'trump':
+          case 'trumptweet':
+            var ttinullimage = await axios.get(`https://nekobot.xyz/api/imagegen?type=trumptweet&text=${args.join(" ").replace(/Ö/g, "%C3%96").replace(/ö/g, "%C3%B6").replace(/ü/g, "%C3%BC").replace(/Ü/g, "%C3%9C").replace(/Ğ/g, "%C4%9E").replace(/ğ/g, "%C4%9F").replace(/ş/g, "%C5%9F").replace(/Ş/g, "%C5%9E").replace(/ç/g, "%C3%A7").replace(/Ç/g, "%C3%87").replace(/ı/g, "%C4%B1").replace(/i/g, "%69").replace(/"/g, "%22").replace(/İ/g, "%C4%B0")}&raw=1`, { responseType: 'arraybuffer' })
+  
+            await conn.sendMessage(from, Buffer.from(ttinullimage.data), MessageType.image, { mimetype: Mimetype.png })
+            break
 
         case 'ls':
           let pw = ["https://meme-api.herokuapp.com/gimme/tits",
