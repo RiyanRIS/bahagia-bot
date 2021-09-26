@@ -1063,7 +1063,7 @@ async function main() {
             return
           }
           break
-
+ 
         case "ocr2":
           if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
             const media = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
