@@ -266,17 +266,16 @@ async function main() {
               return res
             })
             .catch((e) => {
-              reply("error")
+              reply("Maaf terjadi kesalahan saat mengirim file ke kamu, silahkan download sendiri secara manual melalui link berikut atau gunakan format yang lain \n\n" + url + "\n\n-------------------\n" + e.message)
               return e.message
             })
-          } catch (error) {
-            reply("Maaf terjadi kesalahan saat mengirim file ke kamu, silahkan download sendiri secara manual melalui link berikut \n\n" + url)
-            return error.message
+          } catch (e) {
+            reply("Maaf terjadi kesalahan saat mengirim file ke kamu, silahkan download sendiri secara manual melalui link berikut atau gunakan format yang lain \n\n" + url + "\n\n-------------------\n" + e.message)
+            return e.message
           }
 
           fs.unlinkSync(filename)
         })
-        // })
       }
 
 
@@ -794,103 +793,205 @@ async function main() {
           }
           break;
 
-        case 'tw':
-        case 'twd':
-        case 'twdl':
-          const res_twdl = await twdl(args[0])
-          await sendMed(res_twdl, video)
-          break
-
-        case 'ytmp3':
-          const res_ytmp3 = await ytmp3(args[0])
-          await sendMed(res_ytmp3, audio)
-          break
-
-        case 'ytmp4':
-          const res_ytmp4 = await ytmp4(args[0])
-          await sendMed(res_ytmp4, video)
-          break
-        
         case 'yt':
+        case 'ytdl':
         case 'youtube':
           if (!isUrl(args[0]) && !args[0].includes("youtu")) {
             await reply("_Link tidak valid_")
             return
           }
 
-          var bv = await fetchJson(
-            `https://api.dhnjing.xyz/downloader/youtube/video?url=${args[0]}&apikey=beta`
-          )
-          var b = bv.result.creator_metadata
-          var tamnel = await getBuffer(bv.result.media_resources.thumbnail)
-          var a = bv.result.media_metadata
-          sendButImage(
+          const dlyt = await dl.yotube(args[0])
+          let tamnel = await getBuffer(dlyt.thumbnail)
+          await sendButImage(
             from,
-            `*Name channel*: ${b.name}\n📜 *Title*: ${a.title}\n❤️ *Like*: ${a.totalLikes}\n🎞️ *Views*: ${a.totalViews}\n\nSilahkan pilih salah satu format yg mau didownload`, "Bahagia-Bot",
+            `📜 *Title*: ${dlyt.title}\n\nSilahkan pilih salah satu format yg ingin didownload`, "Bahagia-Bot",
             tamnel,
             [
               {
-                buttonId: `${prefix}youtubedownhahaha ${args[0]}|video`,
+                buttonId: `${prefix}youtubedownhahaha ${dlyt.id}|${dlyt.url_id}|${dlyt.kualitas_au}|${dlyt.ext_au}`,
                 buttonText: {
-                  displayText: `VIDEO HD`,
+                  displayText: dlyt.kualitasname_au + " | " + dlyt.size_au,
                 },
                 type: 1,
               },
               {
-                buttonId: `${prefix}youtubedownhahaha ${args[0]}|video`,
+                buttonId: `${prefix}youtubedownhahaha ${dlyt.id}|${dlyt.url_id}|${dlyt.kualitas_sd}|${dlyt.ext_sd}`,
                 buttonText: {
-                  displayText: `VIDEO SD`,
+                  displayText: dlyt.kualitasname_sd + " | " + dlyt.size_sd,
                 },
                 type: 1,
               },
               {
-                buttonId: `${prefix}youtubedownhahaha ${args[0]}|video`,
+                buttonId: `${prefix}youtubedownhahaha ${dlyt.id}|${dlyt.url_id}|${dlyt.kualitas_hd}|${dlyt.ext_hd}`,
                 buttonText: {
-                  displayText: `AUDIO`,
+                  displayText: dlyt.kualitasname_hd + " | " + dlyt.size_hd,
                 },
                 type: 1,
               },
             ]
           )
-
+          break
+        
+        case "youtubedownhahaha":
+          let id, url_id, kualitas, ext
+          try{
+            const gh = args.join("").split("|")
+            id = gh[0]
+            url_id = gh[1]
+            kualitas = gh[2]
+            ext = gh[3]
+            reply("Dalam proses, mohon tunggu sebentar...")
+          } catch(e) {
+            sendToOwner(`command: ${command}\nid: ${id}\n`)
+            reply("Maaf terjadi kesalahan, hubungi pengembang.")
+          }
+          
+          await dl.yotube_download(id, url_id, ext, kualitas)
+            .then(async (res) => {
+              await sendMediaURL(from, res, "")
+                .catch((e) => { reply(e.message) })
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          
           break
 
+        case 'ig':
         case 'igdl':
         case 'igdown':
         case 'igdownloader':
-          const res_igdl = await igdl(args[0])
-          await sendMed(res_igdl, video)
+          if (!isUrl(args[0]) && !args[0].includes("instagram.com")) {
+            await reply("_Link tidak valid_")
+            return
+          }
+          await dl.igdl(args[0])
+            .then(async (res) => {
+              try{
+                res.forEach(async (element) => {
+                  await sendMediaURL(from, element.url, "")
+                })
+              } catch(e) {
+                await dl.igdl(args[0]).then((res) => {
+                  y.forEach(async (element) => {
+                    await sendMediaURL(from, element.url, "")
+                  })
+                })
+              }
+            })
+            .catch((e) => {
+              reply(e)
+            })
           break
-
+        
+        case 'igs':
+        case 'igstory':
+          if (!isUrl(args[0]) && !args[0].includes("instagram.com")) {
+            await reply("_Link tidak valid_")
+            return
+          }
+          await dl.igstory(args[0])
+            .then(async (igs) => {
+              try{
+                igs.forEach(async (element) => {
+                  await sendMediaURL(from, element.url, "")
+                })
+              } catch(e) {
+                await dl.igstory(args[0]).then(async (y) => {
+                  try {
+                    y.forEach(async (element) => {
+                      await sendMediaURL(from, element.url, "")
+                    })
+                  } catch(e) {
+                    reply(e.message)
+                  }
+                })
+                .catch((e) => {
+                  reply(e)
+                })
+              }
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+        
+        case "tt":
         case "tiktok":
         case "ttdl":
           if (!isUrl(args[0]) && !args[0].includes("tiktok.com")) {
             await reply("_Link tidak valid_")
             return
           }
-          await dl.ttdl(`https://www.tiktok.com/@ekosaputra20/video/7004000895004462363?sender_device=pc&sender_web_id=7003580153716557313&is_from_webapp=v1&is_copy_url=0`).then(async (res) => {
-            await sendButMessage(from, "Silahkan pilih salah satu format yg mau didownload", "Bahagia-Bot", [
+          await dl.ttdl(args[0]).then(async (res) => {
+            await dl.ttdl2(args[0]).then(async (ress) => {
+              let tamnel = await getBuffer(ress.tumb)
+              await sendButImage(
+                from,
+                `📜 *Title*: ${ress.text}\n\nSilahkan pilih salah satu format yg ingin didownload`, "Bahagia-Bot",
+                tamnel,[
+                {
+                  buttonId: `${prefix}sndmediaa ${res.nowm}`,
+                  buttonText: {
+                    displayText: `NO WM`,
+                  },
+                  type: 1,
+                },
+                {
+                  buttonId: `${prefix}sndmediaa ${res.wm}`,
+                  buttonText: {
+                    displayText: `WITH WM`,
+                  },
+                  type: 1,
+                },
+                {
+                  buttonId: `${prefix}sndmediaa ${res.audio}`,
+                  buttonText: {
+                    displayText: `AUDIO`,
+                  },
+                  type: 1,
+                }
+              ]).then((resp) => {
+                console.log("done")
+              }).catch((e) => {
+                reply(e.message)
+              })
+            }).catch((e) => {
+              reply(e.message)
+            })
+          }).catch((e) => {
+            reply(e.message)
+          })
+          break
+
+        case 'tw':
+        case 'twdl':
+        case 'twitter':
+          if (!isUrl(args[0]) && !args[0].includes("twitter.com")) {
+            await reply("_Link tidak valid_")
+            return
+          }
+          await dl.twdl(args[0]).then(async (res) => {
+            let tamnel = await getBuffer(res.thumbnail)
+            await sendButImage(
+              from,
+              `📜 *Title*: ${res.desc}\n\nSilahkan pilih salah satu format yg ingin didownload`, "Bahagia-Bot",
+              tamnel,[
               {
-                buttonId: `${prefix}sndmediaa ${res.nowm}`,
+                buttonId: `${prefix}sndmediaa ${res.data.khd.url}`,
                 buttonText: {
-                  displayText: `NO WM`,
+                  displayText: `HD (${formatBytes(res.data.khd.size)})`,
                 },
                 type: 1,
               },
               {
-                buttonId: `${prefix}sndmediaa ${res.wm}`,
+                buttonId: `${prefix}sndmediaa ${res.data.ksd.url}`,
                 buttonText: {
-                  displayText: `WITH WM`,
+                  displayText: `SD (${formatBytes(res.data.ksd.size)})`,
                 },
                 type: 1,
               },
-              {
-                buttonId: `${prefix}sndmediaa ${res.audio}`,
-                buttonText: {
-                  displayText: `AUDIO`,
-                },
-                type: 1,
-              }
             ]).then((resp) => {
               console.log("done")
             }).catch((e) => {
@@ -902,23 +1003,7 @@ async function main() {
           break
 
         case "sndmediaa":
-          console.log(args[0])
           await sendMediaURL(from, args[0], "")
-          break
-
-        case "youtubedownhahaha":
-          var gh = args.join("")
-          var link = gh.split("|")[0]
-          var tipe = gh.split("|")[1]
-          var bv = await fetchJson(
-            `https://api.dhnjing.xyz/downloader/youtube/${tipe}?url=${link}`
-          )
-          if (tipe == "video") {
-            sendMediaURL(from, bv.result.media_resources.videoUrl, "")
-          }
-          if (tipe == "music") {
-            sendMediaURL(from, bv.result.media_resources.musicUrl, "")
-          }
           break
 
           // https://github.com/tesseract-ocr/tesseract

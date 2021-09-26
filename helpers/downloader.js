@@ -149,7 +149,7 @@ module.exports.igdl3 = async (oriUrl) => {
 
 module.exports.igstory = (username) => {
   return new Promise(async (resolve, reject) => {
-    axios.request({
+    await axios.request({
         url: 'https://www.instagramsave.com/instagram-story-downloader.php',
         method: 'GET',
         headers: {
@@ -157,7 +157,7 @@ module.exports.igstory = (username) => {
           "cookie": "PHPSESSID=ugpgvu6fgc4592jh7ht9d18v49; _ga=GA1.2.1126798330.1625045680; _gid=GA1.2.1475525047.1625045680; __gads=ID=92b58ed9ed58d147-221917af11ca0021:T=1625045679:RT=1625045679:S=ALNI_MYnQToDW3kOUClBGEzULNjeyAqOtg"
         }
       })
-      .then(({
+      .then(async ({
         data
       }) => {
         const $ = cheerio.load(data)
@@ -170,43 +170,32 @@ module.exports.igstory = (username) => {
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
           },
           data: {
-            'url': 'https://www.instagram.com/' + username,
+            'url': username,
             'action': 'story',
-            'token': token
+            'token': token,
+            'json': ''
           }
         }
-        axios.post('https://www.instagramsave.com/system/action.php', qs.stringify(config.data), {
+        await axios.post('https://www.instagramsave.com/system/action.php', qs.stringify(config.data), {
             headers: config.headers
           })
           .then(({
             data
           }) => {
-            let result
             let jumlah
             try {
               jumlah = data.medias.length
             } catch (error) {
-              result = [{
-                status: false,
-                msg: "Media tidak ditemukan"
-              }]
+              reject("Media tidak ditemukan")
             }
             if (jumlah >= 1) {
-              result = [{
-                status: true,
-                data: data.medias
-              }]
+              resolve(data.medias)
             } else {
-              result = [{
-                status: false,
-                msg: "Media tidak ditemukan"
-              }]
+              reject("Media tidak ditemukan")
             }
-            resolve(result)
-
           })
       })
-      .catch(reject)
+      .catch((e) => { reject(e.message) })
   })
 }
 
@@ -327,7 +316,6 @@ module.exports.twdl = (link) => {
         }
 
         let result = {
-          status: true,
           thumbnail: thumbnail,
           desc: desc,
           data: {
@@ -775,9 +763,9 @@ module.exports.ytdl_sd = (link) => {
   })
 }
 
-module.exports.ytdl_musik = (link) => {
+module.exports.yotube = (link) => {
   return new Promise(async (resolve, reject) => {
-    let result, img, title, $, size_au, size_sd, size_hd, kualitas_au, kualitas_sd, kualitas_hd, ext_au, ext_sd, ext_hd, id, url_au, url_sd, url_hd
+    let result, img, title, $, size_au, size_sd, size_hd, kualitas_au, kualitas_sd, kualitas_hd, ext_au, ext_sd, ext_hd, id, kualitasname_hd, kualitasname_sd, kualitasname_au
     const ytIdRegex = /(?:http(?:s|):\/\/|)(?:(?:www\.|)youtube(?:\-nocookie|)\.com\/(?:watch\?.*(?:|\&)v=|embed\/|v\/)|youtu\.be\/)([-_0-9A-Za-z]{11})/
     if (!ytIdRegex.test(link)) {
       reject('link invalid')
@@ -805,14 +793,25 @@ module.exports.ytdl_musik = (link) => {
           $ = cheerio.load(data.result)
           img = $('div.thumbnail.cover > a > img').attr('src')
           title = $('div.thumbnail.cover > div > b').text()
+
+          // VIDEO HD
+          kualitas_hd = $('#mp4 > table > tbody > tr:nth-child(1) > td:nth-child(3) > a').attr("data-fquality")
+          ext_hd = $('#mp4 > table > tbody > tr:nth-child(1) > td:nth-child(3) > a').attr("data-ftype")
+          size_hd = $('#mp4 > table > tbody > tr:nth-child(1) > td:nth-child(2)').text()
+          kualitasname_hd = $('#mp4 > table > tbody > tr:nth-child(1) > td:nth-child(1)').text()
+
           // VIDEO SD
           kualitas_sd = $('#mp4 > table > tbody > tr:nth-child(3) > td:nth-child(3) > a').attr("data-fquality")
           ext_sd = $('#mp4 > table > tbody > tr:nth-child(3) > td:nth-child(3) > a').attr("data-ftype")
           size_sd = $('#mp4 > table > tbody > tr:nth-child(3) > td:nth-child(2)').text()
+          kualitasname_sd = $('#mp4 > table > tbody > tr:nth-child(3) > td:nth-child(1)').text()
+
           // AUDIO
           kualitas_au = $('#audio > table > tbody > tr:nth-child(1) > td:nth-child(3) > a:nth-child(2)').attr("data-fquality")
           ext_au = $('#audio > table > tbody > tr:nth-child(1) > td:nth-child(3) > a:nth-child(2)').attr("data-ftype")
           size_au = $('#audio > table > tbody > tr:nth-child(1) > td:nth-child(2)').text()
+          kualitasname_au = $('#audio > table > tbody > tr:nth-child(1) > td:nth-child(1)').text()
+
           id = /var k__id = "(.*?)"/.exec(data.result)[1]
         } catch (e) {
           reject('data yang diperoleh dari https://www.y2mate.com tidak lengkap, hubungi pengembang.')
@@ -822,11 +821,45 @@ module.exports.ytdl_musik = (link) => {
         reject('gagal saat meminta akses ke https://www.y2mate.com, hubungi pengembang.')
       })
 
-    // PROSES AUDIO
+    let url_id = url[1]
+
+    result = {
+      title: title,
+      thumbnail: img,
+      id: id,
+      url_id, url_id,
+      
+      size_au: size_au,
+      kualitas_au: kualitas_au,
+      kualitasname_au: kualitasname_au,
+      ext_au: ext_au,
+
+      size_sd: size_sd,
+      kualitas_sd: kualitas_sd,
+      kualitasname_sd: kualitasname_sd,
+      ext_sd: ext_sd,
+
+      size_hd: size_hd,
+      kualitas_hd: kualitas_hd,
+      kualitasname_hd: kualitasname_hd,
+      ext_hd: ext_hd,
+    }
+
+    resolve(result)
+  })
+}
+
+module.exports.yotube_download = (id, url_id, ext, kualitas) => {
+  return new Promise(async (resolve, reject) => {
+    let headerss = {
+      "sec-ch-ua": '" Not;A Brand";v="99", "Google Chrome";v="91", "Chromium";v="91"',
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+      "Cookie": 'PHPSESSID=6jo2ggb63g5mjvgj45f612ogt7; _ga=GA1.2.405896420.1625200423; _gid=GA1.2.2135261581.1625200423; _PN_SBSCRBR_FALLBACK_DENIED=1625200785624; MarketGidStorage={"0":{},"C702514":{"page":5,"time":1625200846733}}'
+    }
     let configs = {
       type: 'youtube',
       _id: id,
-      v_id: url[1],
+      v_id: url_id,
       ajax: '1',
       token: '',
       ftype: ext,
@@ -841,54 +874,14 @@ module.exports.ytdl_musik = (link) => {
         data
       }) => {
         const $ = cheerio.load(data.result)
-        url_au = $('div > a').attr('href')
+        resolve($('div > a').attr('href'))
       })
       .catch((e) => {
-        url_au = "audio tidak dapat diproses, hubungi pengembang."
+        reject("error")
       })
-
-      // PROSES SD
-      let configs = {
-        type: 'youtube',
-        _id: id,
-        v_id: url[1],
-        ajax: '1',
-        token: '',
-        ftype: ext_sd,
-        fquality: kualitas_sd
-      }
-      await axios('https://www.y2mate.com/mates/en68/convert', {
-          method: 'POST',
-          data: new URLSearchParams(Object.entries(configs)),
-          headers: headerss
-        })
-        .then(({
-          data
-        }) => {
-          const $ = cheerio.load(data.result)
-          url_hasil = $('div > a').attr('href')
-        })
-        .catch((e) => {
-          url_hasil = "video tidak dapat diproses, hubungi pengembang."
-        })
-
-    result = {
-      status: true,
-      title: title,
-      thumbnail: img,
-      size_au: size_au,
-      size_sd: size_sd,
-      size_hd: size_hd,
-      url_au: url_au,
-      url_sd: url_sd,
-      url_hd: url_hd,
-    }
-
-    resolve(result)
   })
 }
 
-// pln ambil dari hotelmurah.com
 module.exports.pln = async (id) => {
   return new Promise((resolve, reject) => {
     axios.get('https://www.hotelmurah.com/pulsa/pln/', {
@@ -1015,6 +1008,7 @@ module.exports.ttdl = (url) => {
               audio: $('div:nth-child(4) > div.download > a').attr('href')
             })
           })
+          .catch(reject)
       })
       .catch(reject)
   })
