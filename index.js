@@ -1166,7 +1166,7 @@ async function main() {
           await qr_fun(qr_txt)
           break
 
-          // https://www.codegrepper.com/code-examples/javascript/read+qr+code+from+image+nodejs
+        // https://www.codegrepper.com/code-examples/javascript/read+qr+code+from+image+nodejs
         case 'qr-read':
         case 'qrr':
         case 'qrread':
@@ -1180,7 +1180,7 @@ async function main() {
             Jimp.read(buffer, function (err, image) {
               if (err) {
                 console.error(err)
-                reply("maaf terjadi kesalahan saat membaca data.")
+                reply(err)
                 return
               }
               let qrcode = new qrCode()
@@ -1277,7 +1277,8 @@ async function main() {
         case 'teb':
         case 'tebak':
         case 'tebakgambar':
-          tebakgambar().then(async (res) => {
+          await tebakgambar()
+            .then(async (res) => {
               await sendMediaURL(from, res.image, "_kami tunggu 2 menit mulai dari sekarang_")
                 .then((resp) => {
                   console.log("sent")
@@ -1334,7 +1335,6 @@ async function main() {
                       ], {
                         quoted: resp
                       })
-                      // conn.sendMessage(from, "Kamu gagal menjawab, jawaban sebenarnya adalah *" + jawaban + "*.", text, {quoted: resp})
                       let datatsdebakgambar = JSON.parse(fs.readFileSync("./src/data/tebakgambar.json"))
                       let inddfx
                       datatebakgambar.forEach((i, el) => {
@@ -1443,9 +1443,8 @@ async function main() {
             .then(async ({
               data
             }) => {
-              console.log(data.url)
               const buffer = await getBuffer(data.url)
-              sendButImage(from, data.title, data.subreddit, buffer, [{
+              await sendButImage(from, data.title, data.subreddit, buffer, [{
                 buttonId: `${prefix}ls`,
                 buttonText: {
                   displayText: `💋 Lagi dong`,
@@ -1458,7 +1457,8 @@ async function main() {
                 .then(async ({
                   data
                 }) => {
-                  sendButImage(from, data.title, data.subreddit, data.url, [{
+                  const buffer1 = await getBuffer(data.url)
+                  sendButImage(from, data.title, data.subreddit, buffer1, [{
                     buttonId: `${prefix}ls`,
                     buttonText: {
                       displayText: `💋 Lagi dong`,
