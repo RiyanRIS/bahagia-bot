@@ -39,6 +39,7 @@ const Jimp = require("jimp")
 const qrCode = require('qrcode-reader')
 const moment = require("moment-timezone")
 const ocrSpaceApi = require('ocr-space-api')
+const request = require('request')
 
 // LOAD LIBRARY
 const {
@@ -64,6 +65,18 @@ const {
   removebg
 } = require("./lib/removebg")
 const sms = require("./lib/bombsms")
+const {
+  getGroupAdmins,
+  helpBiasa,
+  adminHelp,
+  getRandom,
+  randomString,
+  shortlink,
+  formatBytes,
+  getBuffer,
+  isUrl,
+  fetchJson
+} = require("./helpers/function")
 
 const dl = require("./helpers/downloader")
 
@@ -73,164 +86,6 @@ const pesan = require('./src/pesan');
 // BASIC SETTINGS
 const prefix = '/'
 const time = moment.tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss")
-
-// LOAD CUSTOM FUNCTIONS
-const getGroupAdmins = (participants) => {
-  admins = []
-  for (let i of participants) {
-    i.isAdmin ? admins.push(i.jid) : ''
-  }
-  return admins
-}
-const helpBiasa = (prefix) => {
-  return `
-  🎀 *Bahagia-Bot* 🎀
-
-*${prefix}sticker*
-    _Membuat Sticker dari foto/video_
-
-*${prefix}ytmp3 <Link-YT>*
-    _Download lagu dari YouTube_
-
-*${prefix}ytmp4 <Link-YT>*
-    _Download video dari YouTube_
-
-*${prefix}igdl <Link-IG>*
-    _Download video dari Instagram_
-
-*${prefix}twdl <Link-TW>*
-    _Twitter Video Downloader_
-
-*${prefix}ttdl <Link-Tiktok>*
-    _Tiktok Video Downloader_
-
-*${prefix}ocr*
-    _Mengubah gambar menjadi teks_
-    *_Jangan lupa lampirin gambar yang ingin di scan_
-
-*${prefix}carbon <Teks>*
-    _Mengubah teks menjadi gambar keren_
-
-*${prefix}qr <Teks>*
-    _Membuat QR kode dari text/link tertentu_
-
-*${prefix}qrr*
-    _Membaca hasil QR kode dari gambar_
-    *_Jangan lupa lampirin gambar yang ingin di scan_
-
-*${prefix}rmbg*
-    _Menghapus background foto_
-    *_Jangan lupa lampirin gambar yang ingin di hapus backgroudnya_
-
-*${prefix}pln <ID-PEL>*
-    _Cek tagihan listrik pascabayar_
-
-*${prefix}sms <NO-TELP>*
-    _Bomb SMS, gunakan format 87755xxx_
-    _Misal nomor target 089677249020_
-    _Maka tulis_ *${prefix}sms 89677249020*
-
-*${prefix}katacinta*
-    _Kata cinta random_
-
-*${prefix}katamotivasi*
-    _Kata motivasi random_
-
-*${prefix}faktaunik*
-    _Fakta unik random_
-
-🛡 _Semua data yang kamu kirim, nggak kami simpen kok, dijamin aman deh_\n
-🛠 _Request fitur atau ada masalah pada bot ini, hubungi Developer_`
-}
-const adminHelp = (prefix) => {
-  return `
-  🎀 *Bahagia-Bot* 🎀
-
-*${prefix}add <nomor hp>*
-    _Tambah member kedalam group!_
-
-*${prefix}kick <@mention-user>*
-    _Kick out member!_
-    _Bisa juga menggunakan ${prefix}remove, ${prefix}ban_
-
-*${prefix}promote <@mention-user>*
-    _Mempromosikan user menjadi admin group!_
-
-*${prefix}demote <@mention-user>*
-    _Menurunkan user dari admin group!_
-
-*${prefix}rename <nama-baru>*
-    _Mengubah nama group!_
-
-*${prefix}chat <on/off>*
-    _Enable/disable group_
-    _/chat on - semua bisa ngirim pesan!_
-    _/chat off - hanya admin yang ngirim pesan!_
-
-*${prefix}link*
-    _Memunculkan link undangan group!_
-    _Perintah lain: ${prefix}getlink, ${prefix}grouplink_
-
-*${prefix}sticker*
-    _Membuat stiker!_
-    *Parameter:*
-        _crop_ - Memperkecil ukuran stiker!
-        _author_ - Memberi metadata author pada stiker!
-        _pack_ - Memberi metadata pack pada stiker!
-        _nometadata_ - Menghapus semua metadata pada stiker!
-    *Examples:*
-        _${prefix}sticker pack bahagia-bot author riyanris_
-        _${prefix}sticker crop_
-        _${prefix}sticker nometadata_
-
-*${prefix}removebot*
-    _Mengeluarkan bot dari group!_`
-}
-const getRandom = (ext) => {
-  return `${Math.floor(Math.random() * 1000000)}${ext}`
-}
-const randomString = (length) => {
-  let chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyzsadw'
-  let str = '';
-  lengt = length || 9
-  for (let i = 0; i < length; i++) {
-    str += chars[Math.floor(Math.random() * 65)];
-  }
-  return str
-}
-const shortlink = async (url) => {
-  const getdt = await axios.get(`https://tinyurl.com/api-create.php?url=${url}`)
-  return getdt.data
-}
-const formatBytes = (bytes, decimals = 2) => {
-  if (bytes === 0) return '0 Bytes';
-
-  const k = 1024;
-  const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-}
-const getBuffer = async (url, opts) => {
-  try {
-    const reqdata = await axios({
-      method: "get",
-      url,
-      headers: {
-        'DNT': 1,
-        'Upgrade-Insecure-Requests': 1,
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
-      },
-      ...opts,
-      responseType: 'arraybuffer'
-    });
-    return reqdata.data
-  } catch (e) {
-    throw e
-  }
-}
 
 // MAIN FUNCTION
 async function main() {
@@ -257,7 +112,7 @@ async function main() {
 
   setInterval(async () => {
     const tg = moment.tz("Asia/Jakarta").format("MMMM DD, YYYY")
-    const biography = '📅 ' + tg + ' 🇮🇩 Gunakan \\help untuk melihat perintah yang tersedia.'
+    const biography = '📅 ' + tg + ' 🇮🇩 Gunakan \/help untuk melihat perintah yang tersedia.'
     await conn.setStatus(biography)
   }, 50000);
 
@@ -331,7 +186,7 @@ async function main() {
       // const command = body.slice(1).trim().split(/ +/).shift().toLowerCase()
       const command = chats.split(/ +/g)[0]
 
-      const args = body.trim().split(/ +/).slice(1)
+      const args = _chats.trim().split(/ +/).slice(1)
       // const isCmd = body.startsWith(prefix)
       const isCmd = _chats.match(prefixRegEx) ?
         prefixRegEx.exec(_chats)["input"] :
@@ -369,6 +224,61 @@ async function main() {
           }
         })
       }
+
+      const sendMediaURL = async (to, url, text = "") => {
+        // return new Promise((resolve, reject) => {
+        const fn = Date.now() / 1000
+        const filename = fn.toString()
+        let mime = ""
+        var download = function (uri, filename, callback) {
+          console.log("downloading media..")
+          try {
+            request.head(uri, function (err, res, body) {
+              mime = res.headers["content-type"]
+              request(uri)
+                .pipe(fs.createWriteStream(filename))
+                .on("close", callback)
+            })
+          } catch (error) {
+            reply("Maaf, terjadi kesalahan saat mendownload media, coba cek url yang kamu lampirkan atau gunakan format yang lain.")
+            return
+          }
+        }
+        download(url, filename, async function () {
+          let media = fs.readFileSync(filename)
+          let type = mime.split("/")[0] + "Message"
+          if (mime === "image/gif") {
+            type = MessageType.video
+            mime = Mimetype.gif
+          }
+          if (mime.split("/")[0] === "audio") {
+            mime = Mimetype.mp4Audio
+          }
+          console.log("sending")
+          try {
+            await conn.sendMessage(to, media, type, {
+              quoted: mek,
+              mimetype: mime,
+              caption: text,
+            })
+            .then((res) => {
+              console.log("sent")
+              return res
+            })
+            .catch((e) => {
+              reply("error")
+              return e.message
+            })
+          } catch (error) {
+            reply("Maaf terjadi kesalahan saat mengirim file ke kamu, silahkan download sendiri secara manual melalui link berikut \n\n" + url)
+            return error.message
+          }
+
+          fs.unlinkSync(filename)
+        })
+        // })
+      }
+
 
       const sendMed = async (res, jenis) => {
         if (res.status) {
@@ -417,46 +327,25 @@ async function main() {
         but = [],
         options = {}
       ) => {
-        conn.prepareMessage(from, await getBuffer(gam1), image)
-          .then((mhan) => {
-            const buttonMessages = {
-              imageMessage: mhan.message.imageMessage,
-              contentText: text1,
-              footerText: desc1,
-              buttons: but,
-              headerType: 4,
-            };
-            conn.sendMessage(
-              id,
-              buttonMessages,
-              MessageType.buttonsMessage,
-              options
-            );
-          })
-          .catch((e) => {
-            conn.prepareMessage(from, {
-              url: gam1
-            }, image).then((mhan) => {
-              const buttonMessages = {
-                imageMessage: mhan.message.imageMessage,
-                contentText: text1,
-                footerText: desc1,
-                buttons: but,
-                headerType: 4,
-              };
-              conn.sendMessage(
-                id,
-                buttonMessages,
-                MessageType.buttonsMessage,
-                options
-              );
-            })
-          })
-
+        kma = gam1;
+        mhan = await conn.prepareMessage(from, kma, image);
+        const buttonMessages = {
+          imageMessage: mhan.message.imageMessage,
+          contentText: text1,
+          footerText: desc1,
+          buttons: but,
+          headerType: 4,
+        };
+        conn.sendMessage(
+          id,
+          buttonMessages,
+          MessageType.buttonsMessage,
+          options
+        );
       }
 
       const sendToOwner = async (text) => {
-        await conn.sendMessage(conn.user.jid, text, MessageType.text) 
+        await conn.sendMessage(conn.user.jid, text, MessageType.text)
       }
 
       const sendFileFromUrl = async (link, type, options) => {
@@ -912,16 +801,6 @@ async function main() {
           await sendMed(res_twdl, video)
           break
 
-        case 'tiktok':
-        case 'ttdl':
-          const res_ttdl = await ttdl(args[0])
-          await sendMed(res_ttdl, video)
-          break
-
-        case 'yt':
-
-          break;
-
         case 'ytmp3':
           const res_ytmp3 = await ytmp3(args[0])
           await sendMed(res_ytmp3, audio)
@@ -931,12 +810,115 @@ async function main() {
           const res_ytmp4 = await ytmp4(args[0])
           await sendMed(res_ytmp4, video)
           break
+        
+        case 'yt':
+        case 'youtube':
+          if (!isUrl(args[0]) && !args[0].includes("youtu")) {
+            await reply("_Link tidak valid_")
+            return
+          }
+
+          var bv = await fetchJson(
+            `https://api.dhnjing.xyz/downloader/youtube/video?url=${args[0]}&apikey=beta`
+          )
+          var b = bv.result.creator_metadata
+          var tamnel = await getBuffer(bv.result.media_resources.thumbnail)
+          var a = bv.result.media_metadata
+          sendButImage(
+            from,
+            `*Name channel*: ${b.name}\n📜 *Title*: ${a.title}\n❤️ *Like*: ${a.totalLikes}\n🎞️ *Views*: ${a.totalViews}\n\nSilahkan pilih salah satu format yg mau didownload`, "Bahagia-Bot",
+            tamnel,
+            [
+              {
+                buttonId: `${prefix}youtubedownhahaha ${args[0]}|video`,
+                buttonText: {
+                  displayText: `VIDEO HD`,
+                },
+                type: 1,
+              },
+              {
+                buttonId: `${prefix}youtubedownhahaha ${args[0]}|video`,
+                buttonText: {
+                  displayText: `VIDEO SD`,
+                },
+                type: 1,
+              },
+              {
+                buttonId: `${prefix}youtubedownhahaha ${args[0]}|video`,
+                buttonText: {
+                  displayText: `AUDIO`,
+                },
+                type: 1,
+              },
+            ]
+          )
+
+          break
 
         case 'igdl':
         case 'igdown':
         case 'igdownloader':
           const res_igdl = await igdl(args[0])
           await sendMed(res_igdl, video)
+          break
+
+        case "tiktok":
+        case "ttdl":
+          if (!isUrl(args[0]) && !args[0].includes("tiktok.com")) {
+            await reply("_Link tidak valid_")
+            return
+          }
+          await dl.ttdl(`https://www.tiktok.com/@ekosaputra20/video/7004000895004462363?sender_device=pc&sender_web_id=7003580153716557313&is_from_webapp=v1&is_copy_url=0`).then(async (res) => {
+            await sendButMessage(from, "Silahkan pilih salah satu format yg mau didownload", "Bahagia-Bot", [
+              {
+                buttonId: `${prefix}sndmediaa ${res.nowm}`,
+                buttonText: {
+                  displayText: `NO WM`,
+                },
+                type: 1,
+              },
+              {
+                buttonId: `${prefix}sndmediaa ${res.wm}`,
+                buttonText: {
+                  displayText: `WITH WM`,
+                },
+                type: 1,
+              },
+              {
+                buttonId: `${prefix}sndmediaa ${res.audio}`,
+                buttonText: {
+                  displayText: `AUDIO`,
+                },
+                type: 1,
+              }
+            ]).then((resp) => {
+              console.log("done")
+            }).catch((e) => {
+              reply(e.message)
+            })
+          }).catch((e) => {
+            reply(e.message)
+          })
+          break
+
+        case "sndmediaa":
+          console.log(args[0])
+          await sendMediaURL(from, args[0], "")
+          break
+
+        case "youtubedownhahaha":
+          var gh = args.join("")
+          var link = gh.split("|")[0]
+          var tipe = gh.split("|")[1]
+          var bv = await fetchJson(
+            `https://api.dhnjing.xyz/downloader/youtube/${tipe}?url=${link}`
+          )
+          if (tipe == "video") {
+            sendMediaURL(from, bv.result.media_resources.videoUrl, "")
+          }
+          if (tipe == "music") {
+            sendMediaURL(from, bv.result.media_resources.musicUrl, "")
+          }
           break
 
           // https://github.com/tesseract-ocr/tesseract
@@ -1210,14 +1192,8 @@ async function main() {
         case 'teb':
         case 'tebak':
         case 'tebakgambar':
-          reply("```Tunggu sebentar...```")
-          tebakgambar()
-            .then((res) => {
-              conn.sendMessage(from, {
-                  url: res.image
-                }, image, {
-                  caption: "_kami tunggu 2 menit mulai dari sekarang_"
-                })
+          tebakgambar().then(async (res) => {
+              await sendMediaURL(from, res.image, "_kami tunggu 2 menit mulai dari sekarang_")
                 .then((resp) => {
                   console.log("sent")
 
@@ -1310,6 +1286,9 @@ async function main() {
                   })
                 })
             })
+            .catch((e) => {
+              reply(e)
+            })
           break
 
         case 'sms':
@@ -1380,7 +1359,8 @@ async function main() {
               data
             }) => {
               console.log(data.url)
-              sendButImage(from, data.title, data.subreddit, data.url, [{
+              const buffer = await getBuffer(data.url)
+              sendButImage(from, data.title, data.subreddit, buffer, [{
                 buttonId: `${prefix}ls`,
                 buttonText: {
                   displayText: `💋 Lagi dong`,

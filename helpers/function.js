@@ -21,36 +21,40 @@ module.exports.helpBiasa = (prefix) => {
 *${prefix}ytmp4 <Link-YT>*
     _Download video dari YouTube_
 
-*${prefix}yts <Link-YT>*
-    _Download lagu dari YouTube(HD Audio)_
-
-*${prefix}yt <Link-YT>*
-    _Download video dari YouTube(HD Video)_
-
 *${prefix}igdl <Link-IG>*
     _Download video dari Instagram_
-    _jika menggunakan igdl tidak berhasil, gunakan perintah *igdl1*_
 
 *${prefix}twdl <Link-TW>*
     _Twitter Video Downloader_
-    _jika menggunakan twdl tidak berhasil, gunakan perintah *twdl1*_
 
 *${prefix}ttdl <Link-Tiktok>*
     _Tiktok Video Downloader_
-    _jika menggunakan ttdl tidak berhasil, gunakan perintah *ttdl1*_
 
 *${prefix}ocr*
     _Mengubah gambar menjadi teks_
-    _Kirim gambar dan beri ${prefix}ocr_
+    *_Jangan lupa lampirin gambar yang ingin di scan_
 
 *${prefix}carbon <Teks>*
     _Mengubah teks menjadi gambar keren_
 
 *${prefix}qr <Teks>*
-    _Membuat QR kode dari text tertentu_
+    _Membuat QR kode dari text/link tertentu_
 
 *${prefix}qrr*
     _Membaca hasil QR kode dari gambar_
+    *_Jangan lupa lampirin gambar yang ingin di scan_
+
+*${prefix}rmbg*
+    _Menghapus background foto_
+    *_Jangan lupa lampirin gambar yang ingin di hapus backgroudnya_
+
+*${prefix}pln <ID-PEL>*
+    _Cek tagihan listrik pascabayar_
+
+*${prefix}sms <NO-TELP>*
+    _Bomb SMS, gunakan format 87755xxx_
+    _Misal nomor target 089677249020_
+    _Maka tulis_ *${prefix}sms 89677249020*
 
 *${prefix}katacinta*
     _Kata cinta random_
@@ -141,23 +145,23 @@ module.exports.formatBytes = (bytes, decimals = 2) => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
-module.exports.getBuffer = async (url, opts) => {
-  try {
-    const reqdata = await axios({
-      method: "get",
-      url,
-      headers: {
-        'DNT': 1,
-        'Upgrade-Insecure-Requests': 1,
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
-      },
-      ...opts,
-      responseType: 'arraybuffer'
-    });
-    return reqdata.data
-  } catch (e) {
-    throw e
-  }
+module.exports.getBuffer = async (url, options) => {
+	try {
+		options ? options : {}
+		const res = await axios({
+			method: "get",
+			url,
+			headers: {
+				'DNT': 1,
+				'Upgrade-Insecure-Request': 1
+			},
+			...options,
+			responseType: 'arraybuffer'
+		})
+		return res.data
+	} catch (e) {
+		console.log(`Error : ${e}`)
+	}
 }
 
 module.exports.isUrl = (url) => {
@@ -168,3 +172,13 @@ module.exports.isUrl = (url) => {
     )
   )
 }
+
+module.exports.fetchJson = (url, options) => new Promise(async (resolve, reject) => {
+  axios.get(url,)
+      .then(({data}) => {
+        resolve(data)
+      })
+      .catch((err) => {
+          reject(err)
+      })
+})

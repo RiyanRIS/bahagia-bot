@@ -4,7 +4,7 @@ const qs = require("qs")
 const FileType = require('file-type')
 const got = require('got')
 const FormData = require('form-data')
-const { reject } = require("async")
+const ttscrp = require("tiktok-scraper")
 
 module.exports.igdl = (url) => {
   return new Promise(async (resolve, reject) => {
@@ -777,7 +777,7 @@ module.exports.ytdl_sd = (link) => {
 
 module.exports.ytdl_musik = (link) => {
   return new Promise(async (resolve, reject) => {
-    let result, img, title, $, size, kualitas, ext, id, url_hasil
+    let result, img, title, $, size_au, size_sd, size_hd, kualitas_au, kualitas_sd, kualitas_hd, ext_au, ext_sd, ext_hd, id, url_au, url_sd, url_hd
     const ytIdRegex = /(?:http(?:s|):\/\/|)(?:(?:www\.|)youtube(?:\-nocookie|)\.com\/(?:watch\?.*(?:|\&)v=|embed\/|v\/)|youtu\.be\/)([-_0-9A-Za-z]{11})/
     if (!ytIdRegex.test(link)) {
       reject('link invalid')
@@ -805,9 +805,14 @@ module.exports.ytdl_musik = (link) => {
           $ = cheerio.load(data.result)
           img = $('div.thumbnail.cover > a > img').attr('src')
           title = $('div.thumbnail.cover > div > b').text()
-          kualitas = $('#audio > table > tbody > tr:nth-child(1) > td:nth-child(3) > a:nth-child(2)').attr("data-fquality")
-          ext = $('#audio > table > tbody > tr:nth-child(1) > td:nth-child(3) > a:nth-child(2)').attr("data-ftype")
-          size = $('#audio > table > tbody > tr:nth-child(1) > td:nth-child(2)').text()
+          // VIDEO SD
+          kualitas_sd = $('#mp4 > table > tbody > tr:nth-child(3) > td:nth-child(3) > a').attr("data-fquality")
+          ext_sd = $('#mp4 > table > tbody > tr:nth-child(3) > td:nth-child(3) > a').attr("data-ftype")
+          size_sd = $('#mp4 > table > tbody > tr:nth-child(3) > td:nth-child(2)').text()
+          // AUDIO
+          kualitas_au = $('#audio > table > tbody > tr:nth-child(1) > td:nth-child(3) > a:nth-child(2)').attr("data-fquality")
+          ext_au = $('#audio > table > tbody > tr:nth-child(1) > td:nth-child(3) > a:nth-child(2)').attr("data-ftype")
+          size_au = $('#audio > table > tbody > tr:nth-child(1) > td:nth-child(2)').text()
           id = /var k__id = "(.*?)"/.exec(data.result)[1]
         } catch (e) {
           reject('data yang diperoleh dari https://www.y2mate.com tidak lengkap, hubungi pengembang.')
@@ -817,6 +822,7 @@ module.exports.ytdl_musik = (link) => {
         reject('gagal saat meminta akses ke https://www.y2mate.com, hubungi pengembang.')
       })
 
+    // PROSES AUDIO
     let configs = {
       type: 'youtube',
       _id: id,
@@ -835,20 +841,47 @@ module.exports.ytdl_musik = (link) => {
         data
       }) => {
         const $ = cheerio.load(data.result)
-        url_hasil = $('div > a').attr('href')
+        url_au = $('div > a').attr('href')
       })
       .catch((e) => {
-        url_hasil = "audio tidak dapat diproses, hubungi pengembang."
+        url_au = "audio tidak dapat diproses, hubungi pengembang."
       })
+
+      // PROSES SD
+      let configs = {
+        type: 'youtube',
+        _id: id,
+        v_id: url[1],
+        ajax: '1',
+        token: '',
+        ftype: ext_sd,
+        fquality: kualitas_sd
+      }
+      await axios('https://www.y2mate.com/mates/en68/convert', {
+          method: 'POST',
+          data: new URLSearchParams(Object.entries(configs)),
+          headers: headerss
+        })
+        .then(({
+          data
+        }) => {
+          const $ = cheerio.load(data.result)
+          url_hasil = $('div > a').attr('href')
+        })
+        .catch((e) => {
+          url_hasil = "video tidak dapat diproses, hubungi pengembang."
+        })
 
     result = {
       status: true,
       title: title,
       thumbnail: img,
-      kualitas: kualitas,
-      ext: ext,
-      size: size,
-      url: url_hasil,
+      size_au: size_au,
+      size_sd: size_sd,
+      size_hd: size_hd,
+      url_au: url_au,
+      url_sd: url_sd,
+      url_hd: url_hd,
     }
 
     resolve(result)
@@ -944,8 +977,6 @@ module.exports.pln = async (id) => {
   })
 }
 
-
-
 module.exports.ttdl = (url) => {
   return new Promise(async (resolve, reject) => {
     axios.get('https://ttdownloader.com/', {
@@ -986,6 +1017,23 @@ module.exports.ttdl = (url) => {
           })
       })
       .catch(reject)
+  })
+}
+
+module.exports.ttdl2 = (url) => {
+  return new Promise(async (resolve, reject) => {
+    try{
+      const data = await ttscrp.getVideoMeta(url)
+      let res = {
+        text: data.collector[0].text,
+        tumb: data.collector[0].imageUrl,
+        wm: data.collector[0].videoUrl,
+        nowm: data.collector[0].videoUrlNoWaterMark,
+      }
+      resolve(res)
+    } catch(err) {
+      reject(err.message)
+    }
   })
 }
 

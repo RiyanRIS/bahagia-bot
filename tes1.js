@@ -1,28 +1,14 @@
 const {
   WAConnection,
   MessageType,
-  WA_DEFAULT_EPHEMERAL
+  WA_DEFAULT_EPHEMERAL,
+  Mimetype
 } = require('@adiwajshing/baileys')
-const axios = require("axios")
 
-const getBuffer = async (url, opts) => {
-  try {
-    const reqdata = await axios({
-      method: "get",
-      url,
-      headers: {
-        'DNT': 1,
-        'Upgrade-Insecure-Requests': 1,
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
-      },
-      ...opts,
-      responseType: 'arraybuffer'
-    });
-    return reqdata.data
-  } catch (e) {
-    throw e
-  }
-}
+const fs = require("fs")
+const request = require('request')
+
+let url = "https://ttdownloader.com/dl.php?v=YTo0OntzOjk6IndhdGVybWFyayI7YjoxO3M6NzoidmlkZW9JZCI7czozMjoiZjVkOWJkNDc0MzUxNzI2NTU1ZWJkYzUxYTUyZjkwMDMiO3M6MzoidWlkIjtzOjMyOiJmMGNjOTg3MmFjOGNlMjc2N2M2Yjk0OWM3ZmViMjMwOCI7czo0OiJ0aW1lIjtpOjE2MzI1NTI4MzQ7fQ=="
 
 const a = async () => {
   const from = "15108986398@c.us"
@@ -46,19 +32,44 @@ const a = async () => {
     timeoutMs: 30 * 1000
   })
 
-  // turn on disappearing messages
-  await conn.toggleDisappearingMessages(
-    from, 
-    5 // this is 1 week in seconds -- how long you want messages to appear for
-  ) 
-  // will automatically send as a disappearing message
-  await conn.sendMessage(from, 'Hello poof!', MessageType.text)
-  // turn off disappearing messages
-  await conn.toggleDisappearingMessages(from, 0)
+  const sendMediaURL = async (to, url, text = "") => {
+    
+    const fn = Date.now() / 1000;
+    const filename = fn.toString();
+    let mime = "";
+    var download = function (uri, filename, callback) {
+      request.head(uri, function (err, res, body) {
+        mime = res.headers["content-type"];
+        request(uri)
+          .pipe(fs.createWriteStream(filename))
+          .on("close", callback);
+      });
+    };
+    download(url, filename, async function () {
+      console.log("done");
+      let media = fs.readFileSync(filename);
+      let type = mime.split("/")[0] + "Message";
+      if (mime === "image/gif") {
+        type = MessageType.video;
+        mime = Mimetype.gif;
+      }
+      if (mime.split("/")[0] === "audio") {
+        mime = Mimetype.mp4Audio;
+      }
+      conn.sendMessage(to, media, type, {
+        // quoted: mek,
+        mimetype: mime,
+        caption: text,
+      });
 
+      fs.unlinkSync(filename);
+    });
+  };
 
-
+  sendMediaURL(from, url, "")
+  // await new Promise(r => setTimeout(r, 3000)); 
 }
+
 a()
 
 

@@ -1,6 +1,6 @@
 
 ## BahagiaBot - Node Js - Heroku - Baileys
-
+ 
 ## List Perintah :
 
 |  Commands             |       Alias                  |       Description        |
