@@ -1449,6 +1449,9 @@ async function main() {
             .then(async (res) => {
               let img = await getBuffer(res.image)
               await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              .catch((e) => {
+                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
+              })
             })
             .catch((e) => {
               reply(e)
@@ -1460,6 +1463,9 @@ async function main() {
             .then(async (res) => {
               let img = await getBuffer(res.image)
               await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              .catch((e) => {
+                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
+              })
             })
             .catch((e) => {
               reply(e)
@@ -1471,6 +1477,9 @@ async function main() {
             .then(async (res) => {
               let img = await getBuffer(res.image)
               await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              .catch((e) => {
+                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
+              })
             })
             .catch((e) => {
               reply(e)
@@ -1482,6 +1491,9 @@ async function main() {
             .then(async (res) => {
               let img = await getBuffer(res.image)
               await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              .catch((e) => {
+                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
+              })
             })
             .catch((e) => {
               reply(e)
@@ -1493,6 +1505,9 @@ async function main() {
             .then(async (res) => {
               let img = await getBuffer(res.image)
               await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              .catch((e) => {
+                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
+              })
             })
             .catch((e) => {
               reply(e)
@@ -1504,6 +1519,9 @@ async function main() {
             .then(async (res) => {
               let img = await getBuffer(res.image)
               await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              .catch((e) => {
+                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
+              })
             })
             .catch((e) => {
               reply(e)
@@ -1515,6 +1533,9 @@ async function main() {
             .then(async (res) => {
               let img = await getBuffer(res.image)
               await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              .catch((e) => {
+                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
+              })
             })
             .catch((e) => {
               reply(e)
@@ -1526,6 +1547,9 @@ async function main() {
             .then(async (res) => {
               let img = await getBuffer(res.image)
               await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              .catch((e) => {
+                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
+              })
             })
             .catch((e) => {
               reply(e)
@@ -1537,6 +1561,9 @@ async function main() {
             .then(async (res) => {
               let img = await getBuffer(res.image)
               await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              .catch((e) => {
+                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
+              })
             })
             .catch((e) => {
               reply(e)
@@ -1548,6 +1575,9 @@ async function main() {
             .then(async (res) => {
               let img = await getBuffer(res.image)
               await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              .catch((e) => {
+                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
+              })
             })
             .catch((e) => {
               reply(e)
@@ -1559,6 +1589,9 @@ async function main() {
             .then(async (res) => {
               let img = await getBuffer(res.image)
               await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              .catch((e) => {
+                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
+              })
             })
             .catch((e) => {
               reply(e)
@@ -1570,6 +1603,9 @@ async function main() {
             .then(async (res) => {
               let img = await getBuffer(res.image)
               await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              .catch((e) => {
+                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
+              })
             })
             .catch((e) => {
               reply(e)
@@ -1581,6 +1617,9 @@ async function main() {
             .then(async (res) => {
               let img = await getBuffer(res.image)
               await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              .catch((e) => {
+                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
+              })
             })
             .catch((e) => {
               reply(e)
@@ -1591,7 +1630,10 @@ async function main() {
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-funny-animations-of-a-traveling-bear-701.html')
             .then(async (res) => {
               let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              await conn.sendMessage(from, img, video, { mimetype: Mimetype.gif, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              .catch((e) => {
+                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
+              })
             })
             .catch((e) => {
               reply(e)
@@ -1602,7 +1644,10 @@ async function main() {
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/write-name-on-heart-with-wings-gifs-430.html')
             .then(async (res) => {
               let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              await conn.sendMessage(from, img, video, { mimetype: Mimetype.gif, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              .catch((e) => {
+                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
+              })
             })
             .catch((e) => {
               reply(e)
@@ -1614,6 +1659,9 @@ async function main() {
             .then(async (res) => {
               let img = await getBuffer(res.image)
               await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              .catch((e) => {
+                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
+              })
             })
             .catch((e) => {
               reply(e)
@@ -1624,7 +1672,10 @@ async function main() {
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-puppy-cute-animated-online-478.html')
             .then(async (res) => {
               let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              await conn.sendMessage(from, img, video, { mimetype: Mimetype.gif, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              .catch((e) => {
+                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
+              })
             })
             .catch((e) => {
               reply(e)
@@ -1636,6 +1687,9 @@ async function main() {
             .then(async (res) => {
               let img = await getBuffer(res.image)
               await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              .catch((e) => {
+                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
+              })
             })
             .catch((e) => {
               reply(e)
@@ -1647,6 +1701,9 @@ async function main() {
             .then(async (res) => {
               let img = await getBuffer(res.image)
               await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              .catch((e) => {
+                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
+              })
             })
             .catch((e) => {
               reply(e)
@@ -1658,6 +1715,9 @@ async function main() {
             .then(async (res) => {
               let img = await getBuffer(res.image)
               await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              .catch((e) => {
+                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
+              })
             })
             .catch((e) => {
               reply(e)
@@ -1668,7 +1728,10 @@ async function main() {
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-pubg-style-glitch-video-avatar-554.html')
             .then(async (res) => {
               let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              await conn.sendMessage(from, img, video, { mimetype: Mimetype.mp4, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              .catch((e) => {
+                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
+              })
             })
             .catch((e) => {
               reply(e)
@@ -1679,7 +1742,10 @@ async function main() {
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/lightning-pubg-video-logo-maker-online-615.html')
             .then(async (res) => {
               let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              await conn.sendMessage(from, img, video, { mimetype: Mimetype.mp4, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+              .catch((e) => {
+                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
+              })
             })
             .catch((e) => {
               reply(e)
