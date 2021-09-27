@@ -10,22 +10,25 @@ const axios = require("axios")
   let urls = "https://www.youtube.com/watch?v=0SlInpIqHiE"
   let url_ig = "https://www.instagram.com/vincentrompies/"
 
-  const ax = async () => {
-    await dl.igstory(url_ig)
-      .then(async (igs) => {
-        try {
-          igs.forEach(async (element) => {
-            console.log(element)
-          })
-        } catch(e) {
-          console.log(e)
-        }
-      })
-      .catch((e) => {
-        console.log(e)
-      })
-  }
-  ax()
+  
+  py("ini adalah asem kecut", 'https://en.ephoto360.com/dark-green-typography-online-359.html')
+
+  // const ax = async () => {
+  //   await dl.igstory(url_ig)
+  //     .then(async (igs) => {
+  //       try {
+  //         igs.forEach(async (element) => {
+  //           console.log(element)
+  //         })
+  //       } catch(e) {
+  //         console.log(e)
+  //       }
+  //     })
+  //     .catch((e) => {
+  //       console.log(e)
+  //     })
+  // }
+  // ax()
   // axios.get(base + url1).then(({data}) => {
   //   console.log(data)
   // })

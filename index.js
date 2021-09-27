@@ -64,6 +64,9 @@ const {
 const {
   removebg
 } = require("./lib/removebg")
+const {
+  ephoto360
+} = require("./lib/ephoto360")
 const sms = require("./lib/bombsms")
 const {
   getGroupAdmins,
@@ -1433,13 +1436,146 @@ async function main() {
           await conn.sendMessage(from, Buffer.from(ttinullimage.data), MessageType.image, { mimetype: Mimetype.png })
           break
         
-          case 'trump':
-          case 'trumptweet':
-            var ttinullimage = await axios.get(`https://nekobot.xyz/api/imagegen?type=trumptweet&text=${args.join(" ").replace(/Ö/g, "%C3%96").replace(/ö/g, "%C3%B6").replace(/ü/g, "%C3%BC").replace(/Ü/g, "%C3%9C").replace(/Ğ/g, "%C4%9E").replace(/ğ/g, "%C4%9F").replace(/ş/g, "%C5%9F").replace(/Ş/g, "%C5%9E").replace(/ç/g, "%C3%A7").replace(/Ç/g, "%C3%87").replace(/ı/g, "%C4%B1").replace(/i/g, "%69").replace(/"/g, "%22").replace(/İ/g, "%C4%B0")}&raw=1`, { responseType: 'arraybuffer' })
-  
-            await conn.sendMessage(from, Buffer.from(ttinullimage.data), MessageType.image, { mimetype: Mimetype.png })
-            break
+        case 'trump':
+        case 'trumptweet':
+          var ttinullimage = await axios.get(`https://nekobot.xyz/api/imagegen?type=trumptweet&text=${args.join(" ").replace(/Ö/g, "%C3%96").replace(/ö/g, "%C3%B6").replace(/ü/g, "%C3%BC").replace(/Ü/g, "%C3%9C").replace(/Ğ/g, "%C4%9E").replace(/ğ/g, "%C4%9F").replace(/ş/g, "%C5%9F").replace(/Ş/g, "%C5%9E").replace(/ç/g, "%C3%A7").replace(/Ç/g, "%C3%87").replace(/ı/g, "%C4%B1").replace(/i/g, "%69").replace(/"/g, "%22").replace(/İ/g, "%C4%B0")}&raw=1`, { responseType: 'arraybuffer' })
 
+          await conn.sendMessage(from, Buffer.from(ttinullimage.data), MessageType.image, { mimetype: Mimetype.png })
+          break
+        
+        // https://en.ephoto360.com/
+        case 'textleaf':
+          await ephoto360(args.join(" "), 'https://en.ephoto360.com/dark-green-typography-online-359.html')
+            .then(async (res) => {
+              let img = await getBuffer(res.image)
+              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'textmatrix':
+          await ephoto360(args.join(" "), 'https://en.ephoto360.com/matrix-text-effect-154.html')
+            .then(async (res) => {
+              let img = await getBuffer(res.image)
+              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'text2gradient':
+          await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-3d-gradient-text-effect-online-600.html')
+            .then(async (res) => {
+              let img = await getBuffer(res.image)
+              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'textsnow':
+          await ephoto360(args.join(" "), 'https://en.ephoto360.com/snow-on-text-online-107.html')
+            .then(async (res) => {
+              let img = await getBuffer(res.image)
+              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'textballoon':
+          await ephoto360(args.join(" "), 'https://en.ephoto360.com/writing-your-name-on-hot-air-balloon-506.html')
+            .then(async (res) => {
+              let img = await getBuffer(res.image)
+              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'text2gold':
+          await ephoto360(args.join(" "), 'https://en.ephoto360.com/gold-text-effect-pro-271.html')
+            .then(async (res) => {
+              let img = await getBuffer(res.image)
+              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'text5graf':
+          await ephoto360(args.join(" "), 'https://en.ephoto360.com/graffiti-color-199.html')
+            .then(async (res) => {
+              let img = await getBuffer(res.image)
+              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'text3fire':
+          await ephoto360(args.join(" "), 'https://en.ephoto360.com/dragon-fire-text-effect-111.html')
+            .then(async (res) => {
+              let img = await getBuffer(res.image)
+              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'text2space':
+          await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-galaxy-style-free-name-logo-438.html')
+            .then(async (res) => {
+              let img = await getBuffer(res.image)
+              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'text3space':
+          await ephoto360(args.join(" "), 'https://en.ephoto360.com/galaxy-text-effect-116.html')
+            .then(async (res) => {
+              let img = await getBuffer(res.image)
+              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'textgold':
+          await ephoto360(args.join(" "), 'https://en.ephoto360.com/modern-gold-3-212.html')
+            .then(async (res) => {
+              let img = await getBuffer(res.image)
+              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'textangel':
+          await ephoto360(args.join(" "), 'https://en.ephoto360.com/wings-galaxy-206.html')
+            .then(async (res) => {
+              let img = await getBuffer(res.image)
+              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+        
         case 'ls':
           let pw = ["https://meme-api.herokuapp.com/gimme/tits",
             "https://meme-api.herokuapp.com/gimme/BestTits",
