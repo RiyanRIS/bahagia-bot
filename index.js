@@ -1575,6 +1575,116 @@ async function main() {
               reply(e)
             })
           break
+
+        case 'text2pink':
+          await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-a-blackpink-neon-logo-text-effect-online-710.html')
+            .then(async (res) => {
+              let img = await getBuffer(res.image)
+              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'textabear':
+          await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-funny-animations-of-a-traveling-bear-701.html')
+            .then(async (res) => {
+              let img = await getBuffer(res.image)
+              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'textheart':
+          await ephoto360(args.join(" "), 'https://en.ephoto360.com/write-name-on-heart-with-wings-gifs-430.html')
+            .then(async (res) => {
+              let img = await getBuffer(res.image)
+              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'text4graf':
+          await ephoto360(args.join(" "), 'https://en.ephoto360.com/text-graffiti-3d-208.html')
+            .then(async (res) => {
+              let img = await getBuffer(res.image)
+              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'textpuppy':
+          await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-puppy-cute-animated-online-478.html')
+            .then(async (res) => {
+              let img = await getBuffer(res.image)
+              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'textroad':
+          await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-glowing-text-effects-online-706.html')
+            .then(async (res) => {
+              let img = await getBuffer(res.image)
+              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'textsad':
+          await ephoto360(args.join(" "), 'https://en.ephoto360.com/write-text-on-wet-glass-online-589.html')
+            .then(async (res) => {
+              let img = await getBuffer(res.image)
+              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'text3pubg':
+          await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-the-cover-game-playerunknown-s-battlegrounds-401.html')
+            .then(async (res) => {
+              let img = await getBuffer(res.image)
+              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'textpubg':
+          await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-pubg-style-glitch-video-avatar-554.html')
+            .then(async (res) => {
+              let img = await getBuffer(res.image)
+              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'text2pubg':
+          await ephoto360(args.join(" "), 'https://en.ephoto360.com/lightning-pubg-video-logo-maker-online-615.html')
+            .then(async (res) => {
+              let img = await getBuffer(res.image)
+              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
         
         case 'ls':
           let pw = ["https://meme-api.herokuapp.com/gimme/tits",
