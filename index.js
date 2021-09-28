@@ -142,6 +142,7 @@ async function main() {
       if (mek.key.fromMe) return
       const content = JSON.stringify(mek.message)
       global.prefix
+      let txt, split, topText, bottomText
       const from = mek.key.remoteJid
       const type = Object.keys(mek.message)[0]
       const {
@@ -1711,14 +1712,13 @@ async function main() {
           break
 
         case 'textlove':
-          let txtlove = args.join(" ")
-          let topText, bottomText; 
-          if (txtlove.includes(';')) {
-              var split = txtlove.split(';');
+          txt = args.join(" ")
+          if (txt.includes(';')) {
+              split = txt.split(';');
               topText = split[0];
               bottomText = split[1];
           } else {
-              topText = txtlove;
+              topText = txt;
               bottomText = '';
           }
           await ephoto360([`${topText}`, `${bottomText}`], 'https://en.ephoto360.com/write-letters-on-the-balloons-love-189.html')
@@ -1735,18 +1735,19 @@ async function main() {
           break
 
         case 'text2love':
-          let txtlove = args.join(" ")
-          let topText, bottomText; 
-          if (txtlove.includes(';')) {
-              var split = txtlove.split(';');
+          txt = args.join(" ")
+          if (txt.includes(';')) {
+              split = txt.split(';');
               topText = split[0];
               bottomText = split[1];
           } else {
-              topText = txtlove;
+              topText = txt;
               bottomText = '';
           }
+          console.log(topText, bottomText)
           await ephoto360([`${topText}`, `${bottomText}`], 'https://en.ephoto360.com/create-love-balloons-cards-334.html')
             .then(async (res) => {
+              console.log(res)
               let img = await getBuffer(res.image)
               await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
               .catch((e) => {
