@@ -4,11 +4,13 @@ const {ttdl} = require("./lib/ttdl")
 const axios = require("axios")
 const cheerio = require("cheerio")
 const FormData = require("form-data")
+const FileType = require('file-type')
+const got = require('got')
 const fs = require("fs")
 const request = require("request")
 
 const tes = async (text, url) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
   await axios.get(url, {
     withCredentials: true,
     headers: {
@@ -83,7 +85,14 @@ const tes = async (text, url) => {
 
 }
 
-tes([`Riyan`, `Icha`], "https://en.ephoto360.com/write-letters-on-the-balloons-love-189.html")
+// tes([`Riyan`, `Icha`], "https://en.ephoto360.com/write-letters-on-the-balloons-love-189.html")
+
+const he = async () => {
+  let url = "https://e2.yotools.net/images/user_image/2021/09/61531f84f3795.jpg"
+  let buffer_data = await axios.get(url, { responseType: 'arraybuffer'})
+	console.log(await FileType.fromBuffer(buffer_data))
+}
+he()
 // for (let index = 0; index < 10; index++) {
   // let base = "https://cors-tiktok.herokuapp.com/?u="
   // let url = "https://ttdownloader.com/dl.php?v=YTo0OntzOjk6IndhdGVybWFyayI7YjoxO3M6NzoidmlkZW9JZCI7czozMjoiZjVkOWJkNDc0MzUxNzI2NTU1ZWJkYzUxYTUyZjkwMDMiO3M6MzoidWlkIjtzOjMyOiJmMGNjOTg3MmFjOGNlMjc2N2M2Yjk0OWM3ZmViMjMwOCI7czo0OiJ0aW1lIjtpOjE2MzI1NTI4MzQ7fQ=="

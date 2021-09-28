@@ -263,14 +263,32 @@ async function main() {
             mimetype: mime,
             caption: caption,
           })
-          .then((res) => {
-            console.log("sent")
-            return res
-          })
-          .catch((e) => {
-            reply("Maaf terjadi kesalahan saat mengirim file ke kamu, silahkan download sendiri secara manual melalui link berikut atau gunakan format yang lain \n\n" + url + "\n\n-------------------\n" + e.message)
-            return
-          })
+            .then((res) => {
+              console.log("sent")
+              return res
+            })
+            .catch(async (e) => {
+              console.log("gagal pertama")
+              function base64_encode(file) {
+                var bitmap = fs.readFileSync(file);
+                return new Buffer(bitmap).toString('base64');
+              }
+              let base64str = base64_encode(filename);
+              await conn.sendMessage(from, media, type, {
+                quoted: mek,
+                mimetype: mime,
+                caption: caption,
+                thumbnail: base64str
+              })
+                .then((res) => {
+                  console.log("sent")
+                  return res
+                })
+                .catch((e) => {
+                  reply("Maaf terjadi kesalahan saat mengirim file ke kamu, silahkan download sendiri secara manual melalui link berikut atau gunakan format yang lain \n\n" + url + "\n\n-------------------\n" + e.message)
+                  return
+                })
+            })
           fs.unlinkSync(filename)
         })
       }
