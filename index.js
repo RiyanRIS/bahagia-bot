@@ -275,7 +275,6 @@ async function main() {
         })
       }
 
-
       const sendMed = async (res, jenis) => {
         if (res.status) {
           console.log("sending")
