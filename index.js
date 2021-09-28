@@ -1757,7 +1757,7 @@ async function main() {
               reply(e)
             })
           break
-
+ 
         case 'textpuppy':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-puppy-cute-animated-online-478.html')
             .then(async (res) => {
