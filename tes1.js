@@ -7,8 +7,8 @@ const {
 
 const fs = require("fs")
 const request = require('request')
-
-let url = "https://ttdownloader.com/dl.php?v=YTo0OntzOjk6IndhdGVybWFyayI7YjoxO3M6NzoidmlkZW9JZCI7czozMjoiZjVkOWJkNDc0MzUxNzI2NTU1ZWJkYzUxYTUyZjkwMDMiO3M6MzoidWlkIjtzOjMyOiJmMGNjOTg3MmFjOGNlMjc2N2M2Yjk0OWM3ZmViMjMwOCI7czo0OiJ0aW1lIjtpOjE2MzI1NTI4MzQ7fQ=="
+const {ephoto360} = require('./lib/ephoto360')
+const {getBuffer} = require('./helpers/function')
 
 const a = async () => {
   const from = "15108986398@c.us"
@@ -64,9 +64,22 @@ const a = async () => {
 
       fs.unlinkSync(filename);
     });
-  };
+  }
 
-  sendMediaURL(from, url, "")
+  const text = "Riyan Risky W S"
+
+  await ephoto360(text, 'https://en.ephoto360.com/create-love-balloons-cards-334.html')
+    .then(async (res) => {
+      let img = await getBuffer(res.image)
+      await conn.sendMessage(from, img, MessageType.image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + text + '_'})
+      .catch((e) => {
+        console.log("Gagal mengirimkan file ke anda. \n\n" + res.image)
+      })
+    })
+    .catch((e) => {
+      console.log(e)
+    })
+
   // await new Promise(r => setTimeout(r, 3000)); 
 }
 
