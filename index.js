@@ -229,8 +229,7 @@ async function main() {
         })
       }
 
-      const sendMediaURL = async (to, url, text = "") => {
-        // return new Promise((resolve, reject) => {
+      const sendMediaURL = async (url, caption = "") => {
         const fn = Date.now() / 1000
         const filename = fn.toString()
         let mime = ""
@@ -259,25 +258,19 @@ async function main() {
             mime = Mimetype.mp4Audio
           }
           console.log("sending")
-          try {
-            await conn.sendMessage(to, media, type, {
-              quoted: mek,
-              mimetype: mime,
-              caption: text,
-            })
-            .then((res) => {
-              console.log("sent")
-              return res
-            })
-            .catch((e) => {
-              reply("Maaf terjadi kesalahan saat mengirim file ke kamu, silahkan download sendiri secara manual melalui link berikut atau gunakan format yang lain \n\n" + url + "\n\n-------------------\n" + e.message)
-              return e.message
-            })
-          } catch (e) {
+          await conn.sendMessage(from, media, type, {
+            quoted: mek,
+            mimetype: mime,
+            caption: caption,
+          })
+          .then((res) => {
+            console.log("sent")
+            return res
+          })
+          .catch((e) => {
             reply("Maaf terjadi kesalahan saat mengirim file ke kamu, silahkan download sendiri secara manual melalui link berikut atau gunakan format yang lain \n\n" + url + "\n\n-------------------\n" + e.message)
-            return e.message
-          }
-
+            return
+          })
           fs.unlinkSync(filename)
         })
       }
@@ -853,8 +846,7 @@ async function main() {
           
           await dl.yotube_download(id, url_id, ext, kualitas)
             .then(async (res) => {
-              await sendMediaURL(from, res, "")
-                .catch((e) => { reply(e.message) })
+              await sendMediaURL(res, "")
             })
             .catch((e) => {
               reply(e)
@@ -874,12 +866,12 @@ async function main() {
             .then(async (res) => {
               try{
                 res.forEach(async (element) => {
-                  await sendMediaURL(from, element.url, "")
+                  await sendMediaURL(element.url, "")
                 })
               } catch(e) {
                 await dl.igdl(args[0]).then((res) => {
                   y.forEach(async (element) => {
-                    await sendMediaURL(from, element.url, "")
+                    await sendMediaURL(element.url, "")
                   })
                 })
               }
@@ -899,20 +891,20 @@ async function main() {
             .then(async (igs) => {
               try{
                 igs.forEach(async (element) => {
-                  await sendMediaURL(from, element.url, "")
+                  await sendMediaURL(element.url, "")
                 })
               } catch(e) {
                 await dl.igstory(args[0]).then(async (y) => {
                   try {
                     y.forEach(async (element) => {
-                      await sendMediaURL(from, element.url, "")
+                      await sendMediaURL(element.url, "")
                     })
                   } catch(e) {
                     reply(e.message)
                   }
                 })
                 .catch((e) => {
-                  reply(e)
+                  reply(e.message)
                 })
               }
             })
@@ -1007,7 +999,7 @@ async function main() {
           break
 
         case "sndmediaa":
-          await sendMediaURL(from, args[0], "")
+          await sendMediaURL(args[0], "")
           break
 
           // https://github.com/tesseract-ocr/tesseract
@@ -1283,7 +1275,7 @@ async function main() {
         case 'tebakgambar':
           await tebakgambar()
             .then(async (res) => {
-              await sendMediaURL(from, res.image, "_kami tunggu 2 menit mulai dari sekarang_")
+              await sendMediaURL(res.image, "_kami tunggu 2 menit mulai dari sekarang_")
                 .then((resp) => {
                   console.log("sent")
 
@@ -1448,11 +1440,7 @@ async function main() {
         case 'textdaun':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/green-brush-text-effect-typography-maker-online-153.html')
             .then(async (res) => {
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1462,11 +1450,7 @@ async function main() {
         case 'text2daun':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-typography-status-online-with-impressive-leaves-357.html')
             .then(async (res) => {
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1476,11 +1460,7 @@ async function main() {
         case 'textmatrix':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/matrix-text-effect-154.html')
             .then(async (res) => {
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1490,11 +1470,7 @@ async function main() {
         case 'textgradient':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-3d-gradient-text-effect-online-600.html')
             .then(async (res) => {
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1504,11 +1480,7 @@ async function main() {
         case 'textglow':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/advanced-glow-effects-74.html')
             .then(async (res) => {
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1518,11 +1490,7 @@ async function main() {
         case 'textcoklat':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/write-text-on-chocolate-186.html')
             .then(async (res) => {
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1532,11 +1500,7 @@ async function main() {
         case 'texthbd':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/romantic-flower-heart-birthday-cake-by-name-edit-466.html')
             .then(async (res) => {
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1546,11 +1510,7 @@ async function main() {
         case 'textsnow':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/snow-on-text-online-107.html')
             .then(async (res) => {
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1560,11 +1520,7 @@ async function main() {
         case 'textsky':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-a-cloud-text-effect-in-the-sky-618.html')
             .then(async (res) => {
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1588,11 +1544,7 @@ async function main() {
         case 'textballoon':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/writing-your-name-on-hot-air-balloon-506.html')
             .then(async (res) => {
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1602,11 +1554,7 @@ async function main() {
         case 'text2graf':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/graffiti-color-199.html')
             .then(async (res) => {
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1616,11 +1564,7 @@ async function main() {
         case 'text2fire':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/dragon-fire-text-effect-111.html')
             .then(async (res) => {
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1630,11 +1574,7 @@ async function main() {
         case 'text2space':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/galaxy-text-effect-116.html')
             .then(async (res) => {
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1644,11 +1584,7 @@ async function main() {
         case 'textgold':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/modern-gold-3-212.html')
             .then(async (res) => {
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1658,11 +1594,7 @@ async function main() {
         case 'textangel':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/wings-galaxy-206.html')
             .then(async (res) => {
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1672,11 +1604,7 @@ async function main() {
         case 'text2pink':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-a-blackpink-neon-logo-text-effect-online-710.html')
             .then(async (res) => {
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1723,11 +1651,7 @@ async function main() {
           }
           await ephoto360([`${topText}`, `${bottomText}`], 'https://en.ephoto360.com/write-letters-on-the-balloons-love-189.html')
             .then(async (res) => {
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1748,11 +1672,7 @@ async function main() {
           await ephoto360([`${topText}`, `${bottomText}`], 'https://en.ephoto360.com/create-love-balloons-cards-334.html')
             .then(async (res) => {
               console.log(res)
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1776,11 +1696,7 @@ async function main() {
         case 'textcoklat':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-glowing-text-effects-online-706.html')
             .then(async (res) => {
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1790,11 +1706,7 @@ async function main() {
         case 'textsad':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/write-text-on-wet-glass-online-589.html')
             .then(async (res) => {
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1804,11 +1716,7 @@ async function main() {
         case 'text3pubg':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-the-cover-game-playerunknown-s-battlegrounds-401.html')
             .then(async (res) => {
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
