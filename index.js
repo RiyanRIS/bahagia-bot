@@ -41,6 +41,13 @@ const moment = require("moment-timezone")
 const ocrSpaceApi = require('ocr-space-api')
 const request = require('request')
 
+
+const deepai = require('deepai')
+const Algorithmia = require("algorithmia")
+
+deepai.setApiKey('2f488865-1a7b-498c-8fe4-01c15a402c9a')
+const clientAlgo = Algorithmia.client("sim0fQz4awLwB0OwNDifIxJLGgt1")
+
 // LOAD LIBRARY
 const {
   ytmp3,
@@ -65,7 +72,7 @@ const {
   removebg
 } = require("./lib/removebg")
 const {
-  ephoto360
+  ephoto360, ephoto360img
 } = require("./lib/ephoto360")
 const sms = require("./lib/bombsms")
 const {
@@ -84,7 +91,7 @@ const {
 const dl = require("./helpers/downloader")
 
 // LOAD SOURCES
-const pesan = require('./src/pesan');
+const pesan = require('./src/pesan')
 
 // BASIC SETTINGS
 const prefix = '/'
@@ -248,14 +255,19 @@ async function main() {
           }
         }
         download(url, filename, async function () {
-          let media = fs.readFileSync(filename)
-          let type = mime.split("/")[0] + "Message"
-          if (mime === "image/gif") {
-            type = MessageType.video
-            mime = Mimetype.gif
-          }
-          if (mime.split("/")[0] === "audio") {
-            mime = Mimetype.mp4Audio
+          let media, type
+          try{
+            media = fs.readFileSync(filename)
+            type = mime.split("/")[0] + "Message"
+            if (mime === "image/gif") {
+              type = MessageType.video
+              mime = Mimetype.gif
+            }
+            if (mime.split("/")[0] === "audio") {
+              mime = Mimetype.mp4Audio
+            }
+          } catch(e){
+            // reply(e.message)
           }
           console.log("sending")
           await conn.sendMessage(from, media, type, {
@@ -271,7 +283,7 @@ async function main() {
               console.log("gagal pertama")
               function base64_encode(file) {
                 var bitmap = fs.readFileSync(file);
-                return new Buffer(bitmap).toString('base64');
+                return new Buffer.from(bitmap).toString('base64');
               }
               let base64str = base64_encode(filename);
               await conn.sendMessage(from, media, type, {
@@ -1439,6 +1451,103 @@ async function main() {
           }
           break;
         
+        // https://algorithmia.com
+        case 'colorize1':
+          function base64_encode(file) {
+            let bitmap = fs.readFileSync(file);
+            return new Buffer.from(bitmap).toString('base64');
+          }
+
+          if ((isMedia && !mek.message.videoMessage || isQuotedImage)) {
+            const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+            const media = await conn.downloadAndSaveMediaMessage(encmedia, "./public/colorize")
+            console.log("media downloaded", media)
+            let base64str = base64_encode(media)
+            
+            var input = {
+              "image": "data:image/png;base64," + base64str
+            };
+            clientAlgo.algo("deeplearning/ColorfulImageColorization/1.1.14?timeout=300") // timeout is optional
+            .pipe(input)
+            .then(async (response) => {
+              if(!response.error){
+                const download_uri = response.result.output
+                clientAlgo.file(download_uri).exists(function(exists) {
+                  if (exists == true) {
+                    clientAlgo.file(download_uri).get(async function(err, data) {
+                      if (err) {
+                        reply("Failed to download file.");
+                      } else {
+                        fs.writeFileSync("public/haha.png", data);
+                        await conn.sendMessage(from, data, image)
+                          .catch((e) => {
+                            reply("error: " + e.message)
+                          })
+                      }
+                    });
+                  } else {
+                    reply("error url")
+                  }
+                });
+                // const path = response.result.output.split("//")[1]
+                // let url = "https://algorithmia.com/v1/data/" + path
+                // await sendMediaURL(url, `Link: ${url}`)
+              } else {
+                reply(response.error.message)
+              }
+            })
+          } else {
+            reply(`Perintah ini memerlukan gambar hitam putih, mungkin kamu lupa melampirkanya.`)
+          }
+          break
+
+        // https://deepai.org/
+        case 'colorize':
+        case 'imgcolorize':
+        case 'imgcol':
+          if ((isMedia && !mek.message.videoMessage || isQuotedImage)) {
+            const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+            const media = await conn.downloadAndSaveMediaMessage(encmedia, "./public/colorize")
+            console.log("media downloaded", media)
+            let resp = await deepai.callStandardApi("colorizer", {
+              image: fs.createReadStream(media),
+            })
+            await sendMediaURL(resp.output_url, `Link: ${resp.output_url}`)
+          } else {
+            reply(`Perintah ini memerlukan gambar hitam putih, mungkin kamu lupa melampirkanya.`)
+          }
+          break
+          
+        case 'imgtohd':
+        case 'hdimg':
+          if ((isMedia && !mek.message.videoMessage || isQuotedImage)) {
+            const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+            const media = await conn.downloadAndSaveMediaMessage(encmedia, "./public/tohd")
+            console.log("media downloaded", media)
+            let resp = await deepai.callStandardApi("torch-srgan", {
+              image: fs.createReadStream(media),
+            })
+            await sendMediaURL(resp.output_url, `Link: ${resp.output_url}`)
+          } else {
+            reply(`Perintah ini memerlukan gambar resolusi rendah, mungkin kamu lupa melampirkanya.`)
+          }
+          break
+        
+        case 'img2toon':
+        case 'imgtotoon':
+          if ((isMedia && !mek.message.videoMessage || isQuotedImage)) {
+            const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+            const media = await conn.downloadAndSaveMediaMessage(encmedia, "./public/colorize")
+            console.log("media downloaded", media)
+            let resp = await deepai.callStandardApi("toonify", {
+              image: fs.createReadStream(media),
+            })
+            await sendMediaURL(resp.output_url, `Link: ${resp.output_url}`)
+          } else {
+            reply(`Perintah ini memerlukan gambar yang akan dirubah dalam bentuk kartun, mungkin kamu lupa melampirkanya.`)
+          }
+          break
+
         case 'cmm':
         case 'changemymind':
           var ttinullimage = await axios.get(`https://nekobot.xyz/api/imagegen?type=changemymind&text=${args.join(" ").replace(/Ö/g, "%C3%96").replace(/ö/g, "%C3%B6").replace(/ü/g, "%C3%BC").replace(/Ü/g, "%C3%9C").replace(/Ğ/g, "%C4%9E").replace(/ğ/g, "%C4%9F").replace(/ş/g, "%C5%9F").replace(/Ş/g, "%C5%9E").replace(/ç/g, "%C3%A7").replace(/Ç/g, "%C3%87").replace(/ı/g, "%C4%B1").replace(/i/g, "%69").replace(/"/g, "%22").replace(/İ/g, "%C4%B0")}&raw=1`, { responseType: 'arraybuffer' })
@@ -1454,6 +1563,7 @@ async function main() {
           break
         
         // https://en.ephoto360.com/
+        // Pake 1 text
         case 'textdaun':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/green-brush-text-effect-typography-maker-online-153.html')
             .then(async (res) => {
@@ -1656,46 +1766,6 @@ async function main() {
             })
           break
 
-        case 'textlove':
-          txt = args.join(" ")
-          if (txt.includes(';')) {
-              split = txt.split(';');
-              topText = split[0];
-              bottomText = split[1];
-          } else {
-              topText = txt;
-              bottomText = '';
-          }
-          await ephoto360([`${topText}`, `${bottomText}`], 'https://en.ephoto360.com/write-letters-on-the-balloons-love-189.html')
-            .then(async (res) => {
-              sendMediaURL(res.image)
-            })
-            .catch((e) => {
-              reply(e)
-            })
-          break
-
-        case 'text2love':
-          txt = args.join(" ")
-          if (txt.includes(';')) {
-              split = txt.split(';');
-              topText = split[0];
-              bottomText = split[1];
-          } else {
-              topText = txt;
-              bottomText = '';
-          }
-          console.log(topText, bottomText)
-          await ephoto360([`${topText}`, `${bottomText}`], 'https://en.ephoto360.com/create-love-balloons-cards-334.html')
-            .then(async (res) => {
-              console.log(res)
-              sendMediaURL(res.image)
-            })
-            .catch((e) => {
-              reply(e)
-            })
-          break
-
         case 'textpuppy':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-puppy-cute-animated-online-478.html')
             .then(async (res) => {
@@ -1768,6 +1838,111 @@ async function main() {
             })
           break
         
+        // Pake 2 Text
+        case 'textlove':
+          txt = args.join(" ")
+          if (txt.includes(';')) {
+              split = txt.split(';');
+              topText = split[0];
+              bottomText = split[1];
+          } else {
+              topText = txt;
+              bottomText = '';
+          }
+          await ephoto360([`${topText}`, `${bottomText}`], 'https://en.ephoto360.com/write-letters-on-the-balloons-love-189.html')
+            .then(async (res) => {
+              sendMediaURL(res.image)
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'text2love':
+          txt = args.join(" ")
+          if (txt.includes(';')) {
+              split = txt.split(';');
+              topText = split[0];
+              bottomText = split[1];
+          } else {
+              topText = txt;
+              bottomText = '';
+          }
+          console.log(topText, bottomText)
+          await ephoto360([`${topText}`, `${bottomText}`], 'https://en.ephoto360.com/create-love-balloons-cards-334.html')
+            .then(async (res) => {
+              console.log(res)
+              sendMediaURL(res.image)
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        // Pake 1 foto
+        case 'textkabut':
+          if ((isMedia && !mek.message.videoMessage || isQuotedImage)) {
+            const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+            const media = await conn.downloadAndSaveMediaMessage(encmedia, "./public/qrreader_img")
+            console.log("media downloaded", media)
+            await ephoto360img('https://en.ephoto360.com/create-artistic-black-and-white-smoke-photo-effects-716.html', media)
+            .then(async (res) => {
+              await sendMediaURL(res.image)
+            })
+            .catch((e) => {
+              reply(e)
+            })
+            .finally(() => {
+              fs.unlinkSync(media)
+            })
+          break
+          } else {
+            reply(`*Media tidak ditemukan.*\nPerintah ini membutuhkan image untuk diberi efek kabut.`)
+          }
+          break
+
+        case 'textkucing':
+          if ((isMedia && !mek.message.videoMessage || isQuotedImage)) {
+            const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+            const media = await conn.downloadAndSaveMediaMessage(encmedia, "./public/qrreader_img")
+            console.log("media downloaded", media)
+            await ephoto360img('https://en.ephoto360.com/collage-a-cat-with-super-cool-glasses-699.html', media)
+            .then(async (res) => {
+              await sendMediaURL(res.image)
+            })
+            .catch((e) => {
+              reply(e)
+            })
+            .finally(() => {
+              fs.unlinkSync(media)
+            })
+          break
+          } else {
+            reply(`*Media tidak ditemukan.*\nPerintah ini membutuhkan image untuk diberi efek kabut.`)
+          }
+          break
+        
+        case 'textpaper':
+          if ((isMedia && !mek.message.videoMessage || isQuotedImage)) {
+            const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+            const media = await conn.downloadAndSaveMediaMessage(encmedia, "./public/qrreader_img")
+            console.log("media downloaded", media)
+            await ephoto360img('https://en.ephoto360.com/create-an-artistic-ripped-paper-effect-669.html', media)
+            .then(async (res) => {
+              await sendMediaURL(res.image)
+            })
+            .catch((e) => {
+              reply(e)
+            })
+            .finally(() => {
+              fs.unlinkSync(media)
+            })
+          break
+          } else {
+            reply(`*Media tidak ditemukan.*\nPerintah ini membutuhkan image untuk diberi efek kabut.`)
+          }
+          break
+  
         case 'ls':
           let pw = ["https://meme-api.herokuapp.com/gimme/tits",
             "https://meme-api.herokuapp.com/gimme/BestTits",
