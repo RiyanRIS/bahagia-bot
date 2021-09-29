@@ -12,58 +12,123 @@ module.exports.helpBiasa = (prefix) => {
   return `
   🎀 *Bahagia-Bot* 🎀
 
-*${prefix}sticker*
+*STICKER BUILDER*
     _Membuat Sticker dari foto/video_
+    _Gunakan pack untuk package name_
+    _Gunakan auth untuk author name_
+    _Gunakan crop untuk mengubah ukuran menjadi kotak_
+    _Package dan author bersifat opsional_
+    _Max. panjang durasi video adalah 11 second_
 
-*${prefix}ytmp3 <Link-YT>*
-    _Download lagu dari YouTube_
+    *List Perintah: *
+        *${prefix}st*
+        *${prefix}st pack <pack_name> auth <author_name>*
+        *${prefix}st crop*
 
-*${prefix}ytmp4 <Link-YT>*
-    _Download video dari YouTube_
+*DOWNLOADER*
+    _Download media, video, audio atau photo dari YouTube, Instagram, Twitter atau yang lainya._
 
-*${prefix}igdl <Link-IG>*
-    _Download video dari Instagram_
+    *List Perintah: *
+        *${prefix}yt <Link-YT>*   
+        *${prefix}ig <Link-IG>*     
+        *${prefix}igs <Link-IG>*     
+        *${prefix}tw <Link-TW>*        
+        *${prefix}tt <Link-Tiktok>*         
 
-*${prefix}twdl <Link-TW>*
-    _Twitter Video Downloader_
+*ARTIFICIAL INTELLIGENCE (AI)*
 
-*${prefix}ttdl <Link-Tiktok>*
-    _Tiktok Video Downloader_
+    *${prefix}ocr*
+        _Optical Character Recognition (OCR)_
+        _Mengekstrak texs dari gambar_
 
-*${prefix}ocr*
-    _Mengubah gambar menjadi teks_
-    *_Jangan lupa lampirin gambar yang ingin di scan_
+    *${prefix}rmbg*
+        _Remove Image Background_
 
-*${prefix}carbon <Teks>*
-    _Mengubah teks menjadi gambar keren_
+    *${prefix}qr <Teks>*
+        _Menggenerate QR-kode dari text/link_
 
-*${prefix}qr <Teks>*
-    _Membuat QR kode dari text/link tertentu_
+    *${prefix}qrr*
+        _Mendecode QR kode menjadi text_
 
-*${prefix}qrr*
-    _Membaca hasil QR kode dari gambar_
-    *_Jangan lupa lampirin gambar yang ingin di scan_
+    *${prefix}colorize*
+    *${prefix}col*
+        _Mewarnai foto hitam putih menggunakan AI_
 
-*${prefix}rmbg*
-    _Menghapus background foto_
-    *_Jangan lupa lampirin gambar yang ingin di hapus backgroudnya_
+    *${prefix}img2hd*
+        _Mengubah gambar kualitas rendah menjadi HD_
 
-*${prefix}pln <ID-PEL>*
-    _Cek tagihan listrik pascabayar_
+    *${prefix}img2toon*
+        _Membuat foto menjadi mode kartun_
 
-*${prefix}sms <NO-TELP>*
-    _Bomb SMS, gunakan format 87755xxx_
-    _Misal nomor target 089677249020_
-    _Maka tulis_ *${prefix}sms 89677249020*
+*MEME MAKER*
 
-*${prefix}katacinta*
-    _Kata cinta random_
+    *${prefix}cmm <Text>*
+        _Membuat meme Change My Mind_
 
-*${prefix}katamotivasi*
-    _Kata motivasi random_
+    *${prefix}trump <Text>*
+        _Membuat meme Trump Tweets_
 
-*${prefix}faktaunik*
-    _Fakta unik random_
+*GENERATE GAMBAR KEREN*
+    _Cobain aja satu-satu_
+
+    *List Perintah: *
+        *${prefix}textdaun <Text>*
+        *${prefix}text2daun <Text>*
+        *${prefix}textmatrix <Text>*
+        *${prefix}textgradient <Text>*
+        *${prefix}textglow <Text>*
+        *${prefix}textcoklat <Text>*
+        *${prefix}text2coklat <Text>*
+        *${prefix}texthbd <Text>*
+        *${prefix}textsnow <Text>*
+        *${prefix}textsky <Text>*
+        *${prefix}textsand <Text>*
+        *${prefix}textballoon <Text>*
+        *${prefix}text2graf <Text>*
+        *${prefix}text2fire <Text>*
+        *${prefix}text2space <Text>*
+        *${prefix}textgold <Text>*
+        *${prefix}textangel <Text>*
+        *${prefix}textbp <Text>*
+        *${prefix}text2bp <Text>*
+        *${prefix}textabear <Text>*
+        *${prefix}textsad <Text>*
+        *${prefix}textpubg <Text>*
+        *${prefix}text2pubg <Text>*
+        *${prefix}text3pubg <Text>*
+        *${prefix}carbon <Teks>*
+
+    _Yang ini gunakan 2 nama_
+    _Pisahkan antar nama menggunakan *';'*_
+    _Semisal: *${prefix}textlove Surti;Tejo*_
+
+        *${prefix}textlove <Nama1>;<Nama2>*
+        *${prefix}text2love <Nama1>;<Nama2>*
+
+    _Yang ini harus melampirkan gambar dan pastikan objek ada ditengah, biar pas._
+        
+        *${prefix}textkabut*
+        *${prefix}textkucing*
+        *${prefix}textpaper*
+    
+*LAIN-LAIN..*
+
+    *${prefix}pln <ID-PEL>*
+        _Cek tagihan listrik pascabayar_
+
+    *${prefix}sms <NO-TELP>*
+        _Bomb SMS, gunakan format 87755xxx_
+        _Misal nomor target 089677249020_
+        _Maka tulis_ *${prefix}sms 89677249020*
+
+    *${prefix}katacinta*
+        _Kata cinta random_
+
+    *${prefix}katamotivasi*
+        _Kata motivasi random_
+
+    *${prefix}faktaunik*
+        _Fakta unik random_
 
 🛡 _Semua data yang kamu kirim, nggak kami simpen kok, dijamin aman deh_\n
 🛠 _Request fitur atau ada masalah pada bot ini, hubungi Developer_`

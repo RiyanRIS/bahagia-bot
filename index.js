@@ -685,7 +685,7 @@ async function main() {
               if (args[i].includes('pack') == true) {
                 packNameDataCollection = true;
               }
-              if (args[i].includes('author') == true) {
+              if (args[i].includes('auth') == true) {
                 packNameDataCollection = false;
               }
               // If data collection is enabled and args length is more then one it will start appending!
@@ -700,11 +700,11 @@ async function main() {
           }
 
           // Check if author keyword is found in args!
-          if (args.includes('author') == true) {
+          if (args.includes('auth') == true) {
             authorNameDataCollection = false;
             for (let i = 0; i < args.length; i++) {
               // Enables data collection when keyword found in index!
-              if (args[i].includes('author') == true) {
+              if (args[i].includes('auth') == true) {
                 authorNameDataCollection = true;
               }
               // If data collection is enabled and args length is more then one it will start appending!
@@ -712,8 +712,8 @@ async function main() {
                 authorName = authorName + args[i] + ' '
               }
               // Check if variable contain unnecessary startup word!
-              if (authorName.startsWith('author ')) {
-                authorName = `${authorName.split('author ')[1]}`
+              if (authorName.startsWith('auth ')) {
+                authorName = `${authorName.split('auth ')[1]}`
               }
             }
           }
@@ -1226,7 +1226,7 @@ async function main() {
               qrcode.decode(image.bitmap)
             })
           } else {
-            reply("Kamu lupa melampirkan gambar yang akan di scan.")
+            reply("Perintah ini membutuhkan lampiran gambar yang mengandung QR Code.")
           }
           break
 
@@ -1519,6 +1519,7 @@ async function main() {
           break
           
         case 'imgtohd':
+        case 'img2hd':
         case 'hdimg':
           if ((isMedia && !mek.message.videoMessage || isQuotedImage)) {
             const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
@@ -1728,7 +1729,17 @@ async function main() {
             })
           break
 
-        case 'text2pink':
+        case 'textbp':
+          await ephoto360(args.join(" "), 'https://en.ephoto360.com/online-blackpink-style-logo-maker-effect-711.html')
+            .then(async (res) => {
+              sendMediaURL(res.image)
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'text2bp':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-a-blackpink-neon-logo-text-effect-online-710.html')
             .then(async (res) => {
               sendMediaURL(res.image)
@@ -1780,7 +1791,7 @@ async function main() {
             })
           break
 
-        case 'textcoklat':
+        case 'text2coklat':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-glowing-text-effects-online-706.html')
             .then(async (res) => {
               sendMediaURL(res.image)
