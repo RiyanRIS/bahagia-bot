@@ -59,6 +59,9 @@ const {
   removebg
 } = require("./lib/removebg")
 const {
+  hartatahta
+} = require("./lib/hartatahta")
+const {
   ephoto360,
   ephoto360img
 } = require("./lib/ephoto360")
@@ -308,28 +311,42 @@ async function main() {
         })
       }
 
-      const sendMed = async (res, jenis) => {
-        if (res.status) {
-          console.log("sending")
-          const stats = fs.statSync(res.data)
-          if (stats.size < 95999999) { // batas max upload whatsapp 99 mb
-            const media = fs.readFileSync(res.data)
-            await conn.sendMessage(from, media, jenis)
-              .then((res) => {
-                console.log("sent")
-              })
-              .catch(async (e) => {
-                console.error(e)
-                reply(`Error waktu kirim media ke kamu, namun kami masih memiliki linknya: \n_${await shortlink(res.link)}_\n\nSilahkan download sendiri ya.`)
-              })
-          } else {
-            console.log("too large")
-            reply(`Ukuran file terlalu besar silahkan download melalui link berikut: _${await shortlink(res.link)}_`)
+      const sendMedPath = async (path, caption = "", type = image) => {
+        let media = fs.readFileSync(path)
+        await conn.sendMessage(from, media, type, {
+          quoted: mek,
+          caption: caption,
+        })
+        .then((res) => {
+          console.log("sent")
+          fs.unlinkSync(path)
+          return res
+        })
+        .catch(async (e) => {
+          console.log("gagal pertama")
+
+          function base64_encode(file) {
+            var bitmap = fs.readFileSync(file);
+            return new Buffer.from(bitmap).toString('base64');
           }
-        } else {
-          console.log("error")
-          reply(res.msg)
-        }
+          let base64str = base64_encode(path);
+          await conn.sendMessage(from, media, type, {
+              quoted: mek,
+              caption: caption,
+              thumbnail: base64str
+            })
+            .then((res) => {
+              console.log("sent")
+              return res
+            })
+            .catch((e) => {
+              reply("Maaf terjadi kesalahan saat mengirim file ke kamu, ulangi beberapa saat lagi \n\n-------------------\n" + e.message)
+              return
+            })
+            .finally(() => {
+              fs.unlinkSync(path)
+            })
+        })
       }
 
       const sendButMessage = async (id, text1, desc1, but = [], options = {}) => {
@@ -1612,9 +1629,9 @@ async function main() {
             reply("Perintah ini memerlukan satu argumen. \n\nSemisal: */htt Ayunda*")
             return
           }
-          axios("https://api.xteam.xyz/tahta?text="+args[0]+"&APIKEY=7ce7040897d6e72a", { responseType: 'arraybuffer' }).then(async (res) => {
-            await conn.sendMessage(from, Buffer.from(res.data), MessageType.image, { mimetype: Mimetype.png }).catch((e) => reply("Maaf, terjadi kesalahan pada server."))
-          }).catch((e) => reply(e.message))
+          await hartatahta(args[0]).then(async (res) => {
+            await sendMedPath(res)
+          }).catch((e) => reply(e))
           break
 
         case 'trump':
