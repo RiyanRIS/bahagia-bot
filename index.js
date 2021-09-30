@@ -1587,7 +1587,7 @@ async function main() {
               reply(e)
             })
           break
-
+ 
         case 'textmatrix':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/matrix-text-effect-154.html')
             .then(async (res) => {
