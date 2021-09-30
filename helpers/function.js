@@ -46,10 +46,10 @@ _By: RiyanRIS_
         _Remove Image Background_
 
     *${prefix}qr <Teks>*
-        _Menggenerate QR-kode dari text/link_
+        _Menggenerate QR-Code dari text/link_
 
     *${prefix}qrr*
-        _Mendecode QR kode menjadi text_
+        _Mendecode QR-Code menjadi text_
 
     *${prefix}colorize*
     *${prefix}col*

@@ -8,5 +8,8 @@ module.exports.key = {
   // https://api.dhnjing.xyz/
   dhnjing: { 
     satu: "3026d5a2ec13d9" 
+  },
+  xteam: {
+    satu: "7ce7040897d6e72a"
   }
 }

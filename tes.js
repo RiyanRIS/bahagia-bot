@@ -9,6 +9,12 @@ const got = require('got')
 const fs = require("fs")
 const request = require("request")
 
+// SPAM SMS
+const {sms_oyo, sms_mapclub} = require("./lib/bombsms")
+
+sms_mapclub("89677249060")
+  .catch((e) => console.log(e))
+
 // SCRAPING from en.ephoto360.com
 // const {ephoto360} = require("./lib/ephoto360")
 // ephoto360("Riyan", "https://en.ephoto360.com/write-in-sand-summer-beach-online-576.html")
