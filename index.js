@@ -1828,6 +1828,26 @@ async function main() {
             })
           break
 
+        case 'textpetir':
+          await textpro(args.join(" "), 'https://textpro.me/create-thunder-text-effect-online-881.html')
+            .then(async (res) => {
+              await sendMediaURL(res.image)
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'text3bp':
+          await textpro(args.join(" "), 'https://textpro.me/create-blackpink-logo-style-online-1001.html')
+            .then(async (res) => {
+              await sendMediaURL(res.image)
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
         case 'text3pubg':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-the-cover-game-playerunknown-s-battlegrounds-401.html')
             .then(async (res) => {
@@ -1870,6 +1890,82 @@ async function main() {
               bottomText = '';
           }
           await ephoto360([`${topText}`, `${bottomText}`], 'https://en.ephoto360.com/write-letters-on-the-balloons-love-189.html')
+            .then(async (res) => {
+              await sendMediaURL(res.image)
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'textpornhub':
+          txt = args.join(" ")
+          if (txt.includes(';')) {
+              split = txt.split(';');
+              topText = split[0];
+              bottomText = split[1];
+          } else {
+              topText = txt;
+              bottomText = '';
+          }
+          await textpro([`${topText}`, `${bottomText}`], 'https://textpro.me/pornhub-style-logo-online-generator-free-977.html')
+            .then(async (res) => {
+              await sendMediaURL(res.image)
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'textavenger':
+          txt = args.join(" ")
+          if (txt.includes(';')) {
+              split = txt.split(';');
+              topText = split[0];
+              bottomText = split[1];
+          } else {
+              topText = txt;
+              bottomText = '';
+          }
+          await textpro([`${topText}`, `${bottomText}`], 'https://textpro.me/create-3d-avengers-logo-online-974.html')
+            .then(async (res) => {
+              await sendMediaURL(res.image)
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'textgraf':
+          txt = args.join(" ")
+          if (txt.includes(';')) {
+              split = txt.split(';');
+              topText = split[0];
+              bottomText = split[1];
+          } else {
+              topText = txt;
+              bottomText = '';
+          }
+          await textpro([`${topText}`, `${bottomText}`], 'https://textpro.me/create-a-cool-graffiti-text-on-the-wall-1010.html')
+            .then(async (res) => {
+              await sendMediaURL(res.image)
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'texttiktok':
+          txt = args.join(" ")
+          if (txt.includes(';')) {
+              split = txt.split(';');
+              topText = split[0];
+              bottomText = split[1];
+          } else {
+              topText = txt;
+              bottomText = '';
+          }
+          await textpro([`${topText}`, `${bottomText}`], 'https://textpro.me/create-glitch-text-effect-style-tik-tok-983.html')
             .then(async (res) => {
               await sendMediaURL(res.image)
             })

@@ -10,7 +10,8 @@ module.exports.getGroupAdmins = (participants) => {
 
 module.exports.helpBiasa = (prefix) => {
   return `
-  🎀 *Bahagia-Bot* 🎀
+🎀 *Bahagia-Bot* 🎀
+_By: RiyanRIS_
 
 *STICKER BUILDER*
     _Membuat Sticker dari foto/video_
@@ -75,6 +76,7 @@ module.exports.helpBiasa = (prefix) => {
         *${prefix}textdaun <Text>*
         *${prefix}text2daun <Text>*
         *${prefix}textmatrix <Text>*
+        *${prefix}textpetir <Text>*
         *${prefix}textgradient <Text>*
         *${prefix}textglow <Text>*
         *${prefix}textneon <Text>*
@@ -94,6 +96,7 @@ module.exports.helpBiasa = (prefix) => {
         *${prefix}textangel <Text>*
         *${prefix}textbp <Text>*
         *${prefix}text2bp <Text>*
+        *${prefix}text3bp <Text>*
         *${prefix}textabear <Text>*
         *${prefix}textsad <Text>*
         *${prefix}textpubg <Text>*
@@ -101,12 +104,17 @@ module.exports.helpBiasa = (prefix) => {
         *${prefix}text3pubg <Text>*
         *${prefix}carbon <Teks>*
 
-    _Yang ini gunakan 2 nama_
-    _Pisahkan antar nama menggunakan *';'*_
+    _Yang ini gunakan 2 text_
+    _Pisahkan antar text menggunakan *';'*_
     _Semisal: *${prefix}textlove Surti;Tejo*_
 
         *${prefix}textlove <Nama1>;<Nama2>*
         *${prefix}text2love <Nama1>;<Nama2>*
+        *${prefix}textpornhub <Kata1>;<Kata2>*
+        *${prefix}texttiktok <Kata1>;<Kata2>*
+        *${prefix}textavenger <Kata1>;<Kata2>*
+        *${prefix}textgraf <Kata1>;<Kata2>*
+
 
     _Yang ini harus melampirkan gambar dan pastikan objek ada ditengah, biar pas._
         
