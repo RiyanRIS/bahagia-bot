@@ -74,6 +74,9 @@ const {
 const {
   ephoto360, ephoto360img
 } = require("./lib/ephoto360")
+const {
+  textpro
+} = require("./lib/textpro")
 const sms = require("./lib/bombsms")
 const {
   getGroupAdmins,
@@ -353,9 +356,9 @@ async function main() {
         options = {}
       ) => {
         kma = gam1;
-        mhan = await conn.prepareMessage(from, kma, image);
+        mediaa = await conn.prepareMessage(from, kma, image);
         const buttonMessages = {
-          imageMessage: mhan.message.imageMessage,
+          imageMessage: mediaa.message.imageMessage,
           contentText: text1,
           footerText: desc1,
           buttons: but,
@@ -1568,7 +1571,7 @@ async function main() {
         case 'textdaun':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/green-brush-text-effect-typography-maker-online-153.html')
             .then(async (res) => {
-              sendMediaURL(res.image)
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1578,7 +1581,7 @@ async function main() {
         case 'text2daun':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-typography-status-online-with-impressive-leaves-357.html')
             .then(async (res) => {
-              sendMediaURL(res.image)
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1588,7 +1591,7 @@ async function main() {
         case 'textmatrix':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/matrix-text-effect-154.html')
             .then(async (res) => {
-              sendMediaURL(res.image)
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1598,7 +1601,7 @@ async function main() {
         case 'textgradient':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-3d-gradient-text-effect-online-600.html')
             .then(async (res) => {
-              sendMediaURL(res.image)
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1608,7 +1611,7 @@ async function main() {
         case 'textglow':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/advanced-glow-effects-74.html')
             .then(async (res) => {
-              sendMediaURL(res.image)
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1618,7 +1621,7 @@ async function main() {
         case 'textcoklat':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/write-text-on-chocolate-186.html')
             .then(async (res) => {
-              sendMediaURL(res.image)
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1628,7 +1631,7 @@ async function main() {
         case 'texthbd':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/romantic-flower-heart-birthday-cake-by-name-edit-466.html')
             .then(async (res) => {
-              sendMediaURL(res.image)
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1638,7 +1641,7 @@ async function main() {
         case 'textsnow':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/snow-on-text-online-107.html')
             .then(async (res) => {
-              sendMediaURL(res.image)
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1648,7 +1651,7 @@ async function main() {
         case 'textsky':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-a-cloud-text-effect-in-the-sky-618.html')
             .then(async (res) => {
-              sendMediaURL(res.image)
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1658,11 +1661,7 @@ async function main() {
         case 'textsand':
             await ephoto360(args.join(" "), 'https://en.ephoto360.com/write-in-sand-summer-beach-online-576.html')
               .then(async (res) => {
-                let img = await getBuffer(res.image)
-                await conn.sendMessage(from, img, image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-                .catch((e) => {
-                  reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-                })
+                await sendMediaURL(res.image)
               })
               .catch((e) => {
                 reply(e)
@@ -1672,7 +1671,17 @@ async function main() {
         case 'textballoon':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/writing-your-name-on-hot-air-balloon-506.html')
             .then(async (res) => {
-              sendMediaURL(res.image)
+              await sendMediaURL(res.image)
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'textpencil':
+          await textpro(args.join(" "), 'https://textpro.me/create-a-sketch-text-effect-online-1044.html')
+            .then(async (res) => {
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1682,7 +1691,7 @@ async function main() {
         case 'text2graf':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/graffiti-color-199.html')
             .then(async (res) => {
-              sendMediaURL(res.image)
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1692,7 +1701,7 @@ async function main() {
         case 'text2fire':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/dragon-fire-text-effect-111.html')
             .then(async (res) => {
-              sendMediaURL(res.image)
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1702,7 +1711,7 @@ async function main() {
         case 'text2space':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/galaxy-text-effect-116.html')
             .then(async (res) => {
-              sendMediaURL(res.image)
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1712,7 +1721,7 @@ async function main() {
         case 'textgold':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/modern-gold-3-212.html')
             .then(async (res) => {
-              sendMediaURL(res.image)
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1722,7 +1731,7 @@ async function main() {
         case 'textangel':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/wings-galaxy-206.html')
             .then(async (res) => {
-              sendMediaURL(res.image)
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1732,7 +1741,7 @@ async function main() {
         case 'textbp':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/online-blackpink-style-logo-maker-effect-711.html')
             .then(async (res) => {
-              sendMediaURL(res.image)
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1742,7 +1751,7 @@ async function main() {
         case 'text2bp':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-a-blackpink-neon-logo-text-effect-online-710.html')
             .then(async (res) => {
-              sendMediaURL(res.image)
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1752,11 +1761,7 @@ async function main() {
         case 'textabear':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-funny-animations-of-a-traveling-bear-701.html')
             .then(async (res) => {
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, video, { mimetype: Mimetype.gif, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1766,11 +1771,7 @@ async function main() {
         case 'textheart':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/write-name-on-heart-with-wings-gifs-430.html')
             .then(async (res) => {
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, video, { mimetype: Mimetype.gif, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1780,11 +1781,7 @@ async function main() {
         case 'textpuppy':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-puppy-cute-animated-online-478.html')
             .then(async (res) => {
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, video, { mimetype: Mimetype.gif, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1794,7 +1791,7 @@ async function main() {
         case 'text2coklat':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-glowing-text-effects-online-706.html')
             .then(async (res) => {
-              sendMediaURL(res.image)
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1804,7 +1801,7 @@ async function main() {
         case 'textsad':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/write-text-on-wet-glass-online-589.html')
             .then(async (res) => {
-              sendMediaURL(res.image)
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1814,7 +1811,7 @@ async function main() {
         case 'text3pubg':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-the-cover-game-playerunknown-s-battlegrounds-401.html')
             .then(async (res) => {
-              sendMediaURL(res.image)
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1824,11 +1821,7 @@ async function main() {
         case 'textpubg':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-pubg-style-glitch-video-avatar-554.html')
             .then(async (res) => {
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, video, { mimetype: Mimetype.mp4, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1838,11 +1831,7 @@ async function main() {
         case 'text2pubg':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/lightning-pubg-video-logo-maker-online-615.html')
             .then(async (res) => {
-              let img = await getBuffer(res.image)
-              await conn.sendMessage(from, img, video, { mimetype: Mimetype.mp4, caption: 'Hasil untuk 👇\n_' + args.join(" ") + '_'})
-              .catch((e) => {
-                reply("Gagal mengirimkan file ke anda. \n\n" + res.image)
-              })
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1862,7 +1851,7 @@ async function main() {
           }
           await ephoto360([`${topText}`, `${bottomText}`], 'https://en.ephoto360.com/write-letters-on-the-balloons-love-189.html')
             .then(async (res) => {
-              sendMediaURL(res.image)
+              await sendMediaURL(res.image)
             })
             .catch((e) => {
               reply(e)
@@ -1967,7 +1956,7 @@ async function main() {
             "https://meme-api.herokuapp.com/gimme/LegalTeens"
           ]
           let nk = pw[Math.floor(Math.random() * pw.length)]
-          axios.get(nk)
+          await axios.get(nk)
             .then(async ({
               data
             }) => {

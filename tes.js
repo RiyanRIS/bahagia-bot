@@ -9,33 +9,48 @@ const got = require('got')
 const fs = require("fs")
 const request = require("request")
 
-// COLORIZE menggunakan algoritmia
-const Algorithmia = require("algorithmia")
+// SCRAPING from en.ephoto360.com
+// const {ephoto360} = require("./lib/ephoto360")
+// ephoto360("Riyan", "https://en.ephoto360.com/write-in-sand-summer-beach-online-576.html")
+//   .then((res) => {
+//     console.log(res)
+//   }).catch((e) => console.log("error: ", e))
 
-function base64_encode(file) {
-  let bitmap = fs.readFileSync(file);
-  return new Buffer.from(bitmap).toString('base64');
-}
-let base64str = base64_encode("./src/colorize.jpeg")
+// SCRAPING from textpro.me
+// const {textpro} = require("./lib/textpro")
 
-var input = {
-  "image": "data:image/png;base64," + base64str
-}
-Algorithmia.client("sim0fQz4awLwB0OwNDifIxJLGgt1")
-.algo("deeplearning/ColorfulImageColorization/1.1.14?timeout=300") // timeout is optional
-.pipe(input)
-.then((response) => {
-  // console.log(response.get())
-  if(!response.error){
-    const path = response.result.output.split("//")[1]
-    let url = "https://algorithmia.com/v1/data/" + path
-    console.log(url)
-  } else {
-    console.log(response.error.message)
-  }
-})
+// textpro("Hi", "https://textpro.me/create-a-sketch-text-effect-online-1044.html")
+//   .then((res) => {
+//     console.log(res)
+//   }).catch((e) => console.log(e))
 
-// DEEP AI COLORIZE PAKE REQUEST API
+// AI COLORIZE menggunakan algoritmia
+// const Algorithmia = require("algorithmia")
+
+// function base64_encode(file) {
+//   let bitmap = fs.readFileSync(file);
+//   return new Buffer.from(bitmap).toString('base64');
+// }
+// let base64str = base64_encode("./src/colorize.jpeg")
+
+// var input = {
+//   "image": "data:image/png;base64," + base64str
+// }
+// Algorithmia.client("sim0fQz4awLwB0OwNDifIxJLGgt1")
+// .algo("deeplearning/ColorfulImageColorization/1.1.14?timeout=300") // timeout is optional
+// .pipe(input)
+// .then((response) => {
+//   // console.log(response.get())
+//   if(!response.error){
+//     const path = response.result.output.split("//")[1]
+//     let url = "https://algorithmia.com/v1/data/" + path
+//     console.log(url)
+//   } else {
+//     console.log(response.error.message)
+//   }
+// })
+
+// AI DEEP AI COLORIZE PAKE REQUEST API
 // var headers = {
 //     'api-key': '2f488865-1a7b-498c-8fe4-01c15a402c9a'
 // };
@@ -57,7 +72,7 @@ Algorithmia.client("sim0fQz4awLwB0OwNDifIxJLGgt1")
 
 // request(options, callback);
 
-// DEEP AI COLORIZE PAKE LIBRARY
+// AI DEEP AI COLORIZE PAKE LIBRARY
 // const deepai = require('deepai')
 // deepai.setApiKey('2f488865-1a7b-498c-8fe4-01c15a402c9a');
 
