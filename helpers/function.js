@@ -77,12 +77,15 @@ module.exports.helpBiasa = (prefix) => {
         *${prefix}textmatrix <Text>*
         *${prefix}textgradient <Text>*
         *${prefix}textglow <Text>*
+        *${prefix}textneon <Text>*
+        *${prefix}text2neon <Text>*
         *${prefix}textcoklat <Text>*
         *${prefix}text2coklat <Text>*
         *${prefix}texthbd <Text>*
         *${prefix}textsnow <Text>*
         *${prefix}textsky <Text>*
         *${prefix}textsand <Text>*
+        *${prefix}textpencil <Text>*
         *${prefix}textballoon <Text>*
         *${prefix}text2graf <Text>*
         *${prefix}text2fire <Text>*

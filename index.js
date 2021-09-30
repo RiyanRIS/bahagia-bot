@@ -1758,6 +1758,26 @@ async function main() {
             })
           break
 
+        case 'textneon':
+          await textpro(args.join(" "), 'https://textpro.me/green-neon-text-effect-874.html')
+            .then(async (res) => {
+              await sendMediaURL(res.image)
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
+        case 'text2neon':
+          await textpro(args.join(" "), 'https://textpro.me/neon-light-text-effect-online-882.html')
+            .then(async (res) => {
+              await sendMediaURL(res.image)
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+
         case 'textabear':
           await ephoto360(args.join(" "), 'https://en.ephoto360.com/create-funny-animations-of-a-traveling-bear-701.html')
             .then(async (res) => {
