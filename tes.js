@@ -9,11 +9,27 @@ const got = require('got')
 const fs = require("fs")
 const request = require("request")
 
-// SPAM SMS
-const {sms_oyo, sms_mapclub} = require("./lib/bombsms")
+// let no = "089677249060"
+// let no = "6289677249060"
+// let no = "+6289677249060"
+let no = "89677249060"
 
-sms_mapclub("89677249060")
-  .catch((e) => console.log(e))
+if(no.startsWith("08")){
+  no = no.slice(1,100)
+}else if(no.startsWith("62")){
+  no = no.slice(2,100)
+}else if(no.startsWith("+62")){
+  no = no.slice(3,100)
+}
+
+console.log(no)
+
+// SPAM SMS
+// const {sms_oyo, sms_mapclub, sms_icq, sms_fave, sms_kredinesia, smscall_random, call_jagreward, call_nutriclub, sms_olx,  sms_maucash} = require("./lib/bombsms")
+
+// sms_maucash("85162656460")
+//   .then((res) => console.log(res))
+//   .catch((e) => console.log(e))
 
 // SCRAPING from en.ephoto360.com
 // const {ephoto360} = require("./lib/ephoto360")
