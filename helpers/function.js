@@ -67,7 +67,7 @@ _By: RiyanRIS_
         _Membuat meme Change My Mind_
 
     *${prefix}htt <Text>*
-        _Harta Tahta {Text-Kamu}_
+        _Harta Tahta {Text-Kamu}_ 
 
     *${prefix}trump <Text>*
         _Membuat meme Trump Tweets_
