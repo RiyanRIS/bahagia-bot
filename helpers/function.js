@@ -172,6 +172,9 @@ _By: RiyanRIS_
     *${prefix}kbj <Kata>*
         _Kamus Bahasa Jawa_
 
+    *${prefix}aksara <Teks>*
+        _Ubah teks kedalam Aksara Jawa_
+
     *${prefix}pln <ID-PEL>*
         _Cek tagihan listrik pascabayar_
 
