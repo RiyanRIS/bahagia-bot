@@ -23,7 +23,6 @@
     "fluent-ffmpeg": "^2.1.2",
     "form-data": "^4.0.0",
     "fs": "0.0.1-security",
-    "google-translate-tts": "^0.4.0-dev",
     "got": "^11.8.2",
     "jimp": "^0.16.1",
     "moment-timezone": "^0.5.33",

@@ -166,6 +166,12 @@ _By: RiyanRIS_
     
 *LAIN-LAIN..*
 
+    *${prefix}kbbi <Kata>*
+        _Kamus Besar Bahasa Indonesia_
+
+    *${prefix}kbj <Kata>*
+        _Kamus Bahasa Jawa_
+
     *${prefix}pln <ID-PEL>*
         _Cek tagihan listrik pascabayar_
 

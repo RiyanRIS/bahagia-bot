@@ -40,6 +40,7 @@ const qrCode = require('qrcode-reader')
 const moment = require("moment-timezone")
 const ocrSpaceApi = require('ocr-space-api')
 const request = require('request')
+const { aksara } = require('./lib/aksara')
 
 
 const deepai = require('deepai')
@@ -1545,7 +1546,29 @@ async function main() {
             conn.sendMessage(from, fs.readFileSync("./public/gtts.wav"), audio, {mimetype: "audio/mp4"}).catch((e) => reply("error" + " "))
           }
           break;
+        
+        case 'kbj':
+          axios("https://budiarto.id/bausastra/words/search/" + args[0], {
+            method: "GET"
+          }).then(async ({data}) => {
+            if(data.result.length >= 1){
+              let result = data.result[0]
+              let aksara = ""
+              if(result.javanese){
+                aksara = `_${result.javanese}_`
+              }
+              reply(`*${result.entry}* ${aksara}\n${result.meaning}\n\n_~ ${result.citation}_`)
+            }else{
+              reply("Kami tidak menemukan apapun.")
+            }
+            
+          }).catch((e) => reply(e.message))
+          break
 
+        case 'aksara':
+          reply(aksara(args.join(" ")))
+          break
+          
           // https://algorithmia.com
         case 'colorize1':
           function base64_encode(file) {

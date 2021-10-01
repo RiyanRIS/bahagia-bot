@@ -9,6 +9,20 @@ const got = require('got')
 const fs = require("fs")
 const request = require("request")
 
+// Bausastra Scraping
+// let text = "pekok"
+// axios("https://budiarto.id/bausastra/words/search/" + text, {
+//   method: "GET"
+// }).then(({data}) => {
+//   if(data.result.length >= 1){
+//     let result = data.result[0]
+//     console.log(`*${result.entry}*_${result.javanese}_\n${result.meaning}\n\n_~ ${result.citation}_`)
+//   }else{
+//     console.log("Kami tidak menemukan apapun.")
+//   }
+  
+// }).catch((e) => console.log(e))
+
 // Array Manipulation
 // let tes = ["-l", "id", "halo", "riyan", "Ini", "Kalimat", "hahha"]
 
@@ -17,9 +31,19 @@ const request = require("request")
 // console.log(tes1)
 
 // TTS google
-const {tts} = require("./lib/gtts")
+// const {gtts} = require("./lib/gtts")
 
-tts("Halo nama saya siapa? coba tebak...").catch((e) => console.log(e))
+// let text = `Sudah bukan rahasia lagi bahwa selama ini kita lazim mengetahui kucing-kucing di lingkungan sekitar kita dinamai dengan nama yang khas kucing yang umumnya sangat “barat” seperti Meow, Kiko, Amber, Lily, Coco, Kitty, Leo, Bella, Eroe, Miko, dan lain sebangsanya. Bahkan untuk kucing yang sebenarnya adalah kucing lokal sekalipun.
+
+// Jarang sekali kita tahu kucing di lingkungan kita yang menggunakan nama yang sangat lokal atau Indonesia. Padahal, kucing, seperti layaknya orang, juga bisa diberi nama yang sangat lokal, termasuk nama-nama orang di sekitar kita.
+
+// Hal tersebut berbeda dengan anjing yang memang di lingkungan kita masih dianggap sebagai hewan yang cukup “hina” sebab anjing, selain karena stigma kenajisannya, juga masih identik dengan bentuk makian. Karena itulah menjadi tak lumrah dan agak tak sopan jika menamai anjing dengan nama kawan atau orang-orang di sekitar kita.
+
+// Seiring dengan berjalannya waktu, makin banyak orang yang menamai kucingnya dengan nama yang lokal dan cukup ngindonesia. Ada banyak orang yang mulai menamai kucingnya dengan nama seseorang yang mereka kagumi, nama artis favorit, atau bahkan nama orang yang mereka cintai.
+
+// Nah, berikut ini adalah beberapa rekomendasi nama kucing khas Indonesia rekomendasi netizen yang sudah saya himpun melalui Twitter. Yah, siapa tahu ada banyak pembaca yang mendapatkan hibah anak kucing dan pengin menamai kucingnya dengan nama yang sangat Indonesia.`
+
+// gtts(text).catch((e) => console.log(e))
 
 
 // MEME HARTA TAHTA
