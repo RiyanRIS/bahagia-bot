@@ -9,6 +9,14 @@ const got = require('got')
 const fs = require("fs")
 const request = require("request")
 
+// KBBI
+const {kbbi} = require('./lib/kamus');
+
+kbbi("katak").then((res) => {
+  res.forEach((v, i) => {
+    console.log(v)
+  })
+}).catch((e) => reply(e))
 // Bausastra Scraping
 // let text = "pekok"
 // axios("https://budiarto.id/bausastra/words/search/" + text, {

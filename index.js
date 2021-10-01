@@ -96,6 +96,9 @@ const {
 const {
   gtts
 } = require("./lib/gtts")
+const {
+  kbbi, kbj
+} = require("./lib/kamus")
 
 const dl = require("./helpers/downloader")
 
@@ -1548,21 +1551,16 @@ async function main() {
           break;
         
         case 'kbj':
-          axios("https://budiarto.id/bausastra/words/search/" + args[0], {
-            method: "GET"
-          }).then(async ({data}) => {
-            if(data.result.length >= 1){
-              let result = data.result[0]
-              let aksara = ""
-              if(result.javanese){
-                aksara = `_${result.javanese}_`
-              }
-              reply(`*${result.entry}* ${aksara}\n${result.meaning}\n\n_~ ${result.citation}_`)
-            }else{
-              reply("Kami tidak menemukan apapun.")
-            }
-            
-          }).catch((e) => reply(e.message))
+          kbj(args.join(" ")).then((res) => reply(res)).catch((e) => reply(e))
+          break
+        
+        case 'kbbi':
+          kbbi(args.join(" ")).then((res) => {
+            res.forEach((v, i) => {
+              let kal = `*${v.title}*\n_${v.jenis}_\n\n${v.arti}`
+              conn.sendMessage(from, kal, text)
+            })
+          }).catch((e) => reply(e))
           break
 
         case 'aksara':
