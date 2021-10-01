@@ -51,6 +51,10 @@ _By: RiyanRIS_
     *${prefix}qrr*
         _Mendecode QR-Code menjadi text_
 
+    *${prefix}tts <Teks>*
+        _Prosa Text-to-Speech_
+        _Sintesis suara alami dari teks secara instan dalam Bahasa Indonesia_
+
     *${prefix}colorize*
     *${prefix}col*
         _Mewarnai foto hitam putih menggunakan AI_
@@ -60,6 +64,41 @@ _By: RiyanRIS_
 
     *${prefix}img2toon*
         _Membuat foto menjadi mode kartun_
+
+*AUDIO MANIPULATION*
+
+    *${prefix}aurobot*
+        _Suara kek robot_
+    
+    *${prefix}aubass*
+        _Suara bassnya jadi kerasa_
+    
+    *${prefix}aublown*
+        _Suara jadi lembut_
+    
+    *${prefix}audeep*
+        _Suara jadi dalem banget_
+
+    *${prefix}ausmooth*
+        _Suara jadi alus bet aluss_
+    
+    *${prefix}aufast*
+        _Suara jadi cepet_
+
+    *${prefix}auslow*
+        _Suara jadi lambaaatt_
+    
+    *${prefix}aufat*
+        _Suara jadi gendut_
+
+    *${prefix}aureverse*
+        _Suara jadi kebalik_
+
+    *${prefix}aunc*
+        _Efek nightcore_
+
+    *${prefix}autupai*
+        _Efek kek tupai_
 
 *MEME MAKER*
 

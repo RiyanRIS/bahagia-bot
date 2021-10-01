@@ -92,6 +92,9 @@ const {
   isUrl,
   fetchJson
 } = require("./helpers/function")
+const {
+  gtts
+} = require("./lib/gtts")
 
 const dl = require("./helpers/downloader")
 
@@ -412,6 +415,7 @@ async function main() {
       const isMedia = (type === 'imageMessage' || type === 'videoMessage')
       const isQuotedImage = type === 'extendedTextMessage' && content.includes('imageMessage')
       const isQuotedVideo = type === 'extendedTextMessage' && content.includes('videoMessage')
+      const isQuotedAudio = type === "extendedTextMessage" && content.includes("audioMessage")
       const isQuotedSticker = type === 'extendedTextMessage' && content.includes('stickerMessage')
       if (isCmd) {
         if (isGroup) {
@@ -1513,6 +1517,34 @@ async function main() {
             reply("Kamu lupa melampirkan gambar yang akan di hapus backgroundnya.")
           }
           break;
+        
+        case 'tts':
+          if(args[0] == undefined || args[0] == ""){
+            reply("Kami membutuhkan kalimat untuk di proses.")
+            break
+          }
+          let language_tts = "id"
+          let language_text_tts
+          if(args.includes("--lang") || args.includes("-l") || args.includes("-L")){
+            for (let i = 0; i < args.length; i++) {
+              if (args[i].includes("--lang") || args[i].includes("-l")) {
+                language_tts = args[i + 1]
+              }
+            }
+            let textArr = args.splice(2)
+            language_text_tts = textArr.join(" ")
+          } else {
+            language_text_tts = args.join(" ")
+          }
+
+          let res
+          try { res = await gtts(language_text_tts, language_tts) }
+          catch (e) {
+            res = await gtts(language_text_tts)
+          } finally {
+            conn.sendMessage(from, fs.readFileSync("./public/gtts.wav"), audio, {mimetype: "audio/mp4"}).catch((e) => reply("error" + " "))
+          }
+          break;
 
           // https://algorithmia.com
         case 'colorize1':
@@ -1644,6 +1676,285 @@ async function main() {
             mimetype: Mimetype.png
           })
           break
+        
+        case 'aurobot':
+          if ((isMedia && !mek.message.audioMessage || isQuotedAudio)) {
+            const encmedia = isQuotedAudio ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+            const media = await conn.downloadAndSaveMediaMessage(encmedia, "./public/aurobot")
+            console.log("media downloaded", media)
+            let ran = './public/aurobott.mp3'
+            try {
+              exec(`ffmpeg -i ${media} -filter_complex "afftfilt=real='hypot(re,im)*sin(0)':imag='hypot(re,im)*cos(0)':win_size=512:overlap=0.75" ${ran}`, async (err, stderr, stdout) => {
+                fs.unlinkSync(media)
+                if (err) reply("eror: ", err)
+                let buff = fs.readFileSync(ran)
+                await conn.sendMessage(from, buff, audio, { quoted: mek, mimetype: 'audio/mp4' }).then((e) => {
+                  fs.unlinkSync(ran)
+                }).catch((e) => {
+                  reply("kesalahan saat mengirim file ke anda, ulangi beberapa saat lagi.")
+                })
+              })
+            } catch (e) {
+              reply("Terjadi kesalahan saat memproses data, ulangi beberapa saat lagi.")
+            }
+          } else {
+            reply(`Perintah ini memerlukan audio untuk di proses.`)
+          }
+        break
+
+        case 'aublown':
+          if ((isMedia && !mek.message.audioMessage || isQuotedAudio)) {
+            const encmedia = isQuotedAudio ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+            const media = await conn.downloadAndSaveMediaMessage(encmedia, "./public/aublown")
+            console.log("media downloaded", media)
+            let ran = './public/aublownn.mp3'
+            try {
+              exec(`ffmpeg -i ${media} -af acrusher=.1:1:64:0:log ${ran}`, async (err, stderr, stdout) => {
+                fs.unlinkSync(media)
+                if (err) reply("eror: ", err)
+                let buff = fs.readFileSync(ran)
+                await conn.sendMessage(from, buff, audio, { quoted: mek, mimetype: 'audio/mp4' }).then((e) => {
+                  fs.unlinkSync(ran)
+                }).catch((e) => {
+                  reply("kesalahan saat mengirim file ke anda, ulangi beberapa saat lagi.")
+                })
+              })
+            } catch (e) {
+              reply("Terjadi kesalahan saat memproses data, ulangi beberapa saat lagi.")
+            }
+          } else {
+            reply(`Perintah ini memerlukan audio untuk di proses.`)
+          }
+        break
+        
+        case 'audeep':
+          if ((isMedia && !mek.message.audioMessage || isQuotedAudio)) {
+            const encmedia = isQuotedAudio ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+            const media = await conn.downloadAndSaveMediaMessage(encmedia, "./public/audeep")
+            console.log("media downloaded", media)
+            let ran = './public/audeepp.mp3'
+            try {
+              exec(`ffmpeg -i ${media} -af acrusher=.1:1:64:0:log ${ran}`, async (err, stderr, stdout) => {
+                fs.unlinkSync(media)
+                if (err) reply("eror: ", err)
+                let buff = fs.readFileSync(ran)
+                await conn.sendMessage(from, buff, audio, { quoted: mek, mimetype: 'audio/mp4' }).then((e) => {
+                  fs.unlinkSync(ran)
+                }).catch((e) => {
+                  reply("kesalahan saat mengirim file ke anda, ulangi beberapa saat lagi.")
+                })
+              })
+            } catch (e) {
+              reply("Terjadi kesalahan saat memproses data, ulangi beberapa saat lagi.")
+            }
+          } else {
+            reply(`Perintah ini memerlukan audio untuk di proses.`)
+          }
+        break
+        
+        case 'aufast':
+          if ((isMedia && !mek.message.audioMessage || isQuotedAudio)) {
+            const encmedia = isQuotedAudio ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+            const media = await conn.downloadAndSaveMediaMessage(encmedia, "./public/aufast")
+            console.log("media downloaded", media)
+            let ran = './public/aufastt.mp3'
+            try {
+              exec(`ffmpeg -i ${media} -filter:a "atempo=1.63,asetrate=44100"  ${ran}`, async (err, stderr, stdout) => {
+                fs.unlinkSync(media)
+                if (err) reply("eror: ", err)
+                let buff = fs.readFileSync(ran)
+                await conn.sendMessage(from, buff, audio, { quoted: mek, mimetype: 'audio/mp4' }).then((e) => {
+                  fs.unlinkSync(ran)
+                }).catch((e) => {
+                  reply("kesalahan saat mengirim file ke anda, ulangi beberapa saat lagi.")
+                })
+              })
+            } catch (e) {
+              reply("Terjadi kesalahan saat memproses data, ulangi beberapa saat lagi.")
+            }
+          } else {
+            reply(`Perintah ini memerlukan audio untuk di proses.`)
+          }
+        break
+        
+        case 'aufat':
+          if ((isMedia && !mek.message.audioMessage || isQuotedAudio)) {
+            const encmedia = isQuotedAudio ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+            const media = await conn.downloadAndSaveMediaMessage(encmedia, "./public/aufat")
+            console.log("media downloaded", media)
+            let ran = './public/aufatt.mp3'
+            try {
+              exec(`ffmpeg -i ${media} -filter:a "atempo=1.6,asetrate=22100" ${ran}`, async (err, stderr, stdout) => {
+                fs.unlinkSync(media)
+                if (err) reply("eror: ", err)
+                let buff = fs.readFileSync(ran)
+                await conn.sendMessage(from, buff, audio, { quoted: mek, mimetype: 'audio/mp4' }).then((e) => {
+                  fs.unlinkSync(ran)
+                }).catch((e) => {
+                  reply("kesalahan saat mengirim file ke anda, ulangi beberapa saat lagi.")
+                })
+              })
+            } catch (e) {
+              reply("Terjadi kesalahan saat memproses data, ulangi beberapa saat lagi.")
+            }
+          } else {
+            reply(`Perintah ini memerlukan audio untuk di proses.`)
+          }
+        break
+        
+        case 'aurev':
+        case 'aureverse':
+          if ((isMedia && !mek.message.audioMessage || isQuotedAudio)) {
+            const encmedia = isQuotedAudio ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+            const media = await conn.downloadAndSaveMediaMessage(encmedia, "./public/aureverse")
+            console.log("media downloaded", media)
+            let ran = './public/aureversee.mp3'
+            try {
+              exec(`ffmpeg -i ${media} -filter_complex "areverse" ${ran}`, async (err, stderr, stdout) => {
+                fs.unlinkSync(media)
+                if (err) reply("eror: ", err)
+                let buff = fs.readFileSync(ran)
+                await conn.sendMessage(from, buff, audio, { quoted: mek, mimetype: 'audio/mp4' }).then((e) => {
+                  fs.unlinkSync(ran)
+                }).catch((e) => {
+                  reply("kesalahan saat mengirim file ke anda, ulangi beberapa saat lagi.")
+                })
+              })
+            } catch (e) {
+              reply("Terjadi kesalahan saat memproses data, ulangi beberapa saat lagi.")
+            }
+          } else {
+            reply(`Perintah ini memerlukan audio untuk di proses.`)
+          }
+        break
+
+        case 'aunc':
+        case 'aunightcore':
+          if ((isMedia && !mek.message.audioMessage || isQuotedAudio)) {
+            const encmedia = isQuotedAudio ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+            const media = await conn.downloadAndSaveMediaMessage(encmedia, "./public/aunc")
+            console.log("media downloaded", media)
+            let ran = './public/auncc.mp3'
+            try {
+              exec(`ffmpeg -i ${media} -filter:a atempo=1.06,asetrate=44100*1.25 ${ran}`, async (err, stderr, stdout) => {
+                fs.unlinkSync(media)
+                if (err) reply("eror: ", err)
+                let buff = fs.readFileSync(ran)
+                await conn.sendMessage(from, buff, audio, { quoted: mek, mimetype: 'audio/mp4' }).then((e) => {
+                  fs.unlinkSync(ran)
+                }).catch((e) => {
+                  reply("kesalahan saat mengirim file ke anda, ulangi beberapa saat lagi.")
+                })
+              })
+            } catch (e) {
+              reply("Terjadi kesalahan saat memproses data, ulangi beberapa saat lagi.")
+            }
+          } else {
+            reply(`Perintah ini memerlukan audio untuk di proses.`)
+          }
+        break
+
+        case 'aubass':
+        case 'aubas':
+          if ((isMedia && !mek.message.audioMessage || isQuotedAudio)) {
+            const encmedia = isQuotedAudio ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+            const media = await conn.downloadAndSaveMediaMessage(encmedia, "./public/aubass")
+            console.log("media downloaded", media)
+            let ran = './public/aubasss.mp3'
+            try {
+              exec(`ffmpeg -i ${media} -af equalizer=f=94:width_type=o:width=2:g=30 ${ran}`, async (err, stderr, stdout) => {
+                fs.unlinkSync(media)
+                if (err) reply("eror: ", err)
+                let buff = fs.readFileSync(ran)
+                await conn.sendMessage(from, buff, audio, { quoted: mek, mimetype: 'audio/mp4' }).then((e) => {
+                  fs.unlinkSync(ran)
+                }).catch((e) => {
+                  reply("kesalahan saat mengirim file ke anda, ulangi beberapa saat lagi.")
+                })
+              })
+            } catch (e) {
+              reply("Terjadi kesalahan saat memproses data, ulangi beberapa saat lagi.")
+            }
+          } else {
+            reply(`Perintah ini memerlukan audio untuk di proses.`)
+          }
+        break
+        
+        case 'auslow':
+          if ((isMedia && !mek.message.audioMessage || isQuotedAudio)) {
+            const encmedia = isQuotedAudio ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+            const media = await conn.downloadAndSaveMediaMessage(encmedia, "./public/auslow")
+            console.log("media downloaded", media)
+            let ran = './public/ausloww.mp3'
+            try {
+              exec(`ffmpeg -i ${media} -filter:a "atempo=0.7,asetrate=44100" ${ran}`, async (err, stderr, stdout) => {
+                fs.unlinkSync(media)
+                if (err) reply("eror: ", err)
+                let buff = fs.readFileSync(ran)
+                await conn.sendMessage(from, buff, audio, { quoted: mek, mimetype: 'audio/mp4' }).then((e) => {
+                  fs.unlinkSync(ran)
+                }).catch((e) => {
+                  reply("kesalahan saat mengirim file ke anda, ulangi beberapa saat lagi.")
+                })
+              })
+            } catch (e) {
+              reply("Terjadi kesalahan saat memproses data, ulangi beberapa saat lagi.")
+            }
+          } else {
+            reply(`Perintah ini memerlukan audio untuk di proses.`)
+          }
+        break
+
+        case 'ausmooth':
+          if ((isMedia && !mek.message.audioMessage || isQuotedAudio)) {
+            const encmedia = isQuotedAudio ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+            const media = await conn.downloadAndSaveMediaMessage(encmedia, "./public/ausmooth")
+            console.log("media downloaded", media)
+            let ran = './public/ausmoothh.mp3'
+            try {
+              exec(`ffmpeg -i ${media} -filter:v "minterpolate='mi_mode=mci:mc_mode=aobmc:vsbmc=1:fps=120'" ${ran}`, async (err, stderr, stdout) => {
+                fs.unlinkSync(media)
+                if (err) reply("eror: ", err)
+                let buff = fs.readFileSync(ran)
+                await conn.sendMessage(from, buff, audio, { quoted: mek, mimetype: 'audio/mp4' }).then((e) => {
+                  fs.unlinkSync(ran)
+                }).catch((e) => {
+                  reply("kesalahan saat mengirim file ke anda, ulangi beberapa saat lagi.")
+                })
+              })
+            } catch (e) {
+              reply("Terjadi kesalahan saat memproses data, ulangi beberapa saat lagi.")
+            }
+          } else {
+            reply(`Perintah ini memerlukan audio untuk di proses.`)
+          }
+        break
+        
+        case 'autupai':
+          if ((isMedia && !mek.message.audioMessage || isQuotedAudio)) {
+            const encmedia = isQuotedAudio ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+            const media = await conn.downloadAndSaveMediaMessage(encmedia, "./public/autupai")
+            console.log("media downloaded", media)
+            let ran = './public/autupaii.mp3'
+            try {
+              exec(`ffmpeg -i ${media} -filter:a "atempo=0.5,asetrate=65100" ${ran}`, async (err, stderr, stdout) => {
+                fs.unlinkSync(media)
+                if (err) reply("eror: ", err)
+                let buff = fs.readFileSync(ran)
+                await conn.sendMessage(from, buff, audio, { quoted: mek, mimetype: 'audio/mp4' }).then((e) => {
+                  fs.unlinkSync(ran)
+                }).catch((e) => {
+                  reply("kesalahan saat mengirim file ke anda, ulangi beberapa saat lagi.")
+                })
+              })
+            } catch (e) {
+              reply("Terjadi kesalahan saat memproses data, ulangi beberapa saat lagi.")
+            }
+          } else {
+            reply(`Perintah ini memerlukan audio untuk di proses.`)
+          }
+        break
+
 
           // https://en.ephoto360.com/
           // Pake 1 text
