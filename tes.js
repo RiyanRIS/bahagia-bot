@@ -39,7 +39,7 @@ const nuliskanan = async(text) => {
   return new Promise((resolve, reject) => {
     if (text == undefined || text == ""){
       reject("Text masih kosong")
-    }  
+    } 
     const splitText = text.replace(/(\S+\s*){1,9}/g, '$&\n')
     const fixHeight = splitText.split('\n').slice(0, 31).join('\n')
     spawn('convert', [
