@@ -64,6 +64,16 @@ _By: RiyanRIS_
 
     *${prefix}img2toon*
         _Membuat foto menjadi mode kartun_
+    
+*GAMES*
+
+    *${prefix}tg*
+    *${prefix}tebakgambar*
+        _Game Tebak Gambar_
+
+    *${prefix}tp*
+    *${prefix}tebakpribahasa*
+        _Game Tebak Peribahasa_
 
 *AUDIO MANIPULATION*
 
@@ -309,3 +319,13 @@ module.exports.fetchJson = (url, options) => new Promise(async (resolve, reject)
           reject(err)
       })
 })
+
+module.exports.contains = (target, pattern) => {
+    var value = 0;
+    pattern.forEach(function (word) {
+        if (target.includes(word)) {
+        value++
+        }
+    });
+    return value
+}

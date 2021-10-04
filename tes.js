@@ -11,6 +11,26 @@ const request = require("request")
 const {spawn} = require('child_process');
 const {exec} = require('child_process');
 
+// Main Pribahasa
+const {tebakpribahasa} = require("./lib/game")
+tebakpribahasa().then((res) => {
+  console.log(res)
+}).catch(console.log())
+// const db_pribahasa = JSON.parse(fs.readFileSync("./src/pribahasa.json"))
+// const rndm = Math.floor(Math.random() * db_pribahasa.length)
+// const data_acak = db_pribahasa[rndm]
+
+// const pribahasa_soal = data_acak.pribahasa.split(" ")
+// const rndm1 = Math.floor(Math.random() * pribahasa_soal.length)
+// const jawaban = pribahasa_soal[rndm1]
+// const soal = data_acak.pribahasa.replace(jawaban, "....")
+// const res = {
+//   soal: soal,
+//   jawaban: jawaban,
+//   arti: data_acak.arti
+// }
+// console.log(res)
+
 // (function() {
 //   var childProcess = require("child_process");
 //   var oldSpawn = childProcess.spawn;
@@ -25,46 +45,46 @@ const {exec} = require('child_process');
 // return
 
 // NULIS
-let text = `Lelaki tua dengan kaki kanan yang pincang itu hidup dalam keadaan yang sangat memilukan. Ia tidak punya anak dan istri, bapak,ibu, dan saudara-saudaranya sudah meninggal, ia hidup sendirian sebatang kara di gubuk reyot di tepi kampung. Makanan sehari-hari yang bisa ia makan bergantung pada perolehan kayu bakar yang ia cari di hutan lalu ia jual. Ketika kemudian ada iklan penggalangan donasi untuk membantu lelaki malang itu yang digalang oleh salah satu yayasan lewat di beranda Facebook saya, maka tak butuh waktu yang lama bagi saya untuk segera membukanya dan segera mentransfer sejumlah uang. Tentu saja saya berharap donasi yang saya berikan itu akan bermanfaat dan membantu kehidupan si lelaki tua.
+// let text = `Lelaki tua dengan kaki kanan yang pincang itu hidup dalam keadaan yang sangat memilukan. Ia tidak punya anak dan istri, bapak,ibu, dan saudara-saudaranya sudah meninggal, ia hidup sendirian sebatang kara di gubuk reyot di tepi kampung. Makanan sehari-hari yang bisa ia makan bergantung pada perolehan kayu bakar yang ia cari di hutan lalu ia jual. Ketika kemudian ada iklan penggalangan donasi untuk membantu lelaki malang itu yang digalang oleh salah satu yayasan lewat di beranda Facebook saya, maka tak butuh waktu yang lama bagi saya untuk segera membukanya dan segera mentransfer sejumlah uang. Tentu saja saya berharap donasi yang saya berikan itu akan bermanfaat dan membantu kehidupan si lelaki tua.
 
-Saya memang merasa ngeri ketika membayangkan seandainya saya berada di posisi lelaki tua itu. Pastilah saya sudah sangat depresi. Hidup sendirian, dengan kaki yang pincang, dalam gubuk yang hanya 2 x 3 meter, dengan makanan yang sangat terbatas, tanpa hiburan, dan dengan harapan hidup yang harus diecer setiap harinya.
+// Saya memang merasa ngeri ketika membayangkan seandainya saya berada di posisi lelaki tua itu. Pastilah saya sudah sangat depresi. Hidup sendirian, dengan kaki yang pincang, dalam gubuk yang hanya 2 x 3 meter, dengan makanan yang sangat terbatas, tanpa hiburan, dan dengan harapan hidup yang harus diecer setiap harinya.
 
-Dengan membayangkan penderitaan itulah, saya merasa agak ringan untuk mengeluarkan sejumlah uang untuk berdonasi.
+// Dengan membayangkan penderitaan itulah, saya merasa agak ringan untuk mengeluarkan sejumlah uang untuk berdonasi.
 
-Donasi tersebut berhasil menimbulkan semacam ketenangan dalam diri saya. Betapa sebagai manusia, saya, melalui uang yang saya donasikan, masih bisa bermanfaat bagi orang lain yang sedang kesusahan.
+// Donasi tersebut berhasil menimbulkan semacam ketenangan dalam diri saya. Betapa sebagai manusia, saya, melalui uang yang saya donasikan, masih bisa bermanfaat bagi orang lain yang sedang kesusahan.
 
-Hal tersebut, sepintas lalu memang memang terasa luhur dan menyenangkan. Sampai kemudian, algoritma Facebook itu bekerja.`
+// Hal tersebut, sepintas lalu memang memang terasa luhur dan menyenangkan. Sampai kemudian, algoritma Facebook itu bekerja.`
 
-const nuliskanan = async(text) => {
-  return new Promise((resolve, reject) => {
-    if (text == undefined || text == ""){
-      reject("Text masih kosong")
-    }
-    const splitText = text.replace(/(\S+\s*){1,9}/g, '$&\n')
-    const fixHeight = splitText.split('\n').slice(0, 31).join('\n')
-    spawn('convert', [
-        './src/gambar/nulisbukusebelumkanan.jpg',
-        '-font',
-        './src/font/nulisa.ttf',
-        '-size',
-        '960x1280',
-        '-pointsize',
-        '23',
-        '-interline-spacing',
-        '2',
-        '-annotate',
-        '+128+129',
-        fixHeight,
-        './public/nulisbukukanan.jpg'
-    ])
-    .on('error', (e) => console.log(e.message))
-    .on('exit', () => {
-        console.log("Berhasil")
-    })
-  })
-}
+// const nuliskanan = async(text) => {
+//   return new Promise((resolve, reject) => {
+//     if (text == undefined || text == ""){
+//       reject("Text masih kosong")
+//     }
+//     const splitText = text.replace(/(\S+\s*){1,9}/g, '$&\n')
+//     const fixHeight = splitText.split('\n').slice(0, 31).join('\n')
+//     spawn('convert', [
+//         './src/gambar/nulisbukusebelumkanan.jpg',
+//         '-font',
+//         './src/font/nulisa.ttf',
+//         '-size',
+//         '960x1280',
+//         '-pointsize',
+//         '23',
+//         '-interline-spacing',
+//         '2',
+//         '-annotate',
+//         '+128+129',
+//         fixHeight,
+//         './public/nulisbukukanan.jpg'
+//     ])
+//     .on('error', (e) => console.log(e.message))
+//     .on('exit', () => {
+//         console.log("Berhasil")
+//     })
+//   })
+// }
 
-nuliskanan(text)
+// nuliskanan(text)
 //   break
 // case 'nuliskiri':                     
 // if (!args.length >= 1) return piyo.reply(from, 'Kirim /nuliskiri teks', id) 
