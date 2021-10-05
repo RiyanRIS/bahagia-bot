@@ -602,7 +602,7 @@ async function main() {
           } else if (resTebakPribahasa[0].percobaan == 8) {
             reply("bego, udah berapa kali coba masih salah aja")
           } else if (resTebakPribahasa[0].percobaan >= 9) {
-            reply("dahlah.. skip aja")
+            reply("dahlah.. skip aja") 
           } else if (resTebakPribahasa[0].percobaan > 11) {
             reply("DIBILANG SKIP AJA UDAH")
           } else if (resTebakPribahasa[0].percobaan > 11) {
