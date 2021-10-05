@@ -635,9 +635,7 @@ async function main() {
       }
 
       if(isOnGame){
-        if(isCmd){
-          return
-        }
+        return
       }
 
       /////////////// COMMANDS \\\\\\\\\\\\\\\
