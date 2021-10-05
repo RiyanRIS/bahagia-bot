@@ -130,13 +130,19 @@ async function main() {
     console.log('Connected!')
   })
   await conn.connect({
-    timeoutMs: 30 * 1000
+    timeoutMs: 30 * 1000,
+    maxRetries: Infinity
+  })
+
+  conn.on('ws-close', async ({ reason }) => {
+    console.log('Reason is:', reason)
   })
 
   setInterval(async () => {
     const tg = moment.tz("Asia/Jakarta").format("MMMM DD, YYYY")
     const biography = '📅 ' + tg + ' 🇮🇩 Gunakan \/help untuk melihat perintah yang tersedia.'
     await conn.setStatus(biography)
+    
   }, 50000);
 
   conn.on('group-participants-update', async (anu) => {
