@@ -12,10 +12,11 @@ const {spawn} = require('child_process');
 const {exec} = require('child_process');
 
 // Main Pribahasa
-const {tebakpribahasa} = require("./lib/game")
-tebakpribahasa().then((res) => {
-  console.log(res)
-}).catch(console.log())
+// const {tebakpribahasa} = require("./lib/game")
+// tebakpribahasa().then((res) => {
+//   console.log(res)
+// }).catch(console.log())
+
 // const db_pribahasa = JSON.parse(fs.readFileSync("./src/pribahasa.json"))
 // const rndm = Math.floor(Math.random() * db_pribahasa.length)
 // const data_acak = db_pribahasa[rndm]

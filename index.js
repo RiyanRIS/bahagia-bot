@@ -1890,6 +1890,32 @@ async function main() {
             mimetype: Mimetype.png
           })
           break
+
+        case "kontak":
+          pe = args.join(" ")
+          wulinghiyah = pe.split(",")[0]
+          nah = pe.split(",")[1]
+          if(wulinghiyah.startsWith("08")){
+            no = wulinghiyah.slice(1,100)
+          }else if(wulinghiyah.startsWith("62")){
+            no = wulinghiyah.slice(2,100)
+          }else if(wulinghiyah.startsWith("+62")){
+            no = wulinghiyah.slice(3,100)
+          }
+          
+          if (isNaN(no)) return reply("Invalid phone number")
+          vcard =
+            "BEGIN:VCARD\n" +
+            "VERSION:3.0\n" +
+            `FN:${nah}\n` +
+            `TEL;type=CELL;type=VOICE;waid=${"62" + no}:${"62" + no}\n` +
+            "END:VCARD".trim()
+          conn.sendMessage(
+            from,
+            { displayName: `${nah}`, vcard: vcard },
+            contact
+          )
+          break
         
         case 'aurobot':
           if ((isMedia && !mek.message.audioMessage || isQuotedAudio)) {

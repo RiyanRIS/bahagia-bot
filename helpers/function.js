@@ -193,6 +193,9 @@ _By: RiyanRIS_
         _Misal nomor target 089677249020_
         _Maka tulis_ *${prefix}sms 89677249020*
 
+    *${prefix}kontak <NoHP>*
+        _Membuat Kartu Kontak_
+
     *${prefix}katacinta*
         _Kata cinta random_
 
