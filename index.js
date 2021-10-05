@@ -69,6 +69,7 @@ const {
 const {
   textpro
 } = require("./lib/textpro")
+const {nulis} = require("./lib/nulis")
 const {
   sms_oyo,
   sms_mapclub,
@@ -1154,6 +1155,14 @@ async function main() {
           await sendMediaURL(args[0], "")
           break
 
+        case "bka":
+        case "bukukanan":
+          nulis(args).then(async(res) => {
+            sendMedPath(res, "Nulis Buku Kanan, Done!", image)
+            .catch((e) => reply(e.message))
+          }).catch((e) => reply(e))
+          break
+
           // https://github.com/tesseract-ocr/tesseract
         case "ocr":
           if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
@@ -1354,6 +1363,9 @@ async function main() {
           break
 
         case 'bucin':
+          reply("https://riyanris.my.id/bucin-simple/?in=" + args.join(" "))
+          break
+
         case 'katacinta':
         case 'quotescinta':
           const katacinta = async () => {

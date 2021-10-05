@@ -46,46 +46,131 @@ const {exec} = require('child_process');
 // return
 
 // NULIS
-// let text = `Lelaki tua dengan kaki kanan yang pincang itu hidup dalam keadaan yang sangat memilukan. Ia tidak punya anak dan istri, bapak,ibu, dan saudara-saudaranya sudah meninggal, ia hidup sendirian sebatang kara di gubuk reyot di tepi kampung. Makanan sehari-hari yang bisa ia makan bergantung pada perolehan kayu bakar yang ia cari di hutan lalu ia jual. Ketika kemudian ada iklan penggalangan donasi untuk membantu lelaki malang itu yang digalang oleh salah satu yayasan lewat di beranda Facebook saya, maka tak butuh waktu yang lama bagi saya untuk segera membukanya dan segera mentransfer sejumlah uang. Tentu saja saya berharap donasi yang saya berikan itu akan bermanfaat dan membantu kehidupan si lelaki tua.
+let text = `Lelaki tua dengan kaki kanan yang pincang itu hidup dalam keadaan yang sangat memilukan. Ia tidak punya anak dan istri, bapak,ibu, dan saudara-saudaranya sudah meninggal, ia hidup sendirian sebatang kara di gubuk reyot di tepi kampung. Makanan sehari-hari yang bisa ia makan bergantung pada perolehan kayu bakar yang ia cari di hutan lalu ia jual. Ketika kemudian ada iklan penggalangan donasi untuk membantu lelaki malang itu yang digalang oleh salah satu yayasan lewat di beranda Facebook saya, maka tak butuh waktu yang lama bagi saya untuk segera membukanya dan segera mentransfer sejumlah uang. Tentu saja saya berharap donasi yang saya berikan itu akan bermanfaat dan membantu kehidupan si lelaki tua.
 
-// Saya memang merasa ngeri ketika membayangkan seandainya saya berada di posisi lelaki tua itu. Pastilah saya sudah sangat depresi. Hidup sendirian, dengan kaki yang pincang, dalam gubuk yang hanya 2 x 3 meter, dengan makanan yang sangat terbatas, tanpa hiburan, dan dengan harapan hidup yang harus diecer setiap harinya.
+Saya memang merasa ngeri ketika membayangkan seandainya saya berada di posisi lelaki tua itu. Pastilah saya sudah sangat depresi. Hidup sendirian, dengan kaki yang pincang, dalam gubuk yang hanya 2 x 3 meter, dengan makanan yang sangat terbatas, tanpa hiburan, dan dengan harapan hidup yang harus diecer setiap harinya.
 
-// Dengan membayangkan penderitaan itulah, saya merasa agak ringan untuk mengeluarkan sejumlah uang untuk berdonasi.
+Dengan membayangkan penderitaan itulah, saya merasa agak ringan untuk mengeluarkan sejumlah uang untuk berdonasi.
 
-// Donasi tersebut berhasil menimbulkan semacam ketenangan dalam diri saya. Betapa sebagai manusia, saya, melalui uang yang saya donasikan, masih bisa bermanfaat bagi orang lain yang sedang kesusahan.
+Donasi tersebut berhasil menimbulkan semacam ketenangan dalam diri saya. Betapa sebagai manusia, saya, melalui uang yang saya donasikan, masih bisa bermanfaat bagi orang lain yang sedang kesusahan.
 
-// Hal tersebut, sepintas lalu memang memang terasa luhur dan menyenangkan. Sampai kemudian, algoritma Facebook itu bekerja.`
+Hal tersebut, sepintas lalu memang memang terasa luhur dan menyenangkan. Sampai kemudian, algoritma Facebook itu bekerja. Dengan membayangkan penderitaan itulah, saya merasa agak ringan untuk mengeluarkan sejumlah uang untuk berdonasi.
 
-// const nuliskanan = async(text) => {
-//   return new Promise((resolve, reject) => {
-//     if (text == undefined || text == ""){
-//       reject("Text masih kosong")
-//     }
-//     const splitText = text.replace(/(\S+\s*){1,9}/g, '$&\n')
-//     const fixHeight = splitText.split('\n').slice(0, 31).join('\n')
-//     spawn('convert', [
-//         './src/gambar/nulisbukusebelumkanan.jpg',
-//         '-font',
-//         './src/font/nulisa.ttf',
-//         '-size',
-//         '960x1280',
-//         '-pointsize',
-//         '23',
-//         '-interline-spacing',
-//         '2',
-//         '-annotate',
-//         '+128+129',
-//         fixHeight,
-//         './public/nulisbukukanan.jpg'
-//     ])
-//     .on('error', (e) => console.log(e.message))
-//     .on('exit', () => {
-//         console.log("Berhasil")
-//     })
-//   })
-// }
+Donasi tersebut berhasil menimbulkan semacam ketenangan dalam diri saya. Betapa sebagai manusia, saya, melalui uang yang saya donasikan, masih bisa bermanfaat bagi orang lain yang sedang kesusahan.
 
-// nuliskanan(text)
+Hal tersebut, sepintas lalu memang memang terasa luhur dan menyenangkan. Sampai kemudian, algoritma Facebook itu bekerja. Dengan membayangkan penderitaan itulah, saya merasa agak ringan untuk mengeluarkan sejumlah uang untuk berdonasi.
+
+Donasi tersebut berhasil menimbulkan semacam ketenangan dalam diri saya. Betapa sebagai manusia, saya, melalui uang yang saya donasikan, masih bisa bermanfaat bagi orang lain yang sedang kesusahan.
+
+Hal tersebut, sepintas lalu memang memang terasa luhur dan menyenangkan. Sampai kemudian, algoritma Facebook itu bekerja.`
+
+const {nuliskanan} = require("./lib/nulis")
+
+const mes = "-no 43 -kls XI IPA 2 -t Halo ini adalah text yang akan ditulis"
+// const mes = "-n Riyan Risky -no 43 -kls XI IPA -t Halo ini adalah text yang akan ditulis"
+
+const args = mes.split(" ")
+
+let nama = "", namasa = false, kelas = "", kelasa = false, no = "", nosa = false,  txt = "", textsa = false
+// CEK NAMA
+if (args.includes('-nama') || args.includes('--nama')) {
+  for (let i = 0; i < args.length; i++) {
+    // Enables data collection when keyword found in index!
+    if (args[i].includes('-n') || args[i].includes('--nama')) {
+      namasa = true;
+    }
+    if (args[i].includes('-no') || args[i].includes('--nomor') || args[i].includes('-kls') || args[i].includes('--kelas') || args[i].includes('-t') || args[i].includes('--text')) {
+      namasa = false;
+    }
+    // If data collection is enabled and args length is more then one it will start appending!
+    if (namasa == true) {
+      nama = nama + args[i] + ' '
+    }
+  }
+  // Check if variable contain unnecessary startup word!
+  if (nama.startsWith('-nama ')) {
+    nama = `${nama.split('-nama ')[1]}`
+  }
+  if (nama.startsWith('--nama ')) {
+    nama = `${nama.split('--nama ')[1]}`
+  }
+}
+
+// CEK NOMOR
+if (args.includes('-no') || args.includes('--nomor')) {
+  for (let i = 0; i < args.length; i++) {
+    // Enables data collection when keyword found in index!
+    if (args[i].includes('-no') || args[i].includes('--nomor')) {
+      nosa = true
+    }
+    if (args[i].includes('-nama') || args[i].includes('--nama') || args[i].includes('-kls') || args[i].includes('--kelas') || args[i].includes('-t') || args[i].includes('--text')) {
+      nosa = false;
+    }
+    // If data collection is enabled and args length is more then one it will start appending!
+    if (nosa == true) {
+      no = no + args[i] + ' '
+    }
+  }
+  // Check if variable contain unnecessary startup word!
+  if (no.startsWith('-no ')) {
+    no = `${no.split('-no ')[1]}`
+  }
+  if (no.startsWith('--nomor ')) {
+    no = `${no.split('--nomor ')[1]}`
+  }
+}
+
+// CEK KELAS
+if (args.includes('-kls') || args.includes('--kelas')) {
+  for (let i = 0; i < args.length; i++) {
+    // Enables data collection when keyword found in index!
+    if (args[i].includes('-kls') || args[i].includes('--kelas')) {
+      kelasa = true;
+    }
+    if (args[i].includes('-nama') || args[i].includes('--nama') || args[i].includes('-no') || args[i].includes('--nomor') || args[i].includes('-t') || args[i].includes('--text')) {
+      kelasa = false;
+    }
+    // If data collection is enabled and args length is more then one it will start appending!
+    if (kelasa == true) {
+      kelas = kelas + args[i] + ' '
+    }
+  }
+  // Check if variable contain unnecessary startup word!
+  if (kelas.startsWith('-kls ')) {
+    kelas = `${kelas.split('-kls ')[1]}`
+  }
+  if (kelas.startsWith('--kelas ')) {
+    kelas = `${kelas.split('--kelas ')[1]}`
+  }
+}
+
+// CEK TEXT
+if (args.includes('-t') || args.includes('--text')) {
+  for (let i = 0; i < args.length; i++) {
+    // Enables data collection when keyword found in index!
+    if (args[i].includes('-t') || args[i].includes('--text')) {
+      textsa = true;
+    }
+    if (args[i].includes('-nama') || args[i].includes('--nama') || args[i].includes('-no') || args[i].includes('--nomor') || args[i].includes('-kls') || args[i].includes('--kelas')) {
+      textsa = false;
+    }
+    // If data collection is enabled and args length is more then one it will start appending!
+    if (textsa == true) {
+      txt = txt + args[i] + ' '
+    }
+  }
+  // Check if variable contain unnecessary startup word!
+  if (txt.startsWith('-t ')) {
+    txt = `${txt.split('-t ')[1]}`
+  }
+  if (txt.startsWith('--text ')) {
+    txt = `${txt.split('--text ')[1]}`
+  }
+}
+if(nama == "") nama = null
+console.log(nama)
+// nuliskanan(text, "Riyan Risky Widya S", null, "XI IPA 2")
+
 //   break
 // case 'nuliskiri':                     
 // if (!args.length >= 1) return piyo.reply(from, 'Kirim /nuliskiri teks', id) 

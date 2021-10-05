@@ -29,7 +29,7 @@ _By: RiyanRIS_
 *DOWNLOADER*
     _Download media, video, audio atau photo dari YouTube, Instagram, Twitter atau yang lainya._
 
-    *List Perintah: *
+    *List Perintah:*
         *${prefix}yt <Link-YT>*   
         *${prefix}ig <Link-IG>*     
         *${prefix}igs <Link-IG>*     
@@ -74,6 +74,35 @@ _By: RiyanRIS_
     *${prefix}tp*
     *${prefix}tebakpribahasa*
         _Game Tebak Peribahasa_
+
+*NULIS*
+    _Membantu menuliskan text pada sebuah kertas_
+
+    *Atribut Yang Tersedia*
+    -t = Text yang akan ditulis (Wajib)
+    -nama = Nama Lengkap (Opsional)
+    -no = Nomor Absen (Opsional)
+    -kls = Kelas (Opsional)
+
+    _Contoh Penggunaan:_
+    *${prefix}bka -nama Riyan Risky W S -no 32 -t Ini adalah kalimat yang akan ditulis oleh BOT.*
+
+    *List Perintah:*
+        *${prefix}bka*
+        *${prefix}bukukanan*
+            _Menulis dengan media Buku sebelah Kanan_
+
+        *${prefix}bki* _<! BELUM TERSEDIA>_
+        *${prefix}bukukiri*
+            _Menulis dengan media Buku sebelah Kiri_
+
+        *${prefix}fka* _<! BELUM TERSEDIA>_
+        *${prefix}foliokanan*
+            _Menulis dengan media Folio sebelah Kanan_
+
+        *${prefix}fki* _<! BELUM TERSEDIA>_
+        *${prefix}foliokiri*
+            _Menulis dengan media Folio sebelah Kiri_
 
 *AUDIO MANIPULATION*
 
@@ -195,6 +224,10 @@ _By: RiyanRIS_
 
     *${prefix}kontak <NoHP>*
         _Membuat Kartu Kontak_
+
+    *${prefix}bucin <Nama>*
+        _Membuat Web Bucin_
+        _Kirim ke Pacarmu biar terkagum-kagum_
 
     *${prefix}katacinta*
         _Kata cinta random_
