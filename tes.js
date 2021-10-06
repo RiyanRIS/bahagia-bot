@@ -45,16 +45,140 @@ const {exec} = require('child_process');
 // })();
 // return
 
+// SPLIT TEXT
+(async () => {
+  let longMessage = 'Lelaki tua dengan kaki kanan yang pincang itu hidup dalam keadaan yang sangat memilukan. Ia tidak punya anak dan istri, bapak,ibu, dan saudara-saudaranya sudah meninggal, ia hidup sendirian sebatang kara di gubuk reyot di tepi kampung. Makanan sehari-hari yang bisa ia makan bergantung pada perolehan kayu bakar yang ia cari di hutan lalu ia jual. Ketika kemudian ada iklan penggalangan donasi untuk membantu lelaki malang itu yang digalang oleh salah satu yayasan lewat di beranda Facebook saya, maka tak butuh waktu yang lama bagi saya untuk segera membukanya dan segera mentransfer sejumlah uang. Tentu saja saya berharap donasi yang saya berikan itu akan bermanfaat dan membantu kehidupan si lelaki tua.',
+  charLimit = 85,
+  maxSplits = 30,
+  placeholder,
+  indicator,
+  breakPoint,
+  messages = [],
+  n,
+  m,
+  splits,
+  
+  totN = 0,
+  newarrayyy = [],
+  kal = "",
+  baris = 0,
+  diagX = 129;
+
+  const font = ['nulisa']
+  const ran = Math.floor(Math.random() * font.length)
+  // const fixHeight = text
+  const pathbef = './src/gambar/nulisbukusebelumkanan.jpg'
+  const pathres = './public/nulisbukukanan.jpg'
+
+  let arrNew = longMessage.split(" ")
+  for (let index = 0; index < arrNew.length; index++) {
+    totN += arrNew[index].length
+    if(65 < totN){
+      tesP = totN + arrNew[index + 1].length
+      if(tesP > 79){
+
+      }
+      baris++
+      console.log(baris, kal)
+      if(baris == 1){
+        spawn('convert', [
+          pathbef,
+          '-font',
+          `./src/font/${font[ran]}.ttf`,
+          '-size',
+          '960x1280',
+          '-pointsize',
+          '20',
+          '-annotate',
+          `+130+${diagX}`,
+          kal,
+          pathres
+        ])
+        .on('error', (e) => console.log(e.message))
+        .on('exit', () => console.log("baris ke " + baris))
+      } else {
+        diagX += 38
+        spawn('convert', [
+          pathres,
+          '-font',
+          `./src/font/${font[ran]}.ttf`,
+          '-size',
+          '960x1280',
+          '-pointsize',
+          '20',
+          '-annotate',
+          `+130+${diagX}`,
+          kal,
+          pathres
+        ])
+        .on('error', (e) => console.log(e.message))
+        .on('exit', () => console.log("baris ke " + baris))
+      }
+      totN = 0
+      kal = arrNew[index] + " "
+      await new Promise(r => setTimeout(r, 500));
+    } else {
+      kal += arrNew[index] + " "
+    }
+  }
+  console.log(++baris, kal)
+  spawn('convert', [
+    pathres,
+    '-font',
+    `./src/font/${font[ran]}.ttf`,
+    '-size',
+    '960x1280',
+    '-pointsize',
+    '20',
+    '-annotate',
+    `+130+${diagX += 38}`,
+    kal,
+    pathres
+  ])
+  .on('error', (e) => console.log(e.message))
+  .on('exit', () => console.log("baris ke " + baris))
+})()
+
+
+
+// var totalLength = longMessage.length + (9 * 5);
+
+// if (totalLength <= (charLimit * 9)) {
+//     placeholder = '\v';
+// }
+// else {
+//     placeholder = '\v\v';
+// }
+
+// for (n = 0, m = 0; n < longMessage.length / charLimit && n < maxSplits; n++) {
+//     m = n * charLimit;
+//     indicator = '\n';
+//     breakPoint = m + charLimit - indicator.length;
+//     longMessage = longMessage.substring(0, breakPoint) + indicator + longMessage.substring(breakPoint);
+// }
+
+// longMessage = longMessage.replace(/\v+/g, n);
+
+// splits = n;
+
+// for (n = 0; n < splits; n++) {
+//     m = n * charLimit;
+//     messages.push(longMessage.substring(m, m + charLimit));
+// }
+
+// // spit out each message
+//     console.log(messages)
+
 // NULIS
-const { nulis } = require("./lib/nulis")
+// const { nulis } = require("./lib/nulis")
 
-const mes = "-no 43 -kls XI IPA 2 -t Lelaki tua dengan kaki kanan yang pincang itu hidup dalam keadaan yang sangat memilukan. Ia tidak punya anak dan istri, bapak,ibu, dan saudara-saudaranya sudah meninggal, ia hidup sendirian sebatang kara di gubuk reyot di tepi kampung. Makanan sehari-hari yang bisa ia makan bergantung pada perolehan kayu bakar yang ia cari di hutan lalu ia jual. Ketika kemudian ada iklan penggalangan donasi untuk membantu lelaki malang itu yang digalang oleh salah satu yayasan lewat di beranda Facebook saya, maka tak butuh waktu yang lama bagi saya untuk segera membukanya dan segera mentransfer sejumlah uang. Tentu saja saya berharap donasi yang saya berikan itu akan bermanfaat dan membantu kehidupan si lelaki tua."
+// const mes = "-no 43 -kls XI IPA 2 -t Lelaki tua dengan kaki kanan yang pincang itu hidup dalam keadaan yang sangat memilukan. Ia tidak punya anak dan istri, bapak,ibu, dan saudara-saudaranya sudah meninggal, ia hidup sendirian sebatang kara di gubuk reyot di tepi kampung. Makanan sehari-hari yang bisa ia makan bergantung pada perolehan kayu bakar yang ia cari di hutan lalu ia jual. Ketika kemudian ada iklan penggalangan donasi untuk membantu lelaki malang itu yang digalang oleh salah satu yayasan lewat di beranda Facebook saya, maka tak butuh waktu yang lama bagi saya untuk segera membukanya dan segera mentransfer sejumlah uang. Tentu saja saya berharap donasi yang saya berikan itu akan bermanfaat dan membantu kehidupan si lelaki tua."
 
-const args = mes.split(" ")
+// const args = mes.split(" ")
 
-nulis(args).then(async(res) => {
- console.log(res)
-}).catch((e) => console.log(e))
+// nulis(args).then(async(res) => {
+//  console.log(res)
+// }).catch((e) => console.log(e))
 
 // let nama = "", namasa = false, kelas = "", kelasa = false, no = "", nosa = false,  txt = "", textsa = false
 // // CEK NAMA
