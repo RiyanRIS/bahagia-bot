@@ -59,7 +59,6 @@ const {exec} = require('child_process');
   splits,
   
   totN = 0,
-  newarrayyy = [],
   kal = "",
   baris = 0,
   diagX = 129;
@@ -74,48 +73,54 @@ const {exec} = require('child_process');
   for (let index = 0; index < arrNew.length; index++) {
     totN += arrNew[index].length
     if(65 < totN){
-      tesP = totN + arrNew[index + 1].length
-      if(tesP > 79){
+      try {
+        tesP = totN + arrNew[index + 1].length
+        if(78 < tesP){
+          baris++
+          console.log(baris, kal)
+          if(baris == 1){
+            spawn('convert', [
+              pathbef,
+              '-font',
+              `./src/font/${font[ran]}.ttf`,
+              '-size',
+              '960x1280',
+              '-pointsize',
+              '20',
+              '-annotate',
+              `+130+${diagX}`,
+              kal,
+              pathres
+            ])
+            .on('error', (e) => console.log(e.message))
+            .on('exit', () => console.log("baris ke " + baris))
+          } else {
+            diagX += 38
+            spawn('convert', [
+              pathres,
+              '-font',
+              `./src/font/${font[ran]}.ttf`,
+              '-size',
+              '960x1280',
+              '-pointsize',
+              '20',
+              '-annotate',
+              `+130+${diagX}`,
+              kal,
+              pathres
+            ])
+            .on('error', (e) => console.log(e.message))
+            .on('exit', () => console.log("baris ke " + baris))
+          }
+          totN = 0
+          kal = arrNew[index] + " "
+          await new Promise(r => setTimeout(r, 500));
+        } else {
+          kal += arrNew[index] + " "
+        }
+      } catch(e) {
+        kal += arrNew[index] + " "
       }
-      baris++
-      console.log(baris, kal)
-      if(baris == 1){
-        spawn('convert', [
-          pathbef,
-          '-font',
-          `./src/font/${font[ran]}.ttf`,
-          '-size',
-          '960x1280',
-          '-pointsize',
-          '20',
-          '-annotate',
-          `+130+${diagX}`,
-          kal,
-          pathres
-        ])
-        .on('error', (e) => console.log(e.message))
-        .on('exit', () => console.log("baris ke " + baris))
-      } else {
-        diagX += 38
-        spawn('convert', [
-          pathres,
-          '-font',
-          `./src/font/${font[ran]}.ttf`,
-          '-size',
-          '960x1280',
-          '-pointsize',
-          '20',
-          '-annotate',
-          `+130+${diagX}`,
-          kal,
-          pathres
-        ])
-        .on('error', (e) => console.log(e.message))
-        .on('exit', () => console.log("baris ke " + baris))
-      }
-      totN = 0
-      kal = arrNew[index] + " "
-      await new Promise(r => setTimeout(r, 500));
     } else {
       kal += arrNew[index] + " "
     }
