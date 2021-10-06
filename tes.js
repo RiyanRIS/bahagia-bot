@@ -76,7 +76,7 @@ const {exec} = require('child_process');
     if(65 < totN){
       tesP = totN + arrNew[index + 1].length
       if(tesP > 79){
- 
+  
       }
       baris++
       console.log(baris, kal)
