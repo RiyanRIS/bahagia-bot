@@ -11,6 +11,12 @@ const request = require("request")
 const {spawn} = require('child_process');
 const {exec} = require('child_process');
 
+// SIMI
+// let text = "Halo bot..."
+// axios.get("https://api.simsimi.net/v2/?text=" + text + "&lc=id")
+//   .then((res) => console.log(res))
+//   .catch((e) => console.log(e.message))
+
 // Main Pribahasa
 // const {tebakpribahasa} = require("./lib/game")
 // tebakpribahasa().then((res) => {
@@ -46,102 +52,102 @@ const {exec} = require('child_process');
 // return
 
 // SPLIT TEXT
-(async () => {
-  let longMessage = 'Lelaki tua dengan kaki kanan yang pincang itu hidup dalam keadaan yang sangat memilukan. Ia tidak punya anak dan istri, bapak,ibu, dan saudara-saudaranya sudah meninggal, ia hidup sendirian sebatang kara di gubuk reyot di tepi kampung. Makanan sehari-hari yang bisa ia makan bergantung pada perolehan kayu bakar yang ia cari di hutan lalu ia jual. Ketika kemudian ada iklan penggalangan donasi untuk membantu lelaki malang itu yang digalang oleh salah satu yayasan lewat di beranda Facebook saya, maka tak butuh waktu yang lama bagi saya untuk segera membukanya dan segera mentransfer sejumlah uang. Tentu saja saya berharap donasi yang saya berikan itu akan bermanfaat dan membantu kehidupan si lelaki tua.',
-  charLimit = 85,
-  maxSplits = 30,
-  placeholder,
-  indicator,
-  breakPoint,
-  messages = [],
-  n,
-  m,
-  splits,
+// (async () => {
+//   let longMessage = 'Lelaki tua dengan kaki kanan yang pincang itu hidup dalam keadaan yang sangat memilukan. Ia tidak punya anak dan istri, bapak,ibu, dan saudara-saudaranya sudah meninggal, ia hidup sendirian sebatang kara di gubuk reyot di tepi kampung. Makanan sehari-hari yang bisa ia makan bergantung pada perolehan kayu bakar yang ia cari di hutan lalu ia jual. Ketika kemudian ada iklan penggalangan donasi untuk membantu lelaki malang itu yang digalang oleh salah satu yayasan lewat di beranda Facebook saya, maka tak butuh waktu yang lama bagi saya untuk segera membukanya dan segera mentransfer sejumlah uang. Tentu saja saya berharap donasi yang saya berikan itu akan bermanfaat dan membantu kehidupan si lelaki tua.',
+//   charLimit = 85,
+//   maxSplits = 30,
+//   placeholder,
+//   indicator,
+//   breakPoint,
+//   messages = [],
+//   n,
+//   m,
+//   splits,
   
-  totN = 0,
-  kal = "",
-  baris = 0,
-  diagX = 129;
+//   totN = 0,
+//   kal = "",
+//   baris = 0,
+//   diagX = 129;
 
-  const font = ['nulisa']
-  const ran = Math.floor(Math.random() * font.length)
-  // const fixHeight = text
-  const pathbef = './src/gambar/nulisbukusebelumkanan.jpg'
-  const pathres = './public/nulisbukukanan.jpg'
+//   const font = ['nulisa']
+//   const ran = Math.floor(Math.random() * font.length)
+//   // const fixHeight = text
+//   const pathbef = './src/gambar/nulisbukusebelumkanan.jpg'
+//   const pathres = './public/nulisbukukanan.jpg'
 
-  let arrNew = longMessage.split(" ")
-  for (let index = 0; index < arrNew.length; index++) {
-    totN += arrNew[index].length
-    if(65 < totN){
-      try {
-        tesP = totN + arrNew[index + 1].length
-        if(78 < tesP){
-          baris++
-          console.log(baris, kal)
-          if(baris == 1){
-            spawn('convert', [
-              pathbef,
-              '-font',
-              `./src/font/${font[ran]}.ttf`,
-              '-size',
-              '960x1280',
-              '-pointsize',
-              '20',
-              '-annotate',
-              `+130+${diagX}`,
-              kal,
-              pathres
-            ])
-            .on('error', (e) => console.log(e.message))
-            .on('exit', () => console.log("baris ke " + baris))
-          } else {
-            diagX += 38
-            spawn('convert', [
-              pathres,
-              '-font',
-              `./src/font/${font[ran]}.ttf`,
-              '-size',
-              '960x1280',
-              '-pointsize',
-              '20',
-              '-annotate',
-              `+130+${diagX}`,
-              kal,
-              pathres
-            ])
-            .on('error', (e) => console.log(e.message))
-            .on('exit', () => console.log("baris ke " + baris))
-          }
-          totN = 0
-          kal = arrNew[index] + " "
-          await new Promise(r => setTimeout(r, 500));
-        } else {
-          kal += arrNew[index] + " "
-        }
-      } catch(e) {
-        kal += arrNew[index] + " "
-      }
-    } else {
-      kal += arrNew[index] + " "
-    }
-  }
-  console.log(++baris, kal)
-  spawn('convert', [
-    pathres,
-    '-font',
-    `./src/font/${font[ran]}.ttf`,
-    '-size',
-    '960x1280',
-    '-pointsize',
-    '20',
-    '-annotate',
-    `+130+${diagX += 38}`,
-    kal,
-    pathres
-  ])
-  .on('error', (e) => console.log(e.message))
-  .on('exit', () => console.log("baris ke " + baris))
-})()
+//   let arrNew = longMessage.split(" ")
+//   for (let index = 0; index < arrNew.length; index++) {
+//     totN += arrNew[index].length
+//     if(65 < totN){
+//       try {
+//         tesP = totN + arrNew[index + 1].length
+//         if(78 < tesP){
+//           baris++
+//           console.log(baris, kal)
+//           if(baris == 1){
+//             spawn('convert', [
+//               pathbef,
+//               '-font',
+//               `./src/font/${font[ran]}.ttf`,
+//               '-size',
+//               '960x1280',
+//               '-pointsize',
+//               '20',
+//               '-annotate',
+//               `+130+${diagX}`,
+//               kal,
+//               pathres
+//             ])
+//             .on('error', (e) => console.log(e.message))
+//             .on('exit', () => console.log("baris ke " + baris))
+//           } else {
+//             diagX += 38
+//             spawn('convert', [
+//               pathres,
+//               '-font',
+//               `./src/font/${font[ran]}.ttf`,
+//               '-size',
+//               '960x1280',
+//               '-pointsize',
+//               '20',
+//               '-annotate',
+//               `+130+${diagX}`,
+//               kal,
+//               pathres
+//             ])
+//             .on('error', (e) => console.log(e.message))
+//             .on('exit', () => console.log("baris ke " + baris))
+//           }
+//           totN = 0
+//           kal = arrNew[index] + " "
+//           await new Promise(r => setTimeout(r, 500));
+//         } else {
+//           kal += arrNew[index] + " "
+//         }
+//       } catch(e) {
+//         kal += arrNew[index] + " "
+//       }
+//     } else {
+//       kal += arrNew[index] + " "
+//     }
+//   }
+//   console.log(++baris, kal)
+//   spawn('convert', [
+//     pathres,
+//     '-font',
+//     `./src/font/${font[ran]}.ttf`,
+//     '-size',
+//     '960x1280',
+//     '-pointsize',
+//     '20',
+//     '-annotate',
+//     `+130+${diagX += 38}`,
+//     kal,
+//     pathres
+//   ])
+//   .on('error', (e) => console.log(e.message))
+//   .on('exit', () => console.log("baris ke " + baris))
+// })()
 
 
 

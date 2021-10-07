@@ -2772,6 +2772,9 @@ async function main() {
           break;
 
         default:
+          axios.get("https://api.simsimi.net/v2/?text=" + args.join(" ") + "&lc=id")
+            .then((res) => reply(res.data.success))
+            .catch((e) => console.log(e.message))
           break;
       }
       await conn.updatePresence(from, Presence.paused)
