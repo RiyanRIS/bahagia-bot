@@ -690,7 +690,8 @@ async function main() {
           if (!isGroup) {
             reply(helpBiasa(prefix))
           } else {
-            costum(adminHelp(prefix), text);
+            // costum(adminHelp(prefix), text);
+            reply(helpBiasa(prefix))
           }
           break
 
