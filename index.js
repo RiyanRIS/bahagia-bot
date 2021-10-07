@@ -587,7 +587,7 @@ async function main() {
       let isTebakPribahasa = false
       let resTebakPribahasa = []
 
-      // cek apakah pengirim sedang mengerjakan tebak pribahasa
+      // cek apakah pengirim sedang mengerjakan tebak pribahasa 
       datatebakpribahasa.forEach((i, el) => {
         if (from == i.from) {
           isTebakPribahasa = true
