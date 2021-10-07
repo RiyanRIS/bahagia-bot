@@ -40,8 +40,7 @@ const qrCode = require('qrcode-reader')
 const moment = require("moment-timezone")
 const ocrSpaceApi = require('ocr-space-api')
 const request = require('request')
-const { aksara } = require('./lib/aksara')
-
+const http = require("https")
 
 const deepai = require('deepai')
 const Algorithmia = require("algorithmia")
@@ -50,6 +49,7 @@ deepai.setApiKey('2f488865-1a7b-498c-8fe4-01c15a402c9a')
 const clientAlgo = Algorithmia.client("sim0fQz4awLwB0OwNDifIxJLGgt1")
 
 // LOAD LIBRARY
+const { aksara } = require('./lib/aksara')
 const {
   tebakgambar, tebakpribahasa
 } = require("./lib/game")
@@ -388,7 +388,7 @@ async function main() {
         options = {}
       ) => {
         kma = gam1;
-        mediaa = await conn.prepareMessage(from, kma, image);
+        mediaa = await conn.prepareMessage(from, kma, image)
         const buttonMessages = {
           imageMessage: mediaa.message.imageMessage,
           contentText: text1,
@@ -401,7 +401,41 @@ async function main() {
           buttonMessages,
           MessageType.buttonsMessage,
           options
-        );
+        ).catch(async (e) => {
+          const file = fs.createWriteStream("./public/media1")
+          const request = http.get(kma, function (response) {
+            response.pipe(file)
+          })
+          await new Promise((resolve, reject) => {
+            file.on("error", reject)
+            request.on("error", reject)
+            file.on("finish", resolve)
+          })
+            .then(async () => {
+              let media = fs.readFileSync("./public/media1")
+              function base64_encode(file) {
+                var bitmap = fs.readFileSync(file);
+                return new Buffer.from(bitmap).toString('base64');
+              }
+              let base64str = base64_encode("./public/media1");
+              mediaa = await conn.prepareMessage(from, media, image, {
+                thumbnail: base64str
+              })
+              const buttonMessages = {
+                imageMessage: mediaa.message.imageMessage,
+                contentText: text1,
+                footerText: desc1,
+                buttons: but,
+                headerType: 4,
+              };
+              conn.sendMessage(
+                id,
+                buttonMessages,
+                MessageType.buttonsMessage,
+                options
+              ).catch((e) => reply(e.message))
+            }).catch((e) => reply(e.message))
+        })
       }
 
       const sendToOwner = async (text) => {
@@ -553,7 +587,7 @@ async function main() {
       let isTebakPribahasa = false
       let resTebakPribahasa = []
 
-      // cek apakah pengirim sedang mengerjakan tebak gambar
+      // cek apakah pengirim sedang mengerjakan tebak pribahasa
       datatebakpribahasa.forEach((i, el) => {
         if (from == i.from) {
           isTebakPribahasa = true

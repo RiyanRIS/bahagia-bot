@@ -8,7 +8,8 @@ const {
 const fs = require("fs")
 const request = require('request')
 const {ephoto360} = require('./lib/ephoto360')
-const {getBuffer} = require('./helpers/function')
+const {twdl} = require('./helpers/downloader')
+const {getBuffer, formatBytes} = require('./helpers/function')
 
 const a = async () => {
   const from = "15108986398@c.us"
@@ -66,19 +67,68 @@ const a = async () => {
     });
   }
 
-  const text = "Riyan Risky W S"
-
-  await ephoto360(text, 'https://en.ephoto360.com/create-love-balloons-cards-334.html')
-    .then(async (res) => {
-      let img = await getBuffer(res.image)
-      await conn.sendMessage(from, img, MessageType.image, { mimetype: Mimetype.png, caption: 'Hasil untuk 👇\n_' + text + '_'})
-      .catch((e) => {
-        console.log("Gagal mengirimkan file ke anda. \n\n" + res.image)
-      })
-    })
-    .catch((e) => {
+  const sendButImage = async (
+    id, 
+    text1,
+    desc1,
+    gam1,
+    but = [],
+    options = {}
+  ) => {
+    kma = gam1;
+    try {
+      mediaa = await conn.prepareMessage(from, kma, MessageType.image);
+    } catch(e) {
+      console.log("error1")
       console.log(e)
+    }
+    const buttonMessages = {
+      imageMessage: mediaa.message.imageMessage,
+      contentText: text1,
+      footerText: desc1,
+      buttons: but,
+      headerType: 4,
+    };
+    conn.sendMessage(
+      id,
+      buttonMessages,
+      MessageType.buttonsMessage,
+      options
+    );
+  }
+
+  const text = "Riyan Risky W S"
+  const prefix = "?"
+
+  const tw = "https://twitter.com/chenlebase/status/1445014874413617158?t=kWiUFcYHyoLGWwsLgmffPQ&s=19"
+
+  await twdl(tw).then(async (res) => {
+    let tamnel = await getBuffer(res.thumbnail)
+    await sendButImage(
+      from,
+      `📜 *Title*: ${res.desc}\n\nSilahkan pilih salah satu format yg ingin didownload`, "Bahagia-Bot",
+      tamnel, [{
+          buttonId: `${prefix}sndmediaa ${res.data.khd.url}`,
+          buttonText: {
+            displayText: `HD (${formatBytes(res.data.khd.size)})`,
+          },
+          type: 1,
+        },
+        {
+          buttonId: `${prefix}sndmediaa ${res.data.ksd.url}`,
+          buttonText: {
+            displayText: `SD (${formatBytes(res.data.ksd.size)})`,
+          },
+          type: 1,
+        },
+      ]).then((resp) => {
+      console.log("done")
+    }).catch((e) => {
+      reply(e.message)
     })
+  }).catch((e) => {
+    reply(e.message)
+  })
 
   // await new Promise(r => setTimeout(r, 3000)); 
 }
