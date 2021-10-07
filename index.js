@@ -402,33 +402,22 @@ async function main() {
           MessageType.buttonsMessage,
           options
         ).catch(async (e) => {
-          const file = fs.createWriteStream("./public/media1")
-          const request = http.get(kma, function (response) {
-            response.pipe(file)
+          mediaa = await conn.prepareMessage(from, kma, image, {
+            thumbnail: kma.toString('base64')
           })
-          await new Promise((resolve, reject) => {
-            file.on("error", reject)
-            request.on("error", reject)
-            file.on("finish", resolve)
-          })
-            .then(async () => {
-              mediaa = await conn.prepareMessage(from, kma, image, {
-                thumbnail: kma.toString('base64')
-              })
-              const buttonMessages = {
-                imageMessage: mediaa.message.imageMessage,
-                contentText: text1,
-                footerText: desc1,
-                buttons: but,
-                headerType: 4,
-              };
-              conn.sendMessage(
-                id,
-                buttonMessages,
-                MessageType.buttonsMessage,
-                options
-              ).catch((e) => reply(e.message))
-            }).catch((e) => reply(e.message))
+          const buttonMessages = {
+            imageMessage: mediaa.message.imageMessage,
+            contentText: text1,
+            footerText: desc1,
+            buttons: but,
+            headerType: 4,
+          };
+          conn.sendMessage(
+            id,
+            buttonMessages,
+            MessageType.buttonsMessage,
+            options
+          ).catch((e) => reply("Ulangi beberapa saat lagi.."))
         })
       }
 
