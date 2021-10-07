@@ -51,7 +51,7 @@ const clientAlgo = Algorithmia.client("sim0fQz4awLwB0OwNDifIxJLGgt1")
 // LOAD LIBRARY
 const { aksara } = require('./lib/aksara')
 const {
-  tebakgambar, tebakpribahasa
+  tebakgambar, tebakgambar2, tebakpribahasa
 } = require("./lib/game")
 const {
   carbon
@@ -475,10 +475,10 @@ async function main() {
         }
       })
 
-      if (isTebakgambar) { // kondisi jika pengirim sedang mengerjakan tebak gambar
+      if (isTebakgambar && kalimat.toLowerCase() != "skip") { // kondisi jika pengirim sedang mengerjakan tebak gambar
         let jawab = kalimat.toLowerCase()
         if (jawab == resTebakgambar[0].jawaban) { // kondisi jika jawaban benar
-          sendButMessage(from, "Yes, jawaban kamu bener.", `Mau main lagi???`, [{
+          sendButMessage(from, "Yes, jawaban kamu bener.\nPenjelasan: " + resTebakgambar[0].penjelasan, `Mau main lagi???`, [{
               buttonId: `${prefix}tg`,
               buttonText: {
                 displayText: `Ya`,
@@ -527,7 +527,7 @@ async function main() {
             } else if (resTebakgambar[0].percobaan == 6) {
               reply("ayo dong, usaha, jangan ngasal gini..")
             } else if (resTebakgambar[0].percobaan == 7) {
-              reply(`salah, petunjuknya ada ${jumlah} kata dan mengandung kata ${arr_jawaban[1]}`)
+              reply(`salah, petunjuknya ${resTebakgambar[0].deskripsi}`)
             } else if (resTebakgambar[0].percobaan == 8) {
               reply("bego, udah berapa kali coba masih salah aja")
             } else if (resTebakgambar[0].percobaan >= 9) {
@@ -555,6 +555,7 @@ async function main() {
               from: resTebakgambar[0].from,
               percobaan: resTebakgambar[0].percobaan + 1,
               jawaban: resTebakgambar[0].jawaban,
+              penjelasan: resTebakgambar[0].penjelasan,
             }
             dataakanhapus1.push(data)
             fs.writeFileSync("./src/data/tebakgambar.json", JSON.stringify(dataakanhapus1))
@@ -579,10 +580,11 @@ async function main() {
         }
       })
 
-      if (isTebakPribahasa) { // kondisi jika pengirim sedang mengerjakan tebak gambar
+      if (isTebakPribahasa && kalimat.toLowerCase() != "skip") { // kondisi jika pengirim sedang mengerjakan tebak gambar
         let jawab = kalimat.toLowerCase()
         if (jawab == resTebakPribahasa[0].jawaban) { // kondisi jika jawaban benar
-          sendButMessage(from, "Yes, jawaban kamu bener.", `Mau main lagi???`, [{
+          // sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*.\n_" + res.soal.replace("....", res.jawaban) + "_\n\nArti: " + res.arti, `Mau main lagi???`, [{
+          sendButMessage(from, "Yes, jawaban kamu bener.\n_" + resTebakPribahasa[0].soal.replace("....", resTebakPribahasa[0].jawaban) + "_\n\nArti: " + resTebakPribahasa[0].arti, `Mau main lagi???`, [{
               buttonId: `${prefix}tp`,
               buttonText: {
                 displayText: `Ya`,
@@ -649,6 +651,7 @@ async function main() {
           let data = {
             from: resTebakPribahasa[0].from,
             percobaan: resTebakPribahasa[0].percobaan + 1,
+            soal: resTebakPribahasa[0].soal,
             jawaban: resTebakPribahasa[0].jawaban,
             arti: resTebakPribahasa[0].arti,
             status: 0
@@ -658,7 +661,7 @@ async function main() {
         }
       }
 
-      if(isOnGame){
+      if(isOnGame && kalimat != 'skip'){
         return
       }
 
@@ -1456,18 +1459,19 @@ async function main() {
 
         case 'tg':
         case 'tebakgambar':
-          await tebakgambar()
+          await tebakgambar2()
             .then(async (res) => {
-              await sendMediaURL(res.image, "_kami tunggu 2 menit mulai dari sekarang_")
+              await sendMediaURL(res.img, "_kami tunggu 2 menit mulai dari sekarang_")
                 .then((resp) => {
                   console.log("sent")
 
                   // buat perintah bahwa si x sedang mengerjakan tebak gambar
-                  const jawaban = res.jawaban.split("Jawaban ")[1].toLowerCase()
+                  const jawaban = res.jawaban.toLowerCase()
                   data = {
                     from: from,
                     percobaan: 1,
                     jawaban: jawaban,
+                    penjelasan: res.deskripsi
                   }
                   let tebakgambarbaru = JSON.parse(fs.readFileSync("./src/data/tebakgambar.json"))
                   tebakgambarbaru.push(data)
@@ -1497,7 +1501,7 @@ async function main() {
                     }
 
                     if (tedd++ == 120) { // kondisi jika sudah 2 menit belum terjawab
-                      sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + jawaban + "*.", `Mau main lagi???`, [{
+                      sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + jawaban + "*.\nPenjelasan: " + res.deskripsi, `Mau main lagi???`, [{
                           buttonId: `${prefix}tg`,
                           buttonText: {
                             displayText: `Ya`,
@@ -1564,6 +1568,7 @@ async function main() {
                   data = {
                     from: from,
                     percobaan: 1,
+                    soal: res.soal,
                     jawaban: res.jawaban,
                     arti: res.arti,
                     status: 0
@@ -1595,7 +1600,7 @@ async function main() {
                     }
 
                     if (tedd++ == 120) { // kondisi jika sudah 2 menit belum terjawab
-                      sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*.", `Mau main lagi???`, [{
+                      sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*.\n_" + res.soal.replace("....", res.jawaban) + "_\n\nArti: " + res.arti, `Mau main lagi???`, [{
                           buttonId: `${prefix}tp`,
                           buttonText: {
                             displayText: `Ya`,
@@ -1649,6 +1654,37 @@ async function main() {
             .catch((e) => {
               reply(e)
             })
+          break
+          
+        case 'skip':
+          (() => {
+            let tebakgambar = JSON.parse(fs.readFileSync("./src/data/tebakgambar.json"))
+            let tebakpribahasa = JSON.parse(fs.readFileSync("./src/data/tebakpribahasa.json"))
+            let index_priba = null, index_gamb = null
+            tebakpribahasa.forEach((i, el) => {
+              if (from == i.from) {
+                index_priba = el
+                
+              }
+            })
+            if(index_priba != null){
+              tebakpribahasa.splice(index_priba, 1)
+              fs.writeFileSync("./src/data/tebakpribahasa.json", JSON.stringify(tebakpribahasa))
+            }
+
+            tebakgambar.forEach((i, el) => {
+              if (from == i.from) {
+                index_gamb = el
+                
+              }
+            })
+            if(index_gamb != null){
+              tebakgambar.splice(index_gamb, 1)
+              fs.writeFileSync("./src/data/tebakgambar.json", JSON.stringify(tebakgambar))
+            }
+            reply("Kamu telah keluar dari semua games.")
+          })()
+          
           break
 
         case 'sms':
@@ -2772,9 +2808,11 @@ async function main() {
           break;
 
         default:
+          if (!isGroup) {
           axios.get("https://api.simsimi.net/v2/?text=" + kalimat + "&lc=id")
             .then((res) => reply(res.data.success))
             .catch((e) => console.log(e.message))
+          }
           break;
       }
       await conn.updatePresence(from, Presence.paused)

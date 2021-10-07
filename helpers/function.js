@@ -66,6 +66,7 @@ _By: RiyanRIS_
         _Membuat foto menjadi mode kartun_
     
 *GAMES*
+    _Tulis *skip* untuk keluar dari game_
 
     *${prefix}tg*
     *${prefix}tebakgambar*
