@@ -93,7 +93,11 @@ _By: RiyanRIS_
         *${prefix}bukukanan*
             _Menulis dengan media Buku sebelah Kanan_
 
-        *${prefix}bki* _<! BELUM TERSEDIA>_
+        *${prefix}bka1*
+        *${prefix}bukukanan1*
+            _Alternatif jika yang satunya error_
+
+        *${prefix}bki*
         *${prefix}bukukiri*
             _Menulis dengan media Buku sebelah Kiri_
 

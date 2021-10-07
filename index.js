@@ -453,9 +453,10 @@ async function main() {
           console.log(time, ' [COMMAND]', command, '[FROM]', sender.split('@')[0])
         }
       }
-
-      await conn.updatePresence(from, Presence.composing)
-
+      
+      if (!isGroup) {
+        await conn.updatePresence(from, Presence.composing)
+      }
       /////////////// GAMES \\\\\\\\\\\\\\\
 
       let isOnGame = false
@@ -1182,6 +1183,22 @@ async function main() {
         case "bukukanan":
           nulis(args).then(async(res) => {
             sendMedPath(res, "Nulis Buku Kanan, Done!", image)
+            .catch((e) => reply(e.message))
+          }).catch((e) => reply(e))
+          break
+
+        case "bka1":
+        case "bukukanan1":
+          nulis(args, "bukukanan1").then(async(res) => {
+            sendMedPath(res, "Nulis Buku Kanan v2, Done!", image)
+            .catch((e) => reply(e.message))
+          }).catch((e) => reply(e))
+          break
+
+        case "bki":
+        case "bukukiri":
+          nulis(args, "bukukiri").then(async(res) => {
+            sendMedPath(res, "Nulis Buku Kiri, Done!", image)
             .catch((e) => reply(e.message))
           }).catch((e) => reply(e))
           break
