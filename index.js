@@ -2772,7 +2772,7 @@ async function main() {
           break;
 
         default:
-          axios.get("https://api.simsimi.net/v2/?text=" + args.join(" ") + "&lc=id")
+          axios.get("https://api.simsimi.net/v2/?text=" + kalimat + "&lc=id")
             .then((res) => reply(res.data.success))
             .catch((e) => console.log(e.message))
           break;

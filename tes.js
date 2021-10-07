@@ -12,10 +12,10 @@ const {spawn} = require('child_process');
 const {exec} = require('child_process');
 
 // SIMI
-// let text = "Halo bot..."
-// axios.get("https://api.simsimi.net/v2/?text=" + text + "&lc=id")
-//   .then((res) => console.log(res))
-//   .catch((e) => console.log(e.message))
+let text = "/bucinvivi"
+axios.get("https://api.simsimi.net/v2/?text=" + text + "&lc=id")
+  .then((res) => console.log(res.data.success))
+  .catch((e) => console.log(e.message))
 
 // Main Pribahasa
 // const {tebakpribahasa} = require("./lib/game")
