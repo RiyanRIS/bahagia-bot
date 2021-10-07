@@ -412,14 +412,8 @@ async function main() {
             file.on("finish", resolve)
           })
             .then(async () => {
-              let media = fs.readFileSync("./public/media1")
-              function base64_encode(file) {
-                var bitmap = fs.readFileSync(file);
-                return new Buffer.from(bitmap).toString('base64');
-              }
-              let base64str = base64_encode("./public/media1");
-              mediaa = await conn.prepareMessage(from, media, image, {
-                thumbnail: base64str
+              mediaa = await conn.prepareMessage(from, kma, image, {
+                thumbnail: kma.toString('base64')
               })
               const buttonMessages = {
                 imageMessage: mediaa.message.imageMessage,
@@ -1161,8 +1155,10 @@ async function main() {
             let tamnel = await getBuffer(res.thumbnail)
             await sendButImage(
               from,
-              `📜 *Title*: ${res.desc}\n\nSilahkan pilih salah satu format yg ingin didownload`, "Bahagia-Bot",
-              tamnel, [{
+              `📜 *Title*: ${res.desc}\n\nSilahkan pilih salah satu format yg ingin didownload`,
+              "Bahagia-Bot",
+              tamnel, 
+              [{
                   buttonId: `${prefix}sndmediaa ${res.data.khd.url}`,
                   buttonText: {
                     displayText: `HD (${formatBytes(res.data.khd.size)})`,
