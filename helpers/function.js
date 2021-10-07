@@ -244,7 +244,7 @@ _By: RiyanRIS_
         _Fakta unik random_
 
 🛡 _Semua data yang kamu kirim, nggak kami simpen kok, dijamin aman deh_\n
-🛠 _Request fitur atau ada masalah pada bot ini, hubungi Developer_`
+🛠 _Request fitur atau ada masalah pada bot ini, hubungi t.me/kodokkayang_`
 }
 
 module.exports.adminHelp = (prefix) => {
