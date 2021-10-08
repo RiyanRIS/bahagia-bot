@@ -146,6 +146,7 @@ _By: RiyanRIS_
         *${prefix}memetwobutton <Text1>;<Text2>*
         *${prefix}memeslapping <Text1>;<Text2>*
         *${prefix}memedistrack <Text1>;<Text2>;<Text3>*
+        *${prefix}memesadpablo <Text1>;<Text2>;<Text3>*
         *${prefix}memebaloon <Text1>;<Text2>;<Text3>;<Text4>;<Text5>*
 
 *AUDIO MANIPULATION*
