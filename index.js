@@ -252,7 +252,8 @@ async function main() {
 
       const reply = async (teks) => {
         await conn.sendMessage(from, teks, text, {
-          quoted: mek
+          quoted: mek,
+          detectLinks: false
         })
       }
 
