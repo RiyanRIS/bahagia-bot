@@ -674,11 +674,13 @@ async function main() {
 
         case 'help':
         case 'acmd':
-          if (!isGroup) {
-            reply(helpBiasa(prefix))
+          if(args[0] == "nulis"){
+            reply("check yt: https://youtu.be/rVNcp_uxEAE")
+          } else if(args[0] == "nulman"){
+            reply("check yt: https://youtu.be/CzJTBeOE3Yo")
           } else {
-            // costum(adminHelp(prefix), text);
             reply(helpBiasa(prefix))
+            // costum(adminHelp(prefix), text);
           }
           break
 
@@ -1183,6 +1185,14 @@ async function main() {
         case "bukukanan":
           nulis(args).then(async(res) => {
             sendMedPath(res, "Nulis Buku Kanan, Done!", image)
+            .catch((e) => reply(e.message))
+          }).catch((e) => reply(e))
+          break
+
+        case "nulman":
+        case "nulismanual":
+          nulis(args, "entermanual").then(async(res) => {
+            sendMedPath(res, "Nulis Buku Manual, Done!", image)
             .catch((e) => reply(e.message))
           }).catch((e) => reply(e))
           break
