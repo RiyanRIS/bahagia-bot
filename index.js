@@ -69,7 +69,8 @@ const {
   twobutton,
   distrack,
   baloon,
-  slapping
+  slapping,
+  skeleton
 } = require("./lib/imgflip")
 const {
   hartatahta
@@ -1992,6 +1993,12 @@ async function main() {
 
         case 'memeslapping':
           await slapping(args.join(" ")).then(async (res) => {
+            await sendMediaURL(res, `Link: ${res}`)
+          }).catch((e) => reply(e))
+          break
+
+        case 'memeskeleton':
+          await skeleton(args.join(" ")).then(async (res) => {
             await sendMediaURL(res, `Link: ${res}`)
           }).catch((e) => reply(e))
           break

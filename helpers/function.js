@@ -127,12 +127,13 @@ _By: RiyanRIS_
     _Membutuhkan satu argumen teks_
     
     _Contoh Penggunaan:_
-    *${prefix}memecmm wanita adalah objek paling rumit setelah otak manusia*
+    *${prefix}memechangemymind wanita adalah objek paling rumit setelah otak manusia*
 
     *List Perintah:*
         *${prefix}memechangemymind <Text>*
         *${prefix}memehartatahta <Text>*
         *${prefix}memetrump <Text>*
+        *${prefix}memeskeleton <Text>*
 
     _Membutuhkan dua/lebih argumen teks_
     _Masing2 teks dipisah oleh_ *;*
