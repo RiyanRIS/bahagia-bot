@@ -69,7 +69,7 @@ const {
   twobutton,
   distrack,
   baloon,
-  memeslapping
+  slapping
 } = require("./lib/imgflip")
 const {
   hartatahta
@@ -1990,7 +1990,7 @@ async function main() {
           break
 
         case 'memeslapping':
-          await drake(args.join(" ")).then(async (res) => {
+          await slapping(args.join(" ")).then(async (res) => {
             await sendMediaURL(res, `Link: ${res}`)
           }).catch((e) => reply(e))
           break
