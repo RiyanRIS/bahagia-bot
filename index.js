@@ -49,9 +49,13 @@ deepai.setApiKey('2f488865-1a7b-498c-8fe4-01c15a402c9a')
 const clientAlgo = Algorithmia.client("sim0fQz4awLwB0OwNDifIxJLGgt1")
 
 // LOAD LIBRARY
-const { aksara } = require('./lib/aksara')
 const {
-  tebakgambar, tebakgambar2, tebakpribahasa
+  aksara
+} = require('./lib/aksara')
+const {
+  tebakgambar,
+  tebakgambar2,
+  tebakpribahasa
 } = require("./lib/game")
 const {
   carbon
@@ -59,6 +63,14 @@ const {
 const {
   removebg
 } = require("./lib/removebg")
+const {
+  cmm,
+  drake,
+  twobutton,
+  distrack,
+  baloon,
+  memeslapping
+} = require("./lib/imgflip")
 const {
   hartatahta
 } = require("./lib/hartatahta")
@@ -69,7 +81,9 @@ const {
 const {
   textpro
 } = require("./lib/textpro")
-const {nulis} = require("./lib/nulis")
+const {
+  nulis
+} = require("./lib/nulis")
 const {
   sms_oyo,
   sms_mapclub,
@@ -99,7 +113,8 @@ const {
   gtts
 } = require("./lib/gtts")
 const {
-  kbbi, kbj
+  kbbi,
+  kbj
 } = require("./lib/kamus")
 
 const dl = require("./helpers/downloader")
@@ -135,7 +150,9 @@ async function main() {
     maxRetries: Infinity
   })
 
-  conn.on('ws-close', async ({ reason }) => {
+  conn.on('ws-close', async ({
+    reason
+  }) => {
     console.log('Reason is:', reason)
   })
 
@@ -143,7 +160,7 @@ async function main() {
     const tg = moment.tz("Asia/Jakarta").format("MMMM DD, YYYY")
     const biography = '📅 ' + tg + ' 🇮🇩 Gunakan \/help untuk melihat perintah yang tersedia.'
     await conn.setStatus(biography)
-    
+
   }, 50000);
 
   conn.on('group-participants-update', async (anu) => {
@@ -329,39 +346,39 @@ async function main() {
       const sendMedPath = async (path, caption = "", type = image) => {
         let media = fs.readFileSync(path)
         await conn.sendMessage(from, media, type, {
-          quoted: mek,
-          caption: caption,
-        })
-        .then((res) => {
-          console.log("sent")
-          fs.unlinkSync(path)
-          return res
-        })
-        .catch(async (e) => {
-          console.log("gagal pertama")
+            quoted: mek,
+            caption: caption,
+          })
+          .then((res) => {
+            console.log("sent")
+            fs.unlinkSync(path)
+            return res
+          })
+          .catch(async (e) => {
+            console.log("gagal pertama")
 
-          function base64_encode(file) {
-            var bitmap = fs.readFileSync(file);
-            return new Buffer.from(bitmap).toString('base64');
-          }
-          let base64str = base64_encode(path);
-          await conn.sendMessage(from, media, type, {
-              quoted: mek,
-              caption: caption,
-              thumbnail: base64str
-            })
-            .then((res) => {
-              console.log("sent")
-              return res
-            })
-            .catch((e) => {
-              reply("Maaf terjadi kesalahan saat mengirim file ke kamu, ulangi beberapa saat lagi \n\n-------------------\n" + e.message)
-              return
-            })
-            .finally(() => {
-              fs.unlinkSync(path)
-            })
-        })
+            function base64_encode(file) {
+              var bitmap = fs.readFileSync(file);
+              return new Buffer.from(bitmap).toString('base64');
+            }
+            let base64str = base64_encode(path);
+            await conn.sendMessage(from, media, type, {
+                quoted: mek,
+                caption: caption,
+                thumbnail: base64str
+              })
+              .then((res) => {
+                console.log("sent")
+                return res
+              })
+              .catch((e) => {
+                reply("Maaf terjadi kesalahan saat mengirim file ke kamu, ulangi beberapa saat lagi \n\n-------------------\n" + e.message)
+                return
+              })
+              .finally(() => {
+                fs.unlinkSync(path)
+              })
+          })
       }
 
       const sendButMessage = async (id, text1, desc1, but = [], options = {}) => {
@@ -453,7 +470,7 @@ async function main() {
           console.log(time, ' [COMMAND]', command, '[FROM]', sender.split('@')[0])
         }
       }
-      
+
       if (!isGroup) {
         await conn.updatePresence(from, Presence.composing)
       }
@@ -662,7 +679,7 @@ async function main() {
         }
       }
 
-      if(isOnGame && kalimat != 'skip'){
+      if (isOnGame && kalimat != 'skip') {
         return
       }
 
@@ -673,14 +690,17 @@ async function main() {
         /////////////// GROUP COMMAND \\\\\\\\\\\\\\\
 
         case 'help':
-        case 'acmd':
-          if(args[0] == "nulis"){
+        case 'info':
+          if (args[0] == "nulis") {
             reply("check yt: https://youtu.be/rVNcp_uxEAE")
-          } else if(args[0] == "nulman"){
+          } else if (args[0] == "nulman") {
             reply("check yt: https://youtu.be/CzJTBeOE3Yo")
+          } else if (args[0] == "sticker") {
+            reply("check yt: https://youtu.be/rL4eySrXWTQ")
           } else {
             reply(helpBiasa(prefix))
             // costum(adminHelp(prefix), text);
+            // https://youtu.be/rL4eySrXWTQ
           }
           break
 
@@ -1152,7 +1172,7 @@ async function main() {
               from,
               `📜 *Title*: ${res.desc}\n\nSilahkan pilih salah satu format yg ingin didownload`,
               "Bahagia-Bot",
-              tamnel, 
+              tamnel,
               [{
                   buttonId: `${prefix}sndmediaa ${res.data.khd.url}`,
                   buttonText: {
@@ -1183,33 +1203,33 @@ async function main() {
 
         case "bka":
         case "bukukanan":
-          nulis(args).then(async(res) => {
+          nulis(args).then(async (res) => {
             sendMedPath(res, "Nulis Buku Kanan, Done!", image)
-            .catch((e) => reply(e.message))
+              .catch((e) => reply(e.message))
           }).catch((e) => reply(e))
           break
 
         case "nulman":
         case "nulismanual":
-          nulis(args, "entermanual").then(async(res) => {
+          nulis(args, "entermanual").then(async (res) => {
             sendMedPath(res, "Nulis Buku Manual, Done!", image)
-            .catch((e) => reply(e.message))
+              .catch((e) => reply(e.message))
           }).catch((e) => reply(e))
           break
 
         case "bka1":
         case "bukukanan1":
-          nulis(args, "bukukanan1").then(async(res) => {
+          nulis(args, "bukukanan1").then(async (res) => {
             sendMedPath(res, "Nulis Buku Kanan v2, Done!", image)
-            .catch((e) => reply(e.message))
+              .catch((e) => reply(e.message))
           }).catch((e) => reply(e))
           break
 
         case "bki":
         case "bukukiri":
-          nulis(args, "bukukiri").then(async(res) => {
+          nulis(args, "bukukiri").then(async (res) => {
             sendMedPath(res, "Nulis Buku Kiri, Done!", image)
-            .catch((e) => reply(e.message))
+              .catch((e) => reply(e.message))
           }).catch((e) => reply(e))
           break
 
@@ -1682,19 +1702,20 @@ async function main() {
               reply(e)
             })
           break
-          
+
         case 'skip':
           (() => {
             let tebakgambar = JSON.parse(fs.readFileSync("./src/data/tebakgambar.json"))
             let tebakpribahasa = JSON.parse(fs.readFileSync("./src/data/tebakpribahasa.json"))
-            let index_priba = null, index_gamb = null
+            let index_priba = null,
+              index_gamb = null
             tebakpribahasa.forEach((i, el) => {
               if (from == i.from) {
                 index_priba = el
-                
+
               }
             })
-            if(index_priba != null){
+            if (index_priba != null) {
               tebakpribahasa.splice(index_priba, 1)
               fs.writeFileSync("./src/data/tebakpribahasa.json", JSON.stringify(tebakpribahasa))
             }
@@ -1702,31 +1723,31 @@ async function main() {
             tebakgambar.forEach((i, el) => {
               if (from == i.from) {
                 index_gamb = el
-                
+
               }
             })
-            if(index_gamb != null){
+            if (index_gamb != null) {
               tebakgambar.splice(index_gamb, 1)
               fs.writeFileSync("./src/data/tebakgambar.json", JSON.stringify(tebakgambar))
             }
             reply("Kamu telah keluar dari semua games.")
           })()
-          
+
           break
 
         case 'sms':
         case 'bomsms':
           let sms_spamm = args[0]
-          if(sms_spam == undefined || sms_spam == ""){
+          if (sms_spam == undefined || sms_spam == "") {
             reply("Perintah ini memerlukan 1 argumen yaitu nomor target. \n\ncontoh: */sms 896xxxxxxxx*")
             return
           }
-          if(sms_spamm.startsWith("08")){
-            sms_spamm = sms_spamm.slice(1,100)
-          }else if(sms_spamm.startsWith("62")){
-            sms_spamm = sms_spamm.slice(2,100)
-          }else if(sms_spamm.startsWith("+62")){
-            sms_spamm = sms_spamm.slice(3,100)
+          if (sms_spamm.startsWith("08")) {
+            sms_spamm = sms_spamm.slice(1, 100)
+          } else if (sms_spamm.startsWith("62")) {
+            sms_spamm = sms_spamm.slice(2, 100)
+          } else if (sms_spamm.startsWith("+62")) {
+            sms_spamm = sms_spamm.slice(3, 100)
           }
           await call_nutriclub(sms_spamm)
           await new Promise(r => setTimeout(r, 5000))
@@ -1809,15 +1830,15 @@ async function main() {
             reply("Kamu lupa melampirkan gambar yang akan di hapus backgroundnya.")
           }
           break;
-        
+
         case 'tts':
-          if(args[0] == undefined || args[0] == ""){
+          if (args[0] == undefined || args[0] == "") {
             reply("Kami membutuhkan kalimat untuk di proses.")
             break
           }
           let language_tts = "id"
           let language_text_tts
-          if(args.includes("--lang") || args.includes("-l") || args.includes("-L")){
+          if (args.includes("--lang") || args.includes("-l") || args.includes("-L")) {
             for (let i = 0; i < args.length; i++) {
               if (args[i].includes("--lang") || args[i].includes("-l")) {
                 language_tts = args[i + 1]
@@ -1830,18 +1851,21 @@ async function main() {
           }
 
           let res
-          try { res = await gtts(language_text_tts, language_tts) }
-          catch (e) {
+          try {
+            res = await gtts(language_text_tts, language_tts)
+          } catch (e) {
             res = await gtts(language_text_tts)
           } finally {
-            conn.sendMessage(from, fs.readFileSync("./public/gtts.wav"), audio, {mimetype: "audio/mp4"}).catch((e) => reply("error" + " "))
+            conn.sendMessage(from, fs.readFileSync("./public/gtts.wav"), audio, {
+              mimetype: "audio/mp4"
+            }).catch((e) => reply("error" + " "))
           }
           break;
-        
+
         case 'kbj':
           kbj(args.join(" ")).then((res) => reply(res)).catch((e) => reply(e))
           break
-        
+
         case 'kbbi':
           kbbi(args.join(" ")).then((res) => {
             res.forEach((v, i) => {
@@ -1854,7 +1878,7 @@ async function main() {
         case 'aksara':
           reply(aksara(args.join(" ")))
           break
-          
+
           // https://algorithmia.com
         case 'colorize1':
           function base64_encode(file) {
@@ -1953,20 +1977,44 @@ async function main() {
           }
           break
 
-        case 'cmm':
-        case 'changemymind':
-          var ttinullimage = await axios.get(`https://nekobot.xyz/api/imagegen?type=changemymind&text=${args.join(" ").replace(/Ö/g, "%C3%96").replace(/ö/g, "%C3%B6").replace(/ü/g, "%C3%BC").replace(/Ü/g, "%C3%9C").replace(/Ğ/g, "%C4%9E").replace(/ğ/g, "%C4%9F").replace(/ş/g, "%C5%9F").replace(/Ş/g, "%C5%9E").replace(/ç/g, "%C3%A7").replace(/Ç/g, "%C3%87").replace(/ı/g, "%C4%B1").replace(/i/g, "%69").replace(/"/g, "%22").replace(/İ/g, "%C4%B0")}&raw=1`, {
-            responseType: 'arraybuffer'
-          })
-
-          await conn.sendMessage(from, Buffer.from(ttinullimage.data), MessageType.image, {
-            mimetype: Mimetype.png
-          })
+        case 'memechangemymind':
+          await cmm(args.join(" ")).then(async (res) => {
+            await sendMediaURL(res, `Link: ${res}`)
+          }).catch((e) => reply(e))
           break
-        
-        case 'htt':
-        case 'hartatahta':
-          if(args[0] == undefined || args[0] == ""){
+
+        case 'memedrake':
+          await drake(args.join(" ")).then(async (res) => {
+            await sendMediaURL(res, `Link: ${res}`)
+          }).catch((e) => reply(e))
+          break
+
+        case 'memeslapping':
+          await drake(args.join(" ")).then(async (res) => {
+            await sendMediaURL(res, `Link: ${res}`)
+          }).catch((e) => reply(e))
+          break
+
+        case 'memetwobutton':
+          await twobutton(args.join(" ")).then(async (res) => {
+            await sendMediaURL(res, `Link: ${res}`)
+          }).catch((e) => reply(e))
+          break
+
+        case 'memedistrack':
+          await distrack(args.join(" ")).then(async (res) => {
+            await sendMediaURL(res, `Link: ${res}`)
+          }).catch((e) => reply(e))
+          break
+
+        case 'memebaloon':
+          await baloon(args.join(" ")).then(async (res) => {
+            await sendMediaURL(res, `Link: ${res}`)
+          }).catch((e) => reply(e))
+          break
+
+        case 'memehartatahta':
+          if (args[0] == undefined || args[0] == "") {
             reply("Perintah ini memerlukan satu argumen. \n\nSemisal: */htt Ayunda*")
             return
           }
@@ -1975,8 +2023,7 @@ async function main() {
           }).catch((e) => reply(e))
           break
 
-        case 'trump':
-        case 'trumptweet':
+        case 'memetrump':
           var ttinullimage = await axios.get(`https://nekobot.xyz/api/imagegen?type=trumptweet&text=${args.join(" ").replace(/Ö/g, "%C3%96").replace(/ö/g, "%C3%B6").replace(/ü/g, "%C3%BC").replace(/Ü/g, "%C3%9C").replace(/Ğ/g, "%C4%9E").replace(/ğ/g, "%C4%9F").replace(/ş/g, "%C5%9F").replace(/Ş/g, "%C5%9E").replace(/ç/g, "%C3%A7").replace(/Ç/g, "%C3%87").replace(/ı/g, "%C4%B1").replace(/i/g, "%69").replace(/"/g, "%22").replace(/İ/g, "%C4%B0")}&raw=1`, {
             responseType: 'arraybuffer'
           })
@@ -1990,14 +2037,14 @@ async function main() {
           pe = args.join(" ")
           wulinghiyah = pe.split(",")[0]
           nah = pe.split(",")[1]
-          if(wulinghiyah.startsWith("08")){
-            no = wulinghiyah.slice(1,100)
-          }else if(wulinghiyah.startsWith("62")){
-            no = wulinghiyah.slice(2,100)
-          }else if(wulinghiyah.startsWith("+62")){
-            no = wulinghiyah.slice(3,100)
+          if (wulinghiyah.startsWith("08")) {
+            no = wulinghiyah.slice(1, 100)
+          } else if (wulinghiyah.startsWith("62")) {
+            no = wulinghiyah.slice(2, 100)
+          } else if (wulinghiyah.startsWith("+62")) {
+            no = wulinghiyah.slice(3, 100)
           }
-          
+
           if (isNaN(no)) return reply("Invalid phone number")
           vcard =
             "BEGIN:VCARD\n" +
@@ -2006,12 +2053,14 @@ async function main() {
             `TEL;type=CELL;type=VOICE;waid=${"62" + no}:${"62" + no}\n` +
             "END:VCARD".trim()
           conn.sendMessage(
-            from,
-            { displayName: `${nah}`, vcard: vcard },
+            from, {
+              displayName: `${nah}`,
+              vcard: vcard
+            },
             contact
           )
           break
-        
+
         case 'aurobot':
           if ((isMedia && !mek.message.audioMessage || isQuotedAudio)) {
             const encmedia = isQuotedAudio ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
@@ -2023,7 +2072,10 @@ async function main() {
                 fs.unlinkSync(media)
                 if (err) reply("eror: ", err)
                 let buff = fs.readFileSync(ran)
-                await conn.sendMessage(from, buff, audio, { quoted: mek, mimetype: 'audio/mp4' }).then((e) => {
+                await conn.sendMessage(from, buff, audio, {
+                  quoted: mek,
+                  mimetype: 'audio/mp4'
+                }).then((e) => {
                   fs.unlinkSync(ran)
                 }).catch((e) => {
                   reply("kesalahan saat mengirim file ke anda, ulangi beberapa saat lagi.")
@@ -2035,7 +2087,7 @@ async function main() {
           } else {
             reply(`Perintah ini memerlukan audio untuk di proses.`)
           }
-        break
+          break
 
         case 'aublown':
           if ((isMedia && !mek.message.audioMessage || isQuotedAudio)) {
@@ -2048,7 +2100,10 @@ async function main() {
                 fs.unlinkSync(media)
                 if (err) reply("eror: ", err)
                 let buff = fs.readFileSync(ran)
-                await conn.sendMessage(from, buff, audio, { quoted: mek, mimetype: 'audio/mp4' }).then((e) => {
+                await conn.sendMessage(from, buff, audio, {
+                  quoted: mek,
+                  mimetype: 'audio/mp4'
+                }).then((e) => {
                   fs.unlinkSync(ran)
                 }).catch((e) => {
                   reply("kesalahan saat mengirim file ke anda, ulangi beberapa saat lagi.")
@@ -2060,8 +2115,8 @@ async function main() {
           } else {
             reply(`Perintah ini memerlukan audio untuk di proses.`)
           }
-        break
-        
+          break
+
         case 'audeep':
           if ((isMedia && !mek.message.audioMessage || isQuotedAudio)) {
             const encmedia = isQuotedAudio ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
@@ -2073,7 +2128,10 @@ async function main() {
                 fs.unlinkSync(media)
                 if (err) reply("eror: ", err)
                 let buff = fs.readFileSync(ran)
-                await conn.sendMessage(from, buff, audio, { quoted: mek, mimetype: 'audio/mp4' }).then((e) => {
+                await conn.sendMessage(from, buff, audio, {
+                  quoted: mek,
+                  mimetype: 'audio/mp4'
+                }).then((e) => {
                   fs.unlinkSync(ran)
                 }).catch((e) => {
                   reply("kesalahan saat mengirim file ke anda, ulangi beberapa saat lagi.")
@@ -2085,8 +2143,8 @@ async function main() {
           } else {
             reply(`Perintah ini memerlukan audio untuk di proses.`)
           }
-        break
-        
+          break
+
         case 'aufast':
           if ((isMedia && !mek.message.audioMessage || isQuotedAudio)) {
             const encmedia = isQuotedAudio ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
@@ -2098,7 +2156,10 @@ async function main() {
                 fs.unlinkSync(media)
                 if (err) reply("eror: ", err)
                 let buff = fs.readFileSync(ran)
-                await conn.sendMessage(from, buff, audio, { quoted: mek, mimetype: 'audio/mp4' }).then((e) => {
+                await conn.sendMessage(from, buff, audio, {
+                  quoted: mek,
+                  mimetype: 'audio/mp4'
+                }).then((e) => {
                   fs.unlinkSync(ran)
                 }).catch((e) => {
                   reply("kesalahan saat mengirim file ke anda, ulangi beberapa saat lagi.")
@@ -2110,8 +2171,8 @@ async function main() {
           } else {
             reply(`Perintah ini memerlukan audio untuk di proses.`)
           }
-        break
-        
+          break
+
         case 'aufat':
           if ((isMedia && !mek.message.audioMessage || isQuotedAudio)) {
             const encmedia = isQuotedAudio ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
@@ -2123,7 +2184,10 @@ async function main() {
                 fs.unlinkSync(media)
                 if (err) reply("eror: ", err)
                 let buff = fs.readFileSync(ran)
-                await conn.sendMessage(from, buff, audio, { quoted: mek, mimetype: 'audio/mp4' }).then((e) => {
+                await conn.sendMessage(from, buff, audio, {
+                  quoted: mek,
+                  mimetype: 'audio/mp4'
+                }).then((e) => {
                   fs.unlinkSync(ran)
                 }).catch((e) => {
                   reply("kesalahan saat mengirim file ke anda, ulangi beberapa saat lagi.")
@@ -2135,8 +2199,8 @@ async function main() {
           } else {
             reply(`Perintah ini memerlukan audio untuk di proses.`)
           }
-        break
-        
+          break
+
         case 'aurev':
         case 'aureverse':
           if ((isMedia && !mek.message.audioMessage || isQuotedAudio)) {
@@ -2149,7 +2213,10 @@ async function main() {
                 fs.unlinkSync(media)
                 if (err) reply("eror: ", err)
                 let buff = fs.readFileSync(ran)
-                await conn.sendMessage(from, buff, audio, { quoted: mek, mimetype: 'audio/mp4' }).then((e) => {
+                await conn.sendMessage(from, buff, audio, {
+                  quoted: mek,
+                  mimetype: 'audio/mp4'
+                }).then((e) => {
                   fs.unlinkSync(ran)
                 }).catch((e) => {
                   reply("kesalahan saat mengirim file ke anda, ulangi beberapa saat lagi.")
@@ -2161,7 +2228,7 @@ async function main() {
           } else {
             reply(`Perintah ini memerlukan audio untuk di proses.`)
           }
-        break
+          break
 
         case 'aunc':
         case 'aunightcore':
@@ -2175,7 +2242,10 @@ async function main() {
                 fs.unlinkSync(media)
                 if (err) reply("eror: ", err)
                 let buff = fs.readFileSync(ran)
-                await conn.sendMessage(from, buff, audio, { quoted: mek, mimetype: 'audio/mp4' }).then((e) => {
+                await conn.sendMessage(from, buff, audio, {
+                  quoted: mek,
+                  mimetype: 'audio/mp4'
+                }).then((e) => {
                   fs.unlinkSync(ran)
                 }).catch((e) => {
                   reply("kesalahan saat mengirim file ke anda, ulangi beberapa saat lagi.")
@@ -2187,7 +2257,7 @@ async function main() {
           } else {
             reply(`Perintah ini memerlukan audio untuk di proses.`)
           }
-        break
+          break
 
         case 'aubass':
         case 'aubas':
@@ -2201,7 +2271,10 @@ async function main() {
                 fs.unlinkSync(media)
                 if (err) reply("eror: ", err)
                 let buff = fs.readFileSync(ran)
-                await conn.sendMessage(from, buff, audio, { quoted: mek, mimetype: 'audio/mp4' }).then((e) => {
+                await conn.sendMessage(from, buff, audio, {
+                  quoted: mek,
+                  mimetype: 'audio/mp4'
+                }).then((e) => {
                   fs.unlinkSync(ran)
                 }).catch((e) => {
                   reply("kesalahan saat mengirim file ke anda, ulangi beberapa saat lagi.")
@@ -2213,8 +2286,8 @@ async function main() {
           } else {
             reply(`Perintah ini memerlukan audio untuk di proses.`)
           }
-        break
-        
+          break
+
         case 'auslow':
           if ((isMedia && !mek.message.audioMessage || isQuotedAudio)) {
             const encmedia = isQuotedAudio ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
@@ -2226,7 +2299,10 @@ async function main() {
                 fs.unlinkSync(media)
                 if (err) reply("eror: ", err)
                 let buff = fs.readFileSync(ran)
-                await conn.sendMessage(from, buff, audio, { quoted: mek, mimetype: 'audio/mp4' }).then((e) => {
+                await conn.sendMessage(from, buff, audio, {
+                  quoted: mek,
+                  mimetype: 'audio/mp4'
+                }).then((e) => {
                   fs.unlinkSync(ran)
                 }).catch((e) => {
                   reply("kesalahan saat mengirim file ke anda, ulangi beberapa saat lagi.")
@@ -2238,7 +2314,7 @@ async function main() {
           } else {
             reply(`Perintah ini memerlukan audio untuk di proses.`)
           }
-        break
+          break
 
         case 'ausmooth':
           if ((isMedia && !mek.message.audioMessage || isQuotedAudio)) {
@@ -2251,7 +2327,10 @@ async function main() {
                 fs.unlinkSync(media)
                 if (err) reply("eror: ", err)
                 let buff = fs.readFileSync(ran)
-                await conn.sendMessage(from, buff, audio, { quoted: mek, mimetype: 'audio/mp4' }).then((e) => {
+                await conn.sendMessage(from, buff, audio, {
+                  quoted: mek,
+                  mimetype: 'audio/mp4'
+                }).then((e) => {
                   fs.unlinkSync(ran)
                 }).catch((e) => {
                   reply("kesalahan saat mengirim file ke anda, ulangi beberapa saat lagi.")
@@ -2263,8 +2342,8 @@ async function main() {
           } else {
             reply(`Perintah ini memerlukan audio untuk di proses.`)
           }
-        break
-        
+          break
+
         case 'autupai':
           if ((isMedia && !mek.message.audioMessage || isQuotedAudio)) {
             const encmedia = isQuotedAudio ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
@@ -2276,7 +2355,10 @@ async function main() {
                 fs.unlinkSync(media)
                 if (err) reply("eror: ", err)
                 let buff = fs.readFileSync(ran)
-                await conn.sendMessage(from, buff, audio, { quoted: mek, mimetype: 'audio/mp4' }).then((e) => {
+                await conn.sendMessage(from, buff, audio, {
+                  quoted: mek,
+                  mimetype: 'audio/mp4'
+                }).then((e) => {
                   fs.unlinkSync(ran)
                 }).catch((e) => {
                   reply("kesalahan saat mengirim file ke anda, ulangi beberapa saat lagi.")
@@ -2288,7 +2370,7 @@ async function main() {
           } else {
             reply(`Perintah ini memerlukan audio untuk di proses.`)
           }
-        break
+          break
 
 
           // https://en.ephoto360.com/
@@ -2836,9 +2918,9 @@ async function main() {
 
         default:
           if (!isGroup) {
-          axios.get("https://api.simsimi.net/v2/?text=" + kalimat + "&lc=id")
-            .then((res) => reply(res.data.success))
-            .catch((e) => console.log(e.message))
+            axios.get("https://api.simsimi.net/v2/?text=" + kalimat + "&lc=id")
+              .then((res) => reply(res.data.success))
+              .catch((e) => console.log(e.message))
           }
           break;
       }

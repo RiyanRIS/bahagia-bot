@@ -7,9 +7,11 @@ const FormData = require("form-data")
 const FileType = require('file-type')
 const got = require('got')
 const fs = require("fs")
+const qs = require("qs")
 const request = require("request")
 const {spawn} = require('child_process');
 const {exec} = require('child_process');
+
 
 // SIMI
 // let text = "/bucinvivi"
@@ -149,6 +151,28 @@ const {exec} = require('child_process');
 //   .on('exit', () => console.log("baris ke " + baris))
 // })()
 
+// STRING MANIPULATION
+const text = "suka;;sayang"
+
+let a, b, c = ""
+split = text.split(';')
+a = split[0]
+b = split[1]
+c = (split[2] ? split[2] : "")
+
+console.log(a, b, c)
+
+// MEME MAKER
+// const params = qs.stringify({
+//   template_id: 129242436,
+//   username: 'ronnyacacio',
+//   password: 'ronny1324',
+//   text0: "Wanita adalah objek paling rumit setelah otak manusia",
+// });
+
+// axios.post(`https://api.imgflip.com/caption_image?${params}`).then(({data}) => {
+//   console.log(data.data.url)
+// }).catch((e) => console.log(e.message))
 
 
 // var totalLength = longMessage.length + (9 * 5);

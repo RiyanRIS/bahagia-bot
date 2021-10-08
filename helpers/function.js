@@ -15,11 +15,15 @@ _By: RiyanRIS_
 
 *STICKER BUILDER*
     _Membuat Sticker dari foto/video_
-    _Gunakan pack untuk package name_
-    _Gunakan auth untuk author name_
-    _Gunakan crop untuk mengubah ukuran menjadi kotak_
-    _Package dan author bersifat opsional_
     _Max. panjang durasi video adalah 11 second_
+    _Gunakan perintah *${prefix}help stiker* Untuk melihat tutorial_
+
+    *Atribut Yang Tersedia*
+    pack = Package Name
+    auth = Author Name
+
+    _Contoh Penggunaan:_
+    *${prefix}st pack bahagia-bot auth riyanris*
 
     *List Perintah: *
         *${prefix}st*
@@ -28,13 +32,16 @@ _By: RiyanRIS_
 
 *DOWNLOADER*
     _Download media, video, audio atau photo dari YouTube, Instagram, Twitter atau yang lainya._
+    
+    _Contoh Penggunaan:_
+    *${prefix}yt https://youtu.be/ojNRfGNw18U*
 
     *List Perintah:*
-        *${prefix}yt <Link-YT>*   
-        *${prefix}ig <Link-IG>*     
-        *${prefix}igs <Link-IG>*     
-        *${prefix}tw <Link-TW>*        
-        *${prefix}tt <Link-Tiktok>*         
+        *${prefix}yt <Link-YouTube>*
+        *${prefix}ig <Link-Instagram>*
+        *${prefix}igs <Link-Instagram-Story>*
+        *${prefix}tw <Link-Twitter>*
+        *${prefix}tt <Link-Tiktok>*
 
 *ARTIFICIAL INTELLIGENCE (AI)*
 
@@ -57,7 +64,7 @@ _By: RiyanRIS_
 
     *${prefix}colorize*
     *${prefix}col*
-        _Mewarnai foto hitam putih menggunakan AI_
+        _Mewarnai foto hitam putih menggunakan Machine Learning_
 
     *${prefix}img2hd*
         _Mengubah gambar kualitas rendah menjadi HD_
@@ -115,6 +122,31 @@ _By: RiyanRIS_
         *${prefix}foliokiri*
             _Menulis dengan media Folio sebelah Kiri_
 
+*MEME MAKER*
+
+    _Membutuhkan satu argumen teks_
+    
+    _Contoh Penggunaan:_
+    *${prefix}memecmm wanita adalah objek paling rumit setelah otak manusia*
+
+    *List Perintah:*
+        *${prefix}memechangemymind <Text>*
+        *${prefix}memehartatahta <Text>*
+        *${prefix}memetrump <Text>*
+
+    _Membutuhkan dua/lebih argumen teks_
+    _Masing2 teks dipisah oleh_ *;*
+
+    _Contoh Penggunaan:_
+    *${prefix}memedrake Matematika;Olah raga*
+
+    *List Perintah:*
+        *${prefix}memedrake <Text1>;<Text2>*
+        *${prefix}memetwobutton <Text1>;<Text2>*
+        *${prefix}memeslapping <Text1>;<Text2>*
+        *${prefix}memedistrack <Text1>;<Text2>;<Text3>*
+        *${prefix}memebaloon <Text1>;<Text2>;<Text3>;<Text4>;<Text5>*
+
 *AUDIO MANIPULATION*
 
     *${prefix}aurobot*
@@ -149,17 +181,6 @@ _By: RiyanRIS_
 
     *${prefix}autupai*
         _Efek kek tupai_
-
-*MEME MAKER*
-
-    *${prefix}cmm <Text>*
-        _Membuat meme Change My Mind_
-
-    *${prefix}htt <Text>*
-        _Harta Tahta {Text-Kamu}_
-
-    *${prefix}trump <Text>*
-        _Membuat meme Trump Tweets_
 
 *GENERATE GAMBAR KEREN*
     _Cobain aja satu-satu_
