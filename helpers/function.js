@@ -97,11 +97,6 @@ _By: RiyanRIS_
     *${prefix}bka -nama Riyan Risky W S -no 32 -t Ini adalah kalimat yang akan ditulis oleh BOT.*
 
     *List Perintah:*
-        *${prefix}nulman*
-        *${prefix}nulismanual*
-            _Menulis dengan media Buku untuk baris dibuat manual_
-            _Gunakan *${prefix}help nulman* melihat detail tutorial_
-
         *${prefix}bka*
         *${prefix}bukukanan*
             _Menulis dengan media Buku sebelah Kanan_
@@ -112,7 +107,7 @@ _By: RiyanRIS_
 
         *${prefix}bki*
         *${prefix}bukukiri*
-            _Menulis dengan media Buku sebelah Kiri_
+            _Menulis dengan media Buku sebelah Kiri_ 
 
         *${prefix}fka* _<! BELUM TERSEDIA>_
         *${prefix}foliokanan*
