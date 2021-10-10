@@ -107,7 +107,7 @@ _By: RiyanRIS_
 
         *${prefix}bki*
         *${prefix}bukukiri*
-            _Menulis dengan media Buku sebelah Kiri_ 
+            _Menulis dengan media Buku sebelah Kiri_  
 
         *${prefix}fka* _<! BELUM TERSEDIA>_
         *${prefix}foliokanan*
