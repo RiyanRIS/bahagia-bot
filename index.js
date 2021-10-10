@@ -698,7 +698,7 @@ async function main() {
             reply("check yt: https://youtu.be/rVNcp_uxEAE")
           } else if (args[0] == "nulman") {
             reply("check yt: https://youtu.be/CzJTBeOE3Yo")
-          } else if (args[0] == "sticker") {
+          } else if (args[0] == "stiker") {
             reply("check yt: https://youtu.be/rL4eySrXWTQ")
           } else {
             reply(helpBiasa(prefix))
