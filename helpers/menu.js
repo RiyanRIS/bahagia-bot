@@ -33,7 +33,7 @@ _Pesan diluar perintah/command, akan auto dibalas oleh Sim-Simi_
 
 ${menu.footer}`
 }
- 
+  
 module.exports.mnulis = (prefix) => {
   return `${menu.header}
   
