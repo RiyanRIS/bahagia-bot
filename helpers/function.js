@@ -1,5 +1,123 @@
 const axios = require("axios")
 
+const nulis = (prefix) => {
+    return `*NULIS*
+    _Membantu menuliskan text pada sebuah kertas_
+    _Gunakan perintah *${prefix}help nulis* Untuk melihat tutorial_
+
+    *Atribut Yang Tersedia*
+    -t = Text yang akan ditulis (Wajib)
+    -nama = Nama Lengkap (Opsional)
+    -no = Nomor Absen (Opsional)
+    -kls = Kelas (Opsional)
+
+    _Contoh Penggunaan:_
+    *${prefix}bka -nama Riyan Risky W S -no 32 -t Ini adalah kalimat yang akan ditulis oleh BOT.*
+
+    *List Perintah:*
+        *${prefix}bka*
+        *${prefix}bukukanan*
+            _Menulis dengan media Buku sebelah Kanan_
+
+        *${prefix}bka1*
+        *${prefix}bukukanan1*
+            _Alternatif jika yang satunya error_
+
+        *${prefix}bki*
+        *${prefix}bukukiri*
+            _Menulis dengan media Buku sebelah Kiri_
+            
+        *${prefix}bkaman*
+        *${prefix}bukukananmanual*
+            _Menulis dengan media Buku sebelah Kanan Secara Manual_
+
+        *${prefix}bkiman*
+        *${prefix}bukukirimanual*
+            _Menulis dengan media Buku sebelah Kiri Secara Manual_
+
+        *${prefix}fka* _<! BELUM TERSEDIA>_
+        *${prefix}foliokanan*
+            _Menulis dengan media Folio sebelah Kanan_
+
+        *${prefix}fki* _<! BELUM TERSEDIA>_
+        *${prefix}foliokiri*
+            _Menulis dengan media Folio sebelah Kiri_`
+}
+
+const games = (prefix) => {
+    return `*GAMES*
+    _Tulis *skip* untuk keluar dari game_
+
+    *${prefix}tg*
+    *${prefix}tebakgambar*
+        _Game Tebak Gambar_
+
+    *${prefix}tp*
+    *${prefix}tebakpribahasa*
+        _Game Tebak Peribahasa_`
+}
+
+const ai = (prefix) => {
+    return `*ARTIFICIAL INTELLIGENCE (AI)*
+
+    *${prefix}ocr*
+        _Optical Character Recognition (OCR)_
+        _Mengekstrak texs dari gambar_
+
+    *${prefix}rmbg*
+        _Remove Image Background_
+
+    *${prefix}qr <Teks>*
+        _Menggenerate QR-Code dari text/link_
+
+    *${prefix}qrr*
+        _Mendecode QR-Code menjadi text_
+
+    *${prefix}tts <Teks>*
+        _Prosa Text-to-Speech_
+        _Sintesis suara alami dari teks secara instan dalam Bahasa Indonesia_
+
+    *${prefix}colorize*
+    *${prefix}col*
+        _Mewarnai foto hitam putih menggunakan Machine Learning_
+
+    *${prefix}img2hd*
+        _Mengubah gambar kualitas rendah menjadi HD_
+
+    *${prefix}img2toon*
+        _Membuat foto menjadi mode kartun_`
+}
+
+const meme = (prefix) => {
+    return `*MEME MAKER*
+
+    _Membutuhkan satu argumen teks_
+    
+    _Contoh Penggunaan:_
+    *${prefix}memechangemymind wanita adalah objek paling rumit setelah otak manusia*
+
+    *List Perintah:*
+        *${prefix}memechangemymind <Text>*
+        *${prefix}memehartatahta <Text>*
+        *${prefix}memetrump <Text>*
+        *${prefix}memeskeleton <Text>*
+
+    _Membutuhkan dua/lebih argumen teks_
+    _Masing2 teks dipisah oleh_ *;*
+
+    _Contoh Penggunaan:_
+    *${prefix}memedrake Matematika;Olah raga*
+
+    *List Perintah:*
+        *${prefix}memedrake <Text1>;<Text2>*
+        *${prefix}memetwobutton <Text1>;<Text2>*
+        *${prefix}memeslapping <Text1>;<Text2>*
+        *${prefix}memedistrack <Text1>;<Text2>;<Text3>*
+        *${prefix}memesadpablo <Text1>;<Text2>;<Text3>*
+        *${prefix}memebaloon <Text1>;<Text2>;<Text3>;<Text4>;<Text5>*
+`
+}
+
 module.exports.getGroupAdmins = (participants) => {
   admins = []
   for (let i of participants) {
@@ -43,114 +161,13 @@ _By: RiyanRIS_
         *${prefix}tw <Link-Twitter>*
         *${prefix}tt <Link-Tiktok>*
 
-*ARTIFICIAL INTELLIGENCE (AI)*
-
-    *${prefix}ocr*
-        _Optical Character Recognition (OCR)_
-        _Mengekstrak texs dari gambar_
-
-    *${prefix}rmbg*
-        _Remove Image Background_
-
-    *${prefix}qr <Teks>*
-        _Menggenerate QR-Code dari text/link_
-
-    *${prefix}qrr*
-        _Mendecode QR-Code menjadi text_
-
-    *${prefix}tts <Teks>*
-        _Prosa Text-to-Speech_
-        _Sintesis suara alami dari teks secara instan dalam Bahasa Indonesia_
-
-    *${prefix}colorize*
-    *${prefix}col*
-        _Mewarnai foto hitam putih menggunakan Machine Learning_
-
-    *${prefix}img2hd*
-        _Mengubah gambar kualitas rendah menjadi HD_
-
-    *${prefix}img2toon*
-        _Membuat foto menjadi mode kartun_
+${ai(prefix)}
     
-*GAMES*
-    _Tulis *skip* untuk keluar dari game_
+${games(prefix)}
 
-    *${prefix}tg*
-    *${prefix}tebakgambar*
-        _Game Tebak Gambar_
+${nulis(prefix)}
 
-    *${prefix}tp*
-    *${prefix}tebakpribahasa*
-        _Game Tebak Peribahasa_
-
-*NULIS*
-    _Membantu menuliskan text pada sebuah kertas_
-    _Gunakan perintah *${prefix}help nulis* Untuk melihat tutorial_
-
-    *Atribut Yang Tersedia*
-    -t = Text yang akan ditulis (Wajib)
-    -nama = Nama Lengkap (Opsional)
-    -no = Nomor Absen (Opsional)
-    -kls = Kelas (Opsional)
-
-    _Contoh Penggunaan:_
-    *${prefix}bka -nama Riyan Risky W S -no 32 -t Ini adalah kalimat yang akan ditulis oleh BOT.*
-
-    *List Perintah:*
-        *${prefix}bka*
-        *${prefix}bukukanan*
-            _Menulis dengan media Buku sebelah Kanan_
-
-        *${prefix}bka1*
-        *${prefix}bukukanan1*
-            _Alternatif jika yang satunya error_
-
-        *${prefix}bki*
-        *${prefix}bukukiri*
-            _Menulis dengan media Buku sebelah Kiri_
-            
-        *${prefix}bkaman*
-        *${prefix}bukukananmanual*
-            _Menulis dengan media Buku sebelah Kanan Secara Manual_
-
-        *${prefix}bkiman*
-        *${prefix}bukukirimanual*
-            _Menulis dengan media Buku sebelah Kiri Secara Manual_
-
-        *${prefix}fka* _<! BELUM TERSEDIA>_
-        *${prefix}foliokanan*
-            _Menulis dengan media Folio sebelah Kanan_
-
-        *${prefix}fki* _<! BELUM TERSEDIA>_
-        *${prefix}foliokiri*
-            _Menulis dengan media Folio sebelah Kiri_
-
-*MEME MAKER*
-
-    _Membutuhkan satu argumen teks_
-    
-    _Contoh Penggunaan:_
-    *${prefix}memechangemymind wanita adalah objek paling rumit setelah otak manusia*
-
-    *List Perintah:*
-        *${prefix}memechangemymind <Text>*
-        *${prefix}memehartatahta <Text>*
-        *${prefix}memetrump <Text>*
-        *${prefix}memeskeleton <Text>*
-
-    _Membutuhkan dua/lebih argumen teks_
-    _Masing2 teks dipisah oleh_ *;*
-
-    _Contoh Penggunaan:_
-    *${prefix}memedrake Matematika;Olah raga*
-
-    *List Perintah:*
-        *${prefix}memedrake <Text1>;<Text2>*
-        *${prefix}memetwobutton <Text1>;<Text2>*
-        *${prefix}memeslapping <Text1>;<Text2>*
-        *${prefix}memedistrack <Text1>;<Text2>;<Text3>*
-        *${prefix}memesadpablo <Text1>;<Text2>;<Text3>*
-        *${prefix}memebaloon <Text1>;<Text2>;<Text3>;<Text4>;<Text5>*
+${meme(prefix)}
 
 *AUDIO MANIPULATION*
 

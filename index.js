@@ -120,6 +120,18 @@ const {
 } = require("./lib/kamus")
 
 const dl = require("./helpers/downloader")
+const {
+  mmenu,
+  mnulis,
+  mstiker,
+  mdownloader,
+  mmaker,
+  mdeepai,
+  mgames,
+  mfoto,
+  maudio,
+  mother
+} = require("./helpers/menu")
 
 // LOAD SOURCES
 const pesan = require('./src/pesan')
@@ -127,6 +139,8 @@ const pesan = require('./src/pesan')
 // BASIC SETTINGS
 const prefix = '/'
 const time = moment.tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss")
+
+let hit_today = []
 
 // MAIN FUNCTION
 async function main() {
@@ -182,12 +196,17 @@ async function main() {
   conn.on('chat-update', async (mek) => {
     try {
       if (!mek.hasNewMessage) return
-      mek = JSON.parse(JSON.stringify(mek)).messages[0]
+      mek = mek.messages.all()[0]
+      // mek = JSON.parse(JSON.stringify(mek)).messages[0]
       if (!mek.message) return
       if (mek.key && mek.key.remoteJid == 'status@broadcast') return
       if (mek.key.fromMe) return
-      const content = JSON.stringify(mek.message)
       global.prefix
+      mek.message =
+        Object.keys(mek.message)[0] === "ephemeralMessage" ?
+        mek.message.ephemeralMessage.message :
+        mek.message
+      const content = JSON.stringify(mek.message)
       let txt, split, topText, bottomText
       const from = mek.key.remoteJid
       const type = Object.keys(mek.message)[0]
@@ -204,11 +223,11 @@ async function main() {
         audio,
         product
       } = MessageType
-      const body = (type === 'conversation' && mek.message.conversation.startsWith(prefix)) ? mek.message.conversation : (type == 'imageMessage') && mek.message.imageMessage.caption.startsWith(prefix) ? mek.message.imageMessage.caption : (type == 'videoMessage') && mek.message.videoMessage.caption.startsWith(prefix) ? mek.message.videoMessage.caption : (type == 'extendedTextMessage') && mek.message.extendedTextMessage.text.startsWith(prefix) ? mek.message.extendedTextMessage.text : ''
+      // const body = (type === 'conversation' && mek.message.conversation.startsWith(prefix)) ? mek.message.conversation : (type == 'imageMessage') && mek.message.imageMessage.caption.startsWith(prefix) ? mek.message.imageMessage.caption : (type == 'videoMessage') && mek.message.videoMessage.caption.startsWith(prefix) ? mek.message.videoMessage.caption : (type == 'extendedTextMessage') && mek.message.extendedTextMessage.text.startsWith(prefix) ? mek.message.extendedTextMessage.text : ''
       const kalimat = type === 'conversation' ? mek.message.conversation : (type == 'imageMessage') ? mek.message.imageMessage.caption : (type == 'videoMessage') ? mek.message.videoMessage.caption : (type == 'extendedTextMessage') ? mek.message.extendedTextMessage.text : ''
 
-      // let prefixRegEx = /^[!&z?=#.+\/]/gi;
-      let prefixRegEx = /^[\/]/gi;
+      let prefixRegEx = /^[!&z?=#.+\/]/gi;
+      // let prefixRegEx = /^[\/]/gi;
       let _chats =
         type === "conversation" && mek.message.conversation ?
         mek.message.conversation :
@@ -224,9 +243,28 @@ async function main() {
         getCmd(mek.message[type].fileSha256.toString("base64")) !== null &&
         getCmd(mek.message[type].fileSha256.toString("base64")) !== undefined ?
         getCmd(mek.message[type].fileSha256.toString("base64")) :
-        "";
+        ""
 
-      // let prefix = _chats.match(prefixRegEx) ? prefixRegEx.exec(_chats)[0] : "";
+      let prefix = _chats.match(prefixRegEx) ? prefixRegEx.exec(_chats)[0] : ""
+      let body =
+        type === "conversation" && mek.message.conversation.startsWith(prefix) ?
+        mek.message.conversation :
+        type == "imageMessage" &&
+        mek.message.imageMessage.caption.startsWith(prefix) ?
+        mek.message.imageMessage.caption :
+        type == "videoMessage" &&
+        mek.message.videoMessage.caption.startsWith(prefix) ?
+        mek.message.videoMessage.caption :
+        type == "extendedTextMessage" &&
+        mek.message.extendedTextMessage.text.startsWith(prefix) ?
+        mek.message.extendedTextMessage.text :
+        ""
+      let budy =
+        type === "conversation" ?
+        mek.message.conversation :
+        type === "extendedTextMessage" ?
+        mek.message.extendedTextMessage.text :
+        ""
       let chats = _chats.match(prefixRegEx) ?
         _chats
         .split(prefixRegEx)
@@ -235,7 +273,6 @@ async function main() {
 
       // const command = body.slice(1).trim().split(/ +/).shift().toLowerCase()
       const command = chats.split(/ +/g)[0]
-
       const args = _chats.trim().split(/ +/).slice(1)
       // const isCmd = body.startsWith(prefix)
       const isCmd = _chats.match(prefixRegEx) ?
@@ -437,7 +474,24 @@ async function main() {
             buttonMessages,
             MessageType.buttonsMessage,
             options
-          ).catch((e) => reply("Ulangi beberapa saat lagi.."))
+          ).catch(async (e) => {
+            mediaa = await conn.prepareMessage(from, kma, image, {
+              thumbnail: null
+            })
+            const buttonMessages = {
+              imageMessage: mediaa.message.imageMessage,
+              contentText: text1,
+              footerText: desc1,
+              buttons: but,
+              headerType: 4,
+            };
+            conn.sendMessage(
+              id,
+              buttonMessages,
+              MessageType.buttonsMessage,
+              options
+            ).catch((e) => reply("Ulangi beberapa saat lagi.."))
+          })
         })
       }
 
@@ -693,15 +747,28 @@ async function main() {
         /////////////// GROUP COMMAND \\\\\\\\\\\\\\\
 
         case 'help':
+        case 'mulai':
         case 'info':
           if (args[0] == "nulis") {
-            reply("Tutorial Nulis Buku: https://youtu.be/rVNcp_uxEAE\nTutorial Nulis Manual(Lebih rapi tapi rada ribet): https://youtu.be/CzJTBeOE3Yo")
+            reply(mnulis(prefix))
           } else if (args[0] == "stiker") {
-            reply("check yt: https://youtu.be/rL4eySrXWTQ")
+            reply(mstiker(prefix))
+          } else if (args[0] == "downloader") {
+            reply(mdownloader(prefix))
+          } else if (args[0] == "maker") {
+            reply(mmaker(prefix))
+          } else if (args[0] == "deepai") {
+            reply(mdeepai(prefix))
+          } else if (args[0] == "games") {
+            reply(mgames(prefix))
+          } else if (args[0] == "foto") {
+            reply(mfoto(prefix))
+          } else if (args[0] == "audio") {
+            reply(maudio(prefix))
+          } else if (args[0] == "other") {
+            reply(mother(prefix))
           } else {
-            reply(helpBiasa(prefix))
-            // costum(adminHelp(prefix), text);
-            // https://youtu.be/rL4eySrXWTQ
+            reply(mmenu(prefix))
           }
           break
 
@@ -836,7 +903,7 @@ async function main() {
           conn.groupLeave(from)
           break
 
-          /////////////// USERS COMMANDS \\\\\\\\\\\\\\\
+        /////////////// USERS COMMANDS \\\\\\\\\\\\\\\
 
         case 'st':
         case 'stic':
@@ -1084,7 +1151,7 @@ async function main() {
         case 'igs':
         case 'igstory':
           if (!isUrl(args[0]) && !args[0].includes("instagram.com")) {
-            await reply("_Link tidak valid_")
+            await reply("_Link tidak valid_ \nGunakan url lengkap: https://instagram.com/<username> jangan gunakan username saja.")
             return
           }
           await dl.igstory(args[0])
@@ -1300,38 +1367,8 @@ async function main() {
           }
           break
 
-        case "ocr2":
-          if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
-            const media = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
-
-            const filePath = await conn.downloadAndSaveMediaMessage(media, `./public/${getRandom()}`)
-
-            var options = {
-              apikey: '<your_api_key_here>',
-              language: 'por', // Português
-              imageFormat: 'image/png', // Image Type (Only png ou gif is acceptable at the moment i wrote this)
-              isOverlayRequired: true
-            };
-
-            const imageFilePath = "imageFile.jpg";
-
-            // Run and wait the result
-            ocrSpaceApi.parseImageFromLocalFile(imageFilePath, options)
-              .then(function (parsedResult) {
-                console.log('parsedText: \n', parsedResult.parsedText);
-                console.log('ocrParsedResult: \n', parsedResult.ocrParsedResult);
-              }).catch(function (err) {
-                console.log('ERROR:', err);
-              });
-
-          } else {
-            reply(`Kamu belum melampirkan foto yang akan discan.!`)
-          }
-          break
-
           // Special thanks to Sumanjay for his carbon api
-        case 'cb':
-        case 'carbon':
+        case 'textcarbon':
           let carbon_txt = args.join(' ')
           try {
             const cb = async (carbon_txt) => {
@@ -1442,7 +1479,11 @@ async function main() {
           break
 
         case 'bucin':
-          reply("https://riyanris.my.id/bucin-simple/?in=" + args.join(" "))
+          if(args.join(" ").includes("<") || args.join(" ").includes(">")){
+            reply(`Tanpa "< >" Bro, Langsung kasih nama aja \nContoh: ${prefix} Ayunda`)
+            return
+          }
+          reply("https://riyanris.my.id/bucin-simple/?in=" + args.join("%20"))
           break
 
         case 'katacinta':
