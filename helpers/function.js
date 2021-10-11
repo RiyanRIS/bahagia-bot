@@ -107,7 +107,15 @@ _By: RiyanRIS_
 
         *${prefix}bki*
         *${prefix}bukukiri*
-            _Menulis dengan media Buku sebelah Kiri_      
+            _Menulis dengan media Buku sebelah Kiri_
+            
+        *${prefix}bkaman*
+        *${prefix}bukukananmanual*
+            _Menulis dengan media Buku sebelah Kanan Secara Manual_
+
+        *${prefix}bkiman*
+        *${prefix}bukukirimanual*
+            _Menulis dengan media Buku sebelah Kiri Secara Manual_
 
         *${prefix}fka* _<! BELUM TERSEDIA>_
         *${prefix}foliokanan*

@@ -695,9 +695,7 @@ async function main() {
         case 'help':
         case 'info':
           if (args[0] == "nulis") {
-            reply("check yt: https://youtu.be/rVNcp_uxEAE")
-          } else if (args[0] == "nulman") {
-            reply("check yt: https://youtu.be/CzJTBeOE3Yo")
+            reply("Tutorial Nulis Buku: https://youtu.be/rVNcp_uxEAE\nTutorial Nulis Manual(Lebih rapi tapi rada ribet): https://youtu.be/CzJTBeOE3Yo")
           } else if (args[0] == "stiker") {
             reply("check yt: https://youtu.be/rL4eySrXWTQ")
           } else {
@@ -1212,9 +1210,9 @@ async function main() {
           }).catch((e) => reply(e))
           break
 
-        case "nulman":
-        case "nulismanual":
-          nulis(args, "entermanual").then(async (res) => {
+        case "bkaman":
+        case "bukukananmanual":
+          nulis(args, "bkaman").then(async (res) => {
             sendMedPath(res, "Nulis Buku Manual, Done!", image)
               .catch((e) => reply(e.message))
           }).catch((e) => reply(e))
@@ -1232,6 +1230,14 @@ async function main() {
         case "bukukiri":
           nulis(args, "bukukiri").then(async (res) => {
             sendMedPath(res, "Nulis Buku Kiri, Done!", image)
+              .catch((e) => reply(e.message))
+          }).catch((e) => reply(e))
+          break
+
+        case "bkiman":
+        case "bukukirimanual":
+          nulis(args, "bkiman").then(async (res) => {
+            sendMedPath(res, "Nulis Buku Manual, Done!", image)
               .catch((e) => reply(e.message))
           }).catch((e) => reply(e))
           break
