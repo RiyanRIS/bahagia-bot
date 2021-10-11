@@ -39,7 +39,9 @@ module.exports.mnulis = (prefix) => {
   
 *FITUR NULIS*
 _Membantu menuliskan text pada sebuah kertas_
-_Ada 2 mode, baris auto dan baris manual_
+_Ada 2 mode, mode baris auto dan baris manual_
+_Ada 2 jenis kertas, jenis kertas buku dan kertas folio_
+_Masing-masing memiliki bagian kiri dan kanan_
 _Cek Instagram atau YouTube untuk melihat tutorial_
 
 *Atribut Yang Tersedia*
@@ -48,8 +50,9 @@ _Cek Instagram atau YouTube untuk melihat tutorial_
     -no = Nomor Absen (Opsional)
     -kls = Kelas (Opsional)
 
-_Contoh Perintah:_
-    ${prefix}bka -nama Riyan Risky W S -no 32 -kls XI MIPA 2 -t Ini adalah kalimat yang akan ditulis oleh BOT.
+_Contoh Perintah:_'
+    ${prefix}bka -t Ini adalah kalimat yang akan ditulis oleh BOT.
+    ${prefix}bki -nama Riyan Risky W S -no 32 -kls XI MIPA 2 -t Ini adalah kalimat yang akan ditulis oleh BOT.
 
 *List Perintah:*
     *${prefix}bka*
