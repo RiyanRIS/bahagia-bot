@@ -39,6 +39,7 @@ module.exports.mnulis = (prefix) => {
   
 *FITUR NULIS*
 _Membantu menuliskan text pada sebuah kertas_
+_Ada 2 mode, baris auto dan baris manual_
 _Cek Instagram atau YouTube untuk melihat tutorial_
 
 *Atribut Yang Tersedia*
@@ -71,13 +72,21 @@ _Contoh Perintah:_
     *${prefix}bukukirimanual*
         _Menulis dengan media Buku sebelah Kiri Secara Manual_
 
-    *${prefix}fka* _<! BELUM TERSEDIA>_
+    *${prefix}fka*
     *${prefix}foliokanan*
         _Menulis dengan media Folio sebelah Kanan_
 
-    *${prefix}fki* _<! BELUM TERSEDIA>_
+    *${prefix}fki*
     *${prefix}foliokiri*
         _Menulis dengan media Folio sebelah Kiri_
+
+    *${prefix}fkaman*
+    *${prefix}foliokananmanual*
+        _Menulis dengan media Folio sebelah Kanan Secara Manual_
+
+    *${prefix}fkiman*
+    *${prefix}foliokirimanual*
+        _Menulis dengan media Folio sebelah Kiri Secara Manual_
         
 ${menu.footer}`
 }
@@ -338,15 +347,17 @@ module.exports.mother = (prefix) => {
 *${prefix}sms <NO-TELP>*
   _Bomb SMS, gunakan format 87755xxx_
   _Misal nomor target 089677249020_
-  _Maka tulis_ ${prefix}sms 89677249020
+  _Maka tulis:_ ${prefix}sms 89677249020
 
-*${prefix}kontak <NoHP>*
+*${prefix}kontak <NoHP>,<Nama>*
   _Membuat Kartu Kontak_
+  _Jadi kamu ga perlu save nomor kalau mau chat_
+  _Contoh:_ ${prefix}kontak 085156929375,Owner Bot Bahagia
 
 *${prefix}bucin <Nama>*
   _Membuat Web Bucin_
   _Kirim linknya ke Pacarmu biar terkagum-kagum_
-  _Contoh: ${prefix}bucin Ayunda_
+  _Contoh:_ ${prefix}bucin Ayunda
 
 *${prefix}katacinta*
   _Kata cinta random_

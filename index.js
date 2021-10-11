@@ -1309,6 +1309,38 @@ async function main() {
           }).catch((e) => reply(e))
           break
 
+        case "fka":
+        case "foliokanan":
+          nulis(args, "fka").then(async (res) => {
+            sendMedPath(res, "Nulis Folio Kanan, Done!", image)
+              .catch((e) => reply(e.message))
+          }).catch((e) => reply(e))
+          break
+
+        case "fki":
+        case "foliokiri":
+          nulis(args, "fki").then(async (res) => {
+            sendMedPath(res, "Nulis Folio Kiri, Done!", image)
+              .catch((e) => reply(e.message))
+          }).catch((e) => reply(e))
+          break
+
+        case "fkaman":
+        case "foliokananmanual":
+          nulis(args, "fkaman").then(async (res) => {
+            sendMedPath(res, "Nulis Folio Kanan Manual, Done!", image)
+              .catch((e) => reply(e.message))
+          }).catch((e) => reply(e))
+          break
+
+        case "fkiman":
+        case "foliokirimanual":
+          nulis(args, "fkiman").then(async (res) => {
+            sendMedPath(res, "Nulis Folio Kiri Manual, Done!", image)
+              .catch((e) => reply(e.message))
+          }).catch((e) => reply(e))
+          break
+
           // https://github.com/tesseract-ocr/tesseract
         case "ocr":
           if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
@@ -2928,7 +2960,7 @@ async function main() {
           }
           break
 
-        case 'ls':
+        case 'lsse':
           let pw = ["https://meme-api.herokuapp.com/gimme/tits",
             "https://meme-api.herokuapp.com/gimme/BestTits",
             "https://meme-api.herokuapp.com/gimme/boobs",
