@@ -1269,12 +1269,19 @@ async function main() {
           await sendMediaURL(args[0], "")
           break
 
+        case "nulis":
+          nulis(args).then(async (res) => {
+            sendMedPath(res, "Nulis Buku Kanan, Done!", image)
+              .catch((e) => reply(e.message))
+          }).catch((e) => reply(e.message))
+          break
+
         case "bka":
         case "bukukanan":
           nulis(args).then(async (res) => {
             sendMedPath(res, "Nulis Buku Kanan, Done!", image)
               .catch((e) => reply(e.message))
-          }).catch((e) => reply(e))
+          }).catch((e) => reply(e.message))
           break
 
         case "bkaman":

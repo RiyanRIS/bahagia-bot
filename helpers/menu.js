@@ -49,6 +49,9 @@ _Cek Instagram atau YouTube untuk melihat tutorial_
     -nama = Nama Lengkap (Opsional)
     -no = Nomor Absen (Opsional)
     -kls = Kelas (Opsional)
+    -man = Manual Baris (Opsional)
+    -f = Jenis Font [0-4] (Opsional)
+    -ker = Kertas [0-6] (Opsional)
 
 _Contoh Perintah:_'
     ${prefix}bka -t Ini adalah kalimat yang akan ditulis oleh BOT.
