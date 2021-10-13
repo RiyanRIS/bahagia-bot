@@ -1,6 +1,7 @@
 const fun = require("./helpers/function")
 const dl = require("./helpers/downloader")
 const {ttdl} = require("./lib/ttdl")
+const {pengumum} = require("./lib/game")
 const axios = require("axios")
 const cheerio = require("cheerio")
 const FormData = require("form-data")
@@ -12,17 +13,20 @@ const request = require("request")
 const {spawn} = require('child_process');
 const {exec} = require('child_process');
 
-// TES TWITTER DOWNLOADER
-const url = "https://twitter.com/eddystwn/status/1447109838471790595?s=20"
+// GAMES PENGETAHUAN UMUM
+pengumum().then(({jawaban}) => console.log(jawaban.trim())).catch((e) => console.log(e))
 
-dl.twdl(url).then((res) => {
-  console.log("twdl1" ,res)
-}).catch((e) => {
-  console.log("masuk kedua", e)
-  dl.twdl2(url).then((res) => {
-    console.log("twdl2", res)
-  })
-})
+// TES TWITTER DOWNLOADER
+// const url = "https://twitter.com/eddystwn/status/1447109838471790595?s=20"
+
+// dl.twdl(url).then((res) => {
+//   console.log("twdl1" ,res)
+// }).catch((e) => {
+//   console.log("masuk kedua", e)
+//   dl.twdl2(url).then((res) => {
+//     console.log("twdl2", res)
+//   })
+// })
 
 // SIMI
 // let text = "/bucinvivi"
