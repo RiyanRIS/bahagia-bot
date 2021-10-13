@@ -44,7 +44,7 @@ _Cek Instagram atau YouTube untuk melihat tutorial_
 *Jenis Kertas :*
         _0 : Buku Kanan_
         _1 : Buku Kanan v1_
-        _2 : Buku Kanan v2_
+        _2 : Buku Kanan v2_ <BELUM SELESAI>
         _3 : Buku kiri_
         _4 : Folio Kanan_
         _5 : Folio Kiri_
