@@ -39,7 +39,7 @@ module.exports.mnulis = (prefix) => {
   
 *FITUR NULIS*
 _Membantu menuliskan text pada sebuah kertas_
-_Cek Instagram atau YouTube untuk melihat tutorial_
+_Tutorial: https://youtu.be/PBJdP6UZMdA_
 
 *Jenis Kertas :*
         _0 : Buku Kanan_
@@ -64,9 +64,9 @@ _Contoh Perintah:_
     ${prefix}nulis -nama Riyan Risky W S -no 32 -kls XI MIPA 2 -t Ini adalah kalimat yang akan ditulis oleh BOT.
 
 _Untuk memaksimalkan baris agar lebih rapi, gunakan mode baris manual_
-_Tutorial menggunakan mode baris manual bisa cek di YouTube_
+_Tutorial mode manual: https://youtu.be/J0t9EnvseO0_
 
-_Jika ada rekomendasi font yang bagus atau request kertas, hubungi owner saja_
+_Jika ada rekomendasi font yang bagus atau request kertas atau mengalami kendala, silahkan hubungi owner Bot_
 
 ${menu.footer}`
 }
