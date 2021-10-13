@@ -12,6 +12,17 @@ const request = require("request")
 const {spawn} = require('child_process');
 const {exec} = require('child_process');
 
+// TES TWITTER DOWNLOADER
+const url = "https://twitter.com/eddystwn/status/1447109838471790595?s=20"
+
+dl.twdl(url).then((res) => {
+  console.log("twdl1" ,res)
+}).catch((e) => {
+  console.log("masuk kedua", e)
+  dl.twdl2(url).then((res) => {
+    console.log("twdl2", res)
+  })
+})
 
 // SIMI
 // let text = "/bucinvivi"
@@ -152,15 +163,15 @@ const {exec} = require('child_process');
 // })()
 
 // STRING MANIPULATION
-const text = "suka;;sayang"
+// const text = "suka;;sayang"
 
-let a, b, c = ""
-split = text.split(';')
-a = split[0]
-b = split[1]
-c = (split[2] ? split[2] : "")
+// let a, b, c = ""
+// split = text.split(';')
+// a = split[0]
+// b = split[1]
+// c = (split[2] ? split[2] : "")
 
-console.log(a, b, c)
+// console.log(a, b, c)
 
 // MEME MAKER
 // const params = qs.stringify({

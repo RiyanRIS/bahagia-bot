@@ -326,10 +326,7 @@ module.exports.twdl = (link) => {
         resolve(result)
       })
       .catch((e) => {
-        reject({
-          status: false,
-          msg: e.message
-        })
+        reject(e.message)
       })
   })
 }
@@ -427,10 +424,7 @@ module.exports.twdl2 = (url_media) => {
       }
       resolve(result)
     }).catch((e) => {
-      reject({
-        status: false,
-        msg: e.message
-      })
+      reject(e.message)
     })
   })
 }

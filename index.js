@@ -602,7 +602,7 @@ async function main() {
             } else if (resTebakgambar[0].percobaan == 6) {
               reply("ayo dong, usaha, jangan ngasal gini..")
             } else if (resTebakgambar[0].percobaan == 7) {
-              reply(`salah, petunjuknya ${resTebakgambar[0].deskripsi}`)
+              reply(`salah, petunjuknya ${resTebakgambar[0].penjelasan}`)
             } else if (resTebakgambar[0].percobaan == 8) {
               reply("bego, udah berapa kali coba masih salah aja")
             } else if (resTebakgambar[0].percobaan >= 9) {
@@ -1234,7 +1234,7 @@ async function main() {
             await reply("_Link tidak valid_")
             return
           }
-          await dl.twdl(args[0]).then(async (res) => {
+          await dl.twdl2(args[0]).then(async (res) => {
             let tamnel = await getBuffer(res.thumbnail)
             await sendButImage(
               from,
@@ -1261,7 +1261,7 @@ async function main() {
               reply(e.message)
             })
           }).catch((e) => {
-            reply(e.message)
+            reply(e)
           })
           break
 
