@@ -201,6 +201,9 @@ _Tulis *skip* untuk keluar dari game_
 *${prefix}tp*
 *${prefix}tebakpribahasa*
     _Game Tebak Peribahasa_
+
+*${prefix}asahotak*
+    _Game Tebak Tebakan yang mengasah pengetahuan_
         
 ${menu.footer}`
 }
