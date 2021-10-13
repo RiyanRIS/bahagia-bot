@@ -29,7 +29,7 @@ module.exports.mmenu = (prefix) => {
 _Tutorial?? Ada di masing-masing menu, atau cek Sosial Media Kami_
 
 _Jika kamu masih bingung cara memakai bot ini, hubungi owner_
-_Pesan diluar perintah/command, akan auto dibalas oleh Sim-Simi_
+_Pesan diluar perintah/command, akan auto dibalas oleh Simi_
 
 ${menu.footer}`
 }
@@ -39,61 +39,35 @@ module.exports.mnulis = (prefix) => {
   
 *FITUR NULIS*
 _Membantu menuliskan text pada sebuah kertas_
-_Ada 2 mode, mode baris auto dan baris manual_
-_Ada 2 jenis kertas, jenis kertas buku dan kertas folio_
-_Masing-masing memiliki bagian kiri dan kanan_
 _Cek Instagram atau YouTube untuk melihat tutorial_
 
+*Jenis Kertas :*
+        _0 : Buku Kanan_
+        _1 : Buku Kanan v1_
+        _2 : Buku Kanan v2_
+        _3 : Buku kiri_
+        _4 : Folio Kanan_
+        _5 : Folio Kiri_
+
 *Atribut Yang Tersedia*
-    -t = Text yang akan ditulis (Wajib)
-    -nama = Nama Lengkap (Opsional)
-    -no = Nomor Absen (Opsional)
-    -kls = Kelas (Opsional)
-    -man = Manual Baris (Opsional)
-    -f = Jenis Font [0-4] (Opsional)
-    -ker = Kertas [0-6] (Opsional)
+    -t = Text yang akan ditulis
+    -nama = Nama Lengkap
+    -no = Nomor Absen
+    -kls = Kelas
+    -man = Baris Manual
+    -fon = Jenis Font [0, 1, 2, 3, 4, 5]
+    -ker = Kertas [0, 1, 2, 3, 4, 5]
 
-_Contoh Perintah:_'
-    ${prefix}bka -t Ini adalah kalimat yang akan ditulis oleh BOT.
-    ${prefix}bki -nama Riyan Risky W S -no 32 -kls XI MIPA 2 -t Ini adalah kalimat yang akan ditulis oleh BOT.
+_Contoh Perintah:_
+    ${prefix}nulis -t Ini adalah kalimat yang akan ditulis oleh BOT.
+    ${prefix}nulis -ker 3 -fon 2 -t Ini adalah kalimat yang akan ditulis oleh BOT.
+    ${prefix}nulis -nama Riyan Risky W S -no 32 -kls XI MIPA 2 -t Ini adalah kalimat yang akan ditulis oleh BOT.
 
-*List Perintah:*
-    *${prefix}bka*
-    *${prefix}bukukanan*
-        _Menulis dengan media Buku sebelah Kanan_
+_Untuk memaksimalkan baris agar lebih rapi, gunakan mode baris manual_
+_Tutorial menggunakan mode baris manual bisa cek di YouTube_
 
-    *${prefix}bka1*
-    *${prefix}bukukanan1*
-        _Alternatif jika yang satunya error(Font dan Kertas juga berbeda)_
+_Jika ada rekomendasi font yang bagus atau request kertas, hubungi owner saja_
 
-    *${prefix}bki*
-    *${prefix}bukukiri*
-        _Menulis dengan media Buku sebelah Kiri_
-        
-    *${prefix}bkaman*
-    *${prefix}bukukananmanual*
-        _Menulis dengan media Buku sebelah Kanan Secara Manual_
-
-    *${prefix}bkiman*
-    *${prefix}bukukirimanual*
-        _Menulis dengan media Buku sebelah Kiri Secara Manual_
-
-    *${prefix}fka*
-    *${prefix}foliokanan*
-        _Menulis dengan media Folio sebelah Kanan_
-
-    *${prefix}fki*
-    *${prefix}foliokiri*
-        _Menulis dengan media Folio sebelah Kiri_
-
-    *${prefix}fkaman*
-    *${prefix}foliokananmanual*
-        _Menulis dengan media Folio sebelah Kanan Secara Manual_
-
-    *${prefix}fkiman*
-    *${prefix}foliokirimanual*
-        _Menulis dengan media Folio sebelah Kiri Secara Manual_
-        
 ${menu.footer}`
 }
 

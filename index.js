@@ -1271,7 +1271,7 @@ async function main() {
 
         case "nulis":
           nulis(args).then(async (res) => {
-            sendMedPath(res, "Nulis Buku Kanan, Done!", image)
+            sendMedPath(res, "Nulis Berhasil!\n\nJangan lupa follow ig: https://s.id/botbahagia-ig", image)
               .catch((e) => reply(e.message))
           }).catch((e) => reply(e.message))
           break
@@ -1284,34 +1284,10 @@ async function main() {
           }).catch((e) => reply(e.message))
           break
 
-        case "bkaman":
-        case "bukukananmanual":
-          nulis(args, "bkaman").then(async (res) => {
-            sendMedPath(res, "Nulis Buku Manual, Done!", image)
-              .catch((e) => reply(e.message))
-          }).catch((e) => reply(e))
-          break
-
-        case "bka1":
-        case "bukukanan1":
-          nulis(args, "bukukanan1").then(async (res) => {
-            sendMedPath(res, "Nulis Buku Kanan v2, Done!", image)
-              .catch((e) => reply(e.message))
-          }).catch((e) => reply(e))
-          break
-
         case "bki":
         case "bukukiri":
           nulis(args, "bukukiri").then(async (res) => {
             sendMedPath(res, "Nulis Buku Kiri, Done!", image)
-              .catch((e) => reply(e.message))
-          }).catch((e) => reply(e))
-          break
-
-        case "bkiman":
-        case "bukukirimanual":
-          nulis(args, "bkiman").then(async (res) => {
-            sendMedPath(res, "Nulis Buku Manual, Done!", image)
               .catch((e) => reply(e.message))
           }).catch((e) => reply(e))
           break
@@ -1332,23 +1308,7 @@ async function main() {
           }).catch((e) => reply(e))
           break
 
-        case "fkaman":
-        case "foliokananmanual":
-          nulis(args, "fkaman").then(async (res) => {
-            sendMedPath(res, "Nulis Folio Kanan Manual, Done!", image)
-              .catch((e) => reply(e.message))
-          }).catch((e) => reply(e))
-          break
-
-        case "fkiman":
-        case "foliokirimanual":
-          nulis(args, "fkiman").then(async (res) => {
-            sendMedPath(res, "Nulis Folio Kiri Manual, Done!", image)
-              .catch((e) => reply(e.message))
-          }).catch((e) => reply(e))
-          break
-
-          // https://github.com/tesseract-ocr/tesseract
+        // https://github.com/tesseract-ocr/tesseract
         case "ocr":
           if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
             const media = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
