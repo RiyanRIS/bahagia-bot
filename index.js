@@ -171,7 +171,7 @@ async function main() {
   }) => {
     console.log('Reason is:', reason)
   })
-      
+       
   setInterval(async () => {
     const tg = moment.tz("Asia/Jakarta").format("MMMM DD, YYYY")
     const biography = '📅 ' + tg + ' 🇮🇩 Gunakan \/help untuk melihat perintah yang tersedia.'
