@@ -57,7 +57,10 @@ const {
   tebakgambar2,
   tebakpribahasa,
   pengumum,
-  susun
+  susun,
+  tebka,
+  siapakahaku,
+  caklontong
 } = require("./lib/game")
 const {
   carbon
@@ -137,6 +140,7 @@ const {
 
 // LOAD SOURCES
 const pesan = require('./src/pesan')
+const tamnel = fs.readFileSync("./src/logo.png")
 
 // BASIC SETTINGS
 const prefix = '/'
@@ -538,79 +542,193 @@ async function main() {
       let isOnGame = false
 
       // TEBAK GAMBAR HANDLER
-      let datatebakgambar = JSON.parse(fs.readFileSync("./src/data/tebakgambar.json"))
+      const tebakgambarhandler = async () => {
+        let datatebakgambar = JSON.parse(fs.readFileSync("./src/data/tebakgambar.json"))
 
-      let isTebakgambar = false
-      let resTebakgambar = []
+        let isTebakgambar = false
+        let resTebakgambar = []
+        let indexkeberapa = null
 
-      // cek apakah pengirim sedang mengerjakan tebak gambar
-      datatebakgambar.forEach((i, el) => {
-        if (from == i.from) {
-          isTebakgambar = true
-          isOnGame = true
-          resTebakgambar.push(i)
-        }
-      })
+        // cek apakah pengirim sedang mengerjakan tebak gambar
+        datatebakgambar.forEach((i, el) => {
+          if (from == i.from) {
+            isTebakgambar = true
+            isOnGame = true
+            resTebakgambar.push(i)
+            indexkeberapa = el
+          }
+        })
 
-      if (isTebakgambar && kalimat.toLowerCase() != "skip") { // kondisi jika pengirim sedang mengerjakan tebak gambar
-        let jawab = kalimat.toLowerCase()
-        if (jawab == resTebakgambar[0].jawaban) { // kondisi jika jawaban benar
-          sendButMessage(from, "Yes, jawaban kamu bener.\nPenjelasan: " + resTebakgambar[0].penjelasan, `Mau main lagi???`, [{
+        if (isTebakgambar && kalimat.toLowerCase() != "skip") { // kondisi jika pengirim sedang mengerjakan tebak gambar
+          let jawab = kalimat.toLowerCase()
+          if (jawab == resTebakgambar[0].jawaban) { // kondisi jika jawaban benar
+            sendButMessage(from, "Yes, jawaban kamu bener.\nPenjelasan: " + resTebakgambar[0].penjelasan, `Mau main lagi???`, [{
               buttonId: `${prefix}tg`,
               buttonText: {
                 displayText: `Ya`,
               },
               type: 1,
+            }, ], {
+              quoted: mek
+            })
+            let dataakanhapus = JSON.parse(fs.readFileSync("./src/data/tebakgambar.json"))
+            let indexx
+            dataakanhapus.forEach((i, el) => {
+              if (from == i.from) {
+                indexx = el
+              }
+            })
+            dataakanhapus.splice(indexx, 1)
+            fs.writeFileSync("./src/data/tebakgambar.json", JSON.stringify(dataakanhapus))
+          } else { // kondisi jika jawaban salah
+            const arr_jawaban = resTebakgambar[0].jawaban.split(" ")
+            const jumlah = arr_jawaban.length
+            const percent = Math.floor(contains(jawab, arr_jawaban) / jumlah * 100)
+            console.log(resTebakgambar[0].percobaan)
+            if (percent > 10) {
+              reply("wah, ada kata yang bener, ayo dikit lagi..")
+            } else if (percent > 60) {
+              reply("hampirr bener broo, cek lagi, teliti lagi.. ayo..")
+            } else {
+              if (resTebakgambar[0].percobaan == 1) {
+                reply("salah")
+              } else if (resTebakgambar[0].percobaan == 2) {
+                reply("masih salah")
+              } else if (resTebakgambar[0].percobaan == 3) {
+                reply("masih salah.\n_Petunjuk:_ ada *" + jumlah + "* kata nih")
+              } else if (resTebakgambar[0].percobaan == 4) {
+                reply("ayo coba lagi, masih salah tuh")
+              } else if (resTebakgambar[0].percobaan <= 5) {
+                reply("masih salah haha")
+              } else if (resTebakgambar[0].percobaan == 6) {
+                reply("ayo dong, usaha, jangan ngasal gini..")
+              } else if (resTebakgambar[0].percobaan == 7) {
+                reply(`salah, petunjuknya ${resTebakgambar[0].penjelasan}`)
+              } else if (resTebakgambar[0].percobaan == 8) {
+                reply("bego, udah berapa kali coba masih salah aja")
+              } else if (resTebakgambar[0].percobaan <= 10) {
+                reply("dahlah.. skip aja")
+              } else if (resTebakgambar[0].percobaan < 13) {
+                reply("DIBILANG SKIP AJA UDAH")
+              } else if (resTebakgambar[0].percobaan <= 15) {
+                reply("TULIS AJA \"skip\" BIAR GUA KASIH TAU JAWABANYA")
+              } else if (resTebakgambar[0].percobaan > 15) {
+                reply("MASIH NGEYEL...")
+              }
+
+              let dataakanhapus1 = JSON.parse(fs.readFileSync("./src/data/tebakgambar.json"))
+              let indexx1
+              // Hapus dulu data lama
+              dataakanhapus1.forEach((i, el) => {
+                if (from == i.from) {
+                  indexx1 = el
+                }
+              })
+              dataakanhapus1.splice(indexx1, 1)
+
+              // terus masukin deh data baru
+              let data = {
+                from: resTebakgambar[0].from,
+                percobaan: resTebakgambar[0].percobaan + 1,
+                jawaban: resTebakgambar[0].jawaban,
+                penjelasan: resTebakgambar[0].penjelasan,
+              }
+              dataakanhapus1.push(data)
+              fs.writeFileSync("./src/data/tebakgambar.json", JSON.stringify(dataakanhapus1))
+
+            }
+
+          }
+        }
+
+        if (isTebakgambar && kalimat.toLowerCase() == "skip") {
+          reply(`Game tebak gambar::\nJawaban: ${resTebakgambar[0].jawaban}\nPenjelasan: ${resTebakgambar[0].penjelasan}\n\nNoob Gitu aja gabisa..`)
+          await new Promise(r => setTimeout(r, 2000));
+          if (indexkeberapa != null) {
+            datatebakgambar.splice(indexkeberapa, 1)
+            fs.writeFileSync("./src/data/tebakgambar.json", JSON.stringify(datatebakgambar))
+          }
+          sendButMessage(from, "Mau main lagi gak?.\n", `Bot Bahagia`, [{
+            buttonId: `${prefix}tebakgambar`,
+            buttonText: {
+              displayText: `Ya`,
             },
-          ], {
+            type: 1,
+          }, ], {
             quoted: mek
           })
-          let dataakanhapus = JSON.parse(fs.readFileSync("./src/data/tebakgambar.json"))
-          let indexx
-          dataakanhapus.forEach((i, el) => {
-            if (from == i.from) {
-              indexx = el
-            }
-          })
-          dataakanhapus.splice(indexx, 1)
-          fs.writeFileSync("./src/data/tebakgambar.json", JSON.stringify(dataakanhapus))
-        } else { // kondisi jika jawaban salah
-          const arr_jawaban = resTebakgambar[0].jawaban.split(" ")
-          const jumlah = arr_jawaban.length
-          const percent = Math.floor(contains(jawab, arr_jawaban) / jumlah * 100)
-          console.log(resTebakgambar[0].percobaan)
-          if (percent > 10) {
-            reply("wah, ada kata yang bener, ayo dikit lagi..")
-          } else if (percent > 60) {
-            reply("hampirr bener broo, cek lagi, teliti lagi.. ayo..")
-          } else {
-            if (resTebakgambar[0].percobaan == 1) {
+        }
+      }
+      tebakgambarhandler()
+
+      // TEBAK PRIBAHASA HANDLER
+      const tebakpribahasahandler = async () => {
+        let datatebakpribahasa = JSON.parse(fs.readFileSync("./src/data/tebakpribahasa.json"))
+
+        let isTebakPribahasa = false
+        let resTebakPribahasa = []
+        let indexkeberapa = null
+
+        // cek apakah pengirim sedang mengerjakan tebak pribahasa
+        datatebakpribahasa.forEach((i, el) => {
+          if (from == i.from) {
+            isTebakPribahasa = true
+            isOnGame = true
+            resTebakPribahasa.push(i)
+            indexkeberapa = el
+          }
+        })
+
+        if (isTebakPribahasa && kalimat.toLowerCase() != "skip") { // kondisi jika pengirim sedang mengerjakan tebak pribahasa
+          let jawab = kalimat.toLowerCase()
+          if (jawab == resTebakPribahasa[0].jawaban) { // kondisi jika jawaban benar
+            // sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*.\n_" + res.soal.replace("....", res.jawaban) + "_\n\nArti: " + res.arti, `Mau main lagi???`, [{
+            sendButMessage(from, "Yes, jawaban kamu bener.\n_" + resTebakPribahasa[0].soal.replace("....", resTebakPribahasa[0].jawaban) + "_\n\nArti: " + resTebakPribahasa[0].arti, `Mau main lagi???`, [{
+              buttonId: `${prefix}tp`,
+              buttonText: {
+                displayText: `Ya`,
+              },
+              type: 1,
+            }, ], {
+              quoted: mek
+            })
+            let dataakanhapus = JSON.parse(fs.readFileSync("./src/data/tebakpribahasa.json"))
+            let indexx
+            dataakanhapus.forEach((i, el) => {
+              if (from == i.from) {
+                indexx = el
+              }
+            })
+            dataakanhapus.splice(indexx, 1)
+            fs.writeFileSync("./src/data/tebakpribahasa.json", JSON.stringify(dataakanhapus))
+          } else { // kondisi jika jawaban salah
+            if (resTebakPribahasa[0].percobaan == 1) {
               reply("salah")
-            } else if (resTebakgambar[0].percobaan == 2) {
+            } else if (resTebakPribahasa[0].percobaan == 2) {
               reply("masih salah")
-            } else if (resTebakgambar[0].percobaan == 3) {
-              reply("masih salah.\n_Petunjuk:_ ada *" + jumlah + "* kata nih")
-            } else if (resTebakgambar[0].percobaan == 4) {
+            } else if (resTebakPribahasa[0].percobaan == 3) {
+              reply("masih salah.\n_Petunjuk:_ ada *" + resTebakPribahasa[0].jawaban.length + "* huruf")
+            } else if (resTebakPribahasa[0].percobaan == 4) {
               reply("ayo coba lagi, masih salah tuh")
-            } else if (resTebakgambar[0].percobaan <= 5) {
+            } else if (resTebakPribahasa[0].percobaan <= 5) {
               reply("masih salah haha")
-            } else if (resTebakgambar[0].percobaan == 6) {
+            } else if (resTebakPribahasa[0].percobaan == 6) {
               reply("ayo dong, usaha, jangan ngasal gini..")
-            } else if (resTebakgambar[0].percobaan == 7) {
-              reply(`salah, petunjuknya ${resTebakgambar[0].penjelasan}`)
-            } else if (resTebakgambar[0].percobaan == 8) {
+            } else if (resTebakPribahasa[0].percobaan == 7) {
+              reply(`salah, petunjuknya 2 huruf awal adalah *${resTebakPribahasa[0].jawaban.slice(0, 2)}*`)
+            } else if (resTebakPribahasa[0].percobaan == 8) {
               reply("bego, udah berapa kali coba masih salah aja")
-            } else if (resTebakgambar[0].percobaan >= 9) {
+            } else if (resTebakPribahasa[0].percobaan <= 10) {
               reply("dahlah.. skip aja")
-            } else if (resTebakgambar[0].percobaan > 11) {
+            } else if (resTebakPribahasa[0].percobaan < 13) {
               reply("DIBILANG SKIP AJA UDAH")
-            } else if (resTebakgambar[0].percobaan > 11) {
+            } else if (resTebakPribahasa[0].percobaan <= 15) {
               reply("TULIS AJA \"skip\" BIAR GUA KASIH TAU JAWABANYA")
-            } else if (resTebakgambar[0].percobaan > 15) {
+            } else if (resTebakPribahasa[0].percobaan > 15) {
               reply("MASIH NGEYEL...")
             }
 
-            let dataakanhapus1 = JSON.parse(fs.readFileSync("./src/data/tebakgambar.json"))
+            let dataakanhapus1 = JSON.parse(fs.readFileSync("./src/data/tebakpribahasa.json"))
             let indexx1
             // Hapus dulu data lama
             dataakanhapus1.forEach((i, el) => {
@@ -622,344 +740,586 @@ async function main() {
 
             // terus masukin deh data baru
             let data = {
-              from: resTebakgambar[0].from,
-              percobaan: resTebakgambar[0].percobaan + 1,
-              jawaban: resTebakgambar[0].jawaban,
-              penjelasan: resTebakgambar[0].penjelasan,
+              from: resTebakPribahasa[0].from,
+              percobaan: resTebakPribahasa[0].percobaan + 1,
+              soal: resTebakPribahasa[0].soal,
+              jawaban: resTebakPribahasa[0].jawaban,
+              arti: resTebakPribahasa[0].arti,
+              status: 0
             }
             dataakanhapus1.push(data)
-            fs.writeFileSync("./src/data/tebakgambar.json", JSON.stringify(dataakanhapus1))
-
+            fs.writeFileSync("./src/data/tebakpribahasa.json", JSON.stringify(dataakanhapus1))
           }
-
         }
-      }
 
-      // TEBAK PRIBAHASA HANDLER
-      let datatebakpribahasa = JSON.parse(fs.readFileSync("./src/data/tebakpribahasa.json"))
-
-      let isTebakPribahasa = false
-      let resTebakPribahasa = []
-
-      // cek apakah pengirim sedang mengerjakan tebak pribahasa
-      datatebakpribahasa.forEach((i, el) => {
-        if (from == i.from) {
-          isTebakPribahasa = true
-          isOnGame = true
-          resTebakPribahasa.push(i)
-        }
-      })
-
-      if (isTebakPribahasa && kalimat.toLowerCase() != "skip") { // kondisi jika pengirim sedang mengerjakan tebak pribahasa
-        let jawab = kalimat.toLowerCase()
-        if (jawab == resTebakPribahasa[0].jawaban) { // kondisi jika jawaban benar
-          // sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*.\n_" + res.soal.replace("....", res.jawaban) + "_\n\nArti: " + res.arti, `Mau main lagi???`, [{
-          sendButMessage(from, "Yes, jawaban kamu bener.\n_" + resTebakPribahasa[0].soal.replace("....", resTebakPribahasa[0].jawaban) + "_\n\nArti: " + resTebakPribahasa[0].arti, `Mau main lagi???`, [{
-              buttonId: `${prefix}tp`,
-              buttonText: {
-                displayText: `Ya`,
-              },
-              type: 1,
-            },
-          ], {
-            quoted: mek
-          })
-          let dataakanhapus = JSON.parse(fs.readFileSync("./src/data/tebakpribahasa.json"))
-          let indexx
-          dataakanhapus.forEach((i, el) => {
-            if (from == i.from) {
-              indexx = el
-            }
-          })
-          dataakanhapus.splice(indexx, 1)
-          fs.writeFileSync("./src/data/tebakpribahasa.json", JSON.stringify(dataakanhapus))
-        } else { // kondisi jika jawaban salah
-          if (resTebakPribahasa[0].percobaan == 1) {
-            reply("salah")
-          } else if (resTebakPribahasa[0].percobaan == 2) {
-            reply("masih salah")
-          } else if (resTebakPribahasa[0].percobaan == 3) {
-            reply("masih salah.\n_Petunjuk:_ ada *" + resTebakPribahasa[0].jawaban.length + "* huruf")
-          } else if (resTebakPribahasa[0].percobaan == 4) {
-            reply("ayo coba lagi, masih salah tuh")
-          } else if (resTebakPribahasa[0].percobaan <= 5) {
-            reply("masih salah haha")
-          } else if (resTebakPribahasa[0].percobaan == 6) {
-            reply("ayo dong, usaha, jangan ngasal gini..")
-          } else if (resTebakPribahasa[0].percobaan == 7) {
-            reply(`salah, petunjuknya 2 huruf awal adalah *${resTebakPribahasa[0].jawaban.slice(0, 2)}*`)
-          } else if (resTebakPribahasa[0].percobaan == 8) {
-            reply("bego, udah berapa kali coba masih salah aja")
-          } else if (resTebakPribahasa[0].percobaan >= 9) {
-            reply("dahlah.. skip aja")
-          } else if (resTebakPribahasa[0].percobaan > 11) {
-            reply("DIBILANG SKIP AJA UDAH")
-          } else if (resTebakPribahasa[0].percobaan > 11) {
-            reply("TULIS AJA \"skip\" BIAR GUA KASIH TAU JAWABANYA")
-          } else if (resTebakPribahasa[0].percobaan > 15) {
-            reply("MASIH NGEYEL...")
+        if (isTebakPribahasa && kalimat.toLowerCase() == "skip") {
+          reply(`Game tebak pribahasa::\nSoal: ${resTebakPribahasa[0].soal}\nJawaban: ${resTebakPribahasa[0].jawaban}\n\nNoob Gitu aja gabisa..`)
+          await new Promise(r => setTimeout(r, 2000));
+          if (indexkeberapa != null) {
+            datatebakpribahasa.splice(indexkeberapa, 1)
+            fs.writeFileSync("./src/data/tebakpribahasa.json", JSON.stringify(datatebakpribahasa))
           }
-
-          let dataakanhapus1 = JSON.parse(fs.readFileSync("./src/data/tebakpribahasa.json"))
-          let indexx1
-          // Hapus dulu data lama
-          dataakanhapus1.forEach((i, el) => {
-            if (from == i.from) {
-              indexx1 = el
-            }
-          })
-          dataakanhapus1.splice(indexx1, 1)
-
-          // terus masukin deh data baru
-          let data = {
-            from: resTebakPribahasa[0].from,
-            percobaan: resTebakPribahasa[0].percobaan + 1,
-            soal: resTebakPribahasa[0].soal,
-            jawaban: resTebakPribahasa[0].jawaban,
-            arti: resTebakPribahasa[0].arti,
-            status: 0
-          }
-          dataakanhapus1.push(data)
-          fs.writeFileSync("./src/data/tebakpribahasa.json", JSON.stringify(dataakanhapus1))
-        }
-      }
-
-      // ASAH OTAK HANDLER
-      let asahotakk1 = JSON.parse(fs.readFileSync("./src/data/asahotak.json"))
-
-      let isAsahOtak = false
-      let resAsahOtaak1 = []
-
-      // cek apakah pengirim sedang mengerjakan asah otak
-      asahotakk1.forEach((i, el) => {
-        if (from == i.from) {
-          isAsahOtak = true
-          isOnGame = true
-          resAsahOtaak1.push(i)
-        }
-      })
-
-      if (isAsahOtak && kalimat.toLowerCase() != "skip") { // kondisi jika pengirim sedang mengerjakan asah otak
-        let jawab = kalimat.toLowerCase()
-        if (jawab == resAsahOtaak1[0].jawaban.toLowerCase()) { // kondisi jika jawaban benar
-          sendButMessage(from, "Yes, jawaban kamu bener.\n", `Mau main lagi???`, [{
-              buttonId: `${prefix}asahotak`,
-              buttonText: {
-                displayText: `Ya`,
-              },
-              type: 1,
-            },
-          ], {
-            quoted: mek
-          })
-          let dataasahhapus = JSON.parse(fs.readFileSync("./src/data/asahotak.json"))
-          let idxasah
-          dataasahhapus.forEach((i, el) => {
-            if (from == i.from) {
-              idxasah = el
-            }
-          })
-          dataasahhapus.splice(idxasah, 1)
-          fs.writeFileSync("./src/data/asahotak.json", JSON.stringify(dataasahhapus))
-        } else { // kondisi jika jawaban salah
-          if (resAsahOtaak1[0].percobaan == 1) {
-            reply("salah")
-          } else if (resAsahOtaak1[0].percobaan == 2) {
-            reply("masih salah")
-          } else if (resAsahOtaak1[0].percobaan == 3) {
-            reply("masih salah.\n_Petunjuk:_ ada *" + resAsahOtaak1[0].jawaban.length + "* huruf")
-          } else if (resAsahOtaak1[0].percobaan == 4) {
-            reply("ayo coba lagi, masih salah tuh")
-          } else if (resAsahOtaak1[0].percobaan <= 5) {
-            reply("masih salah haha")
-          } else if (resAsahOtaak1[0].percobaan == 6) {
-            reply("ayo dong, usaha, jangan ngasal gini..")
-          } else if (resAsahOtaak1[0].percobaan == 7) {
-            reply(`salah, petunjuknya 2 huruf awal adalah *${resAsahOtaak1[0].jawaban.slice(0, 2)}...*`)
-          } else if (resAsahOtaak1[0].percobaan == 8) {
-            reply("bego, udah berapa kali coba masih salah aja")
-          } else if (resAsahOtaak1[0].percobaan >= 9) {
-            reply("dahlah.. skip aja")
-          } else if (resAsahOtaak1[0].percobaan > 11) {
-            reply("DIBILANG SKIP AJA UDAH")
-          } else if (resAsahOtaak1[0].percobaan > 11) {
-            reply("TULIS AJA \"skip\" BIAR GUA KASIH TAU JAWABANYA")
-          } else if (resAsahOtaak1[0].percobaan > 15) {
-            reply("MASIH NGEYEL...")
-          }
-
-          let dataasahhapus1 = JSON.parse(fs.readFileSync("./src/data/asahotak.json"))
-          let idxasah1
-          // Hapus dulu data lama
-          dataasahhapus1.forEach((i, el) => {
-            if (from == i.from) {
-              idxasah1 = el
-            }
-          })
-          dataasahhapus1.splice(idxasah1, 1)
-
-          // terus masukin deh data baru
-          let data = {
-            from: resAsahOtaak1[0].from,
-            percobaan: resAsahOtaak1[0].percobaan + 1,
-            soal: resAsahOtaak1[0].soal,
-            jawaban: resAsahOtaak1[0].jawaban,
-            status: 0
-          }
-          dataasahhapus1.push(data)
-          fs.writeFileSync("./src/data/asahotak.json", JSON.stringify(dataasahhapus1))
-        }
-      }
-
-      // SUSUN KATA HANDLER
-      let datasusunnkata = JSON.parse(fs.readFileSync("./src/data/susunkata.json"))
-
-      let isSusuunkata = false
-      let resSusuunKataa = []
-
-      // cek apakah pengirim sedang mengerjakan tebak pribahasa
-      datasusunnkata.forEach((i, el) => {
-        if (from == i.from) {
-          isSusuunkata = true
-          isOnGame = true
-          resSusuunKataa.push(i)
-        }
-      })
-
-      if (isSusuunkata && kalimat.toLowerCase() != "skip") { // kondisi jika pengirim sedang mengerjakan tebak pribahasa
-        let jawab = kalimat.toLowerCase()
-        if (jawab == resSusuunKataa[0].jawaban.toLowerCase()) { // kondisi jika jawaban benar
-          sendButMessage(from, "Yes, jawaban kamu bener.\n", `Mau main lagi???`, [{
-              buttonId: `${prefix}susunkata`,
-              buttonText: {
-                displayText: `Ya`,
-              },
-              type: 1,
-            },
-          ], {
-            quoted: mek
-          })
-          let dataakanhapus = JSON.parse(fs.readFileSync("./src/data/susunkata.json"))
-          let indexx
-          dataakanhapus.forEach((i, el) => {
-            if (from == i.from) {
-              indexx = el
-            }
-          })
-          dataakanhapus.splice(indexx, 1)
-          fs.writeFileSync("./src/data/susunkata.json", JSON.stringify(dataakanhapus))
-        } else { // kondisi jika jawaban salah
-          if (resSusuunKataa[0].percobaan == 1) {
-            reply("salah")
-          } else if (resSusuunKataa[0].percobaan == 2) {
-            reply("masih salah")
-          } else if (resSusuunKataa[0].percobaan == 3) {
-            reply("masih salah.\n_Petunjuk:_ ada *" + resSusuunKataa[0].jawaban.length + "* huruf")
-          } else if (resSusuunKataa[0].percobaan == 4) {
-            reply("ayo coba lagi, masih salah tuh")
-          } else if (resSusuunKataa[0].percobaan <= 5) {
-            reply("masih salah haha")
-          } else if (resSusuunKataa[0].percobaan == 6) {
-            reply("ayo dong, usaha, jangan ngasal gini..")
-          } else if (resSusuunKataa[0].percobaan == 7) {
-            reply(`salah, petunjuknya 2 huruf awal adalah *${resSusuunKataa[0].jawaban.slice(0, 2)}*`)
-          } else if (resSusuunKataa[0].percobaan == 8) {
-            reply("bego, udah berapa kali coba masih salah aja")
-          } else if (resSusuunKataa[0].percobaan >= 9) {
-            reply("dahlah.. skip aja")
-          } else if (resSusuunKataa[0].percobaan > 11) {
-            reply("DIBILANG SKIP AJA UDAH")
-          } else if (resSusuunKataa[0].percobaan > 11) {
-            reply("TULIS AJA \"skip\" BIAR GUA KASIH TAU JAWABANYA")
-          } else if (resSusuunKataa[0].percobaan > 15) {
-            reply("MASIH NGEYEL...")
-          }
-
-          let dataakanhapus1 = JSON.parse(fs.readFileSync("./src/data/susunkata.json"))
-          let indexx1
-          // Hapus dulu data lama
-          dataakanhapus1.forEach((i, el) => {
-            if (from == i.from) {
-              indexx1 = el
-            }
-          })
-          dataakanhapus1.splice(indexx1, 1)
-
-          // terus masukin deh data baru
-          let data = {
-            from: resSusuunKataa[0].from,
-            percobaan: resSusuunKataa[0].percobaan + 1,
-            soal: resSusuunKataa[0].soal,
-            jawaban: resSusuunKataa[0].jawaban,
-            tipe: resSusuunKataa[0].tipe,
-            status: 0
-          }
-          dataakanhapus1.push(data)
-          fs.writeFileSync("./src/data/susunkata.json", JSON.stringify(dataakanhapus1))
-        }
-      }
-
-      if(isTebakgambar && kalimat.toLowerCase() == "skip"){
-        reply(`Game tebak gambar::\nJawaban: ${resTebakgambar[0].jawaban}\nPenjelasan: ${resTebakgambar[0].penjelasan}\n\nNoob Gitu aja gabisa..`)
-        await new Promise(r => setTimeout(r, 1000));
-        sendButMessage(from, "Mau main lagi gak?.\n", `Bot Bahagia`, [{
-            buttonId: `${prefix}tebakgambar`,
-            buttonText: {
-              displayText: `Ya`,
-            },
-            type: 1,
-          },
-        ], {
-          quoted: mek
-        })
-      }
-
-      if(isTebakPribahasa && kalimat.toLowerCase() == "skip"){
-        reply(`Game tebak pribahasa::\nSoal: ${resTebakPribahasa[0].soal}\nJawaban: ${resTebakPribahasa[0].jawaban}\n\nNoob Gitu aja gabisa..`)
-        await new Promise(r => setTimeout(r, 1000));
-        sendButMessage(from, "Mau main lagi gak?.\n", `Bot Bahagia`, [{
+          sendButMessage(from, "Mau main lagi gak?.\n", `Bot Bahagia`, [{
             buttonId: `${prefix}tebakpribahasa`,
             buttonText: {
               displayText: `Ya`,
             },
             type: 1,
-          },
-        ], {
-          quoted: mek
-        })
+          }, ], {
+            quoted: mek
+          })
+        }
       }
+      tebakpribahasahandler()
 
-      if(isAsahOtak && kalimat.toLowerCase() == "skip"){
-        reply(`Game asah otak::\nSoal: ${resAsahOtaak1[0].soal}\nJawaban: ${resAsahOtaak1[0].jawaban}\n\nNoob Gitu aja gabisa..`)
-        await new Promise(r => setTimeout(r, 1000));
-        sendButMessage(from, "Mau main lagi gak?.\n", `Bot Bahagia`, [{
+      // ASAH OTAK HANDLER
+      const asahotakhandler = async () => {
+        let asahotakk1 = JSON.parse(fs.readFileSync("./src/data/asahotak.json"))
+
+        let isAsahOtak = false
+        let resAsahOtaak1 = []
+        let indexkeberapa = null
+
+        // cek apakah pengirim sedang mengerjakan asah otak
+        asahotakk1.forEach((i, el) => {
+          if (from == i.from) {
+            isAsahOtak = true
+            isOnGame = true
+            resAsahOtaak1.push(i)
+            indexkeberapa = el
+          }
+        })
+
+        if (isAsahOtak && kalimat.toLowerCase() != "skip") { // kondisi jika pengirim sedang mengerjakan asah otak
+          let jawab = kalimat.toLowerCase()
+          if (jawab == resAsahOtaak1[0].jawaban.toLowerCase()) { // kondisi jika jawaban benar
+            sendButMessage(from, "Yes, jawaban kamu bener.\n", `Mau main lagi???`, [{
+              buttonId: `${prefix}asahotak`,
+              buttonText: {
+                displayText: `Ya`,
+              },
+              type: 1,
+            }, ], {
+              quoted: mek
+            })
+            let dataasahhapus = JSON.parse(fs.readFileSync("./src/data/asahotak.json"))
+            let idxasah
+            dataasahhapus.forEach((i, el) => {
+              if (from == i.from) {
+                idxasah = el
+              }
+            })
+            dataasahhapus.splice(idxasah, 1)
+            fs.writeFileSync("./src/data/asahotak.json", JSON.stringify(dataasahhapus))
+          } else { // kondisi jika jawaban salah
+            if (resAsahOtaak1[0].percobaan == 1) {
+              reply("salah")
+            } else if (resAsahOtaak1[0].percobaan == 2) {
+              reply("masih salah")
+            } else if (resAsahOtaak1[0].percobaan == 3) {
+              reply("masih salah.\n_Petunjuk:_ ada *" + resAsahOtaak1[0].jawaban.length + "* huruf")
+            } else if (resAsahOtaak1[0].percobaan == 4) {
+              reply("ayo coba lagi, masih salah tuh")
+            } else if (resAsahOtaak1[0].percobaan <= 5) {
+              reply("masih salah haha")
+            } else if (resAsahOtaak1[0].percobaan == 6) {
+              reply("ayo dong, usaha, jangan ngasal gini..")
+            } else if (resAsahOtaak1[0].percobaan == 7) {
+              reply(`salah, petunjuknya 2 huruf awal adalah *${resAsahOtaak1[0].jawaban.slice(0, 2)}...*`)
+            } else if (resAsahOtaak1[0].percobaan == 8) {
+              reply("bego, udah berapa kali coba masih salah aja")
+            } else if (resAsahOtaak1[0].percobaan <= 10) {
+              reply("dahlah.. skip aja")
+            } else if (resAsahOtaak1[0].percobaan < 13) {
+              reply("DIBILANG SKIP AJA UDAH")
+            } else if (resAsahOtaak1[0].percobaan <= 15) {
+              reply("TULIS AJA \"skip\" BIAR GUA KASIH TAU JAWABANYA")
+            } else if (resAsahOtaak1[0].percobaan > 15) {
+              reply("MASIH NGEYEL...")
+            }
+
+            let dataasahhapus1 = JSON.parse(fs.readFileSync("./src/data/asahotak.json"))
+            let idxasah1
+            // Hapus dulu data lama
+            dataasahhapus1.forEach((i, el) => {
+              if (from == i.from) {
+                idxasah1 = el
+              }
+            })
+            dataasahhapus1.splice(idxasah1, 1)
+
+            // terus masukin deh data baru
+            let data = {
+              from: resAsahOtaak1[0].from,
+              percobaan: resAsahOtaak1[0].percobaan + 1,
+              soal: resAsahOtaak1[0].soal,
+              jawaban: resAsahOtaak1[0].jawaban,
+              status: 0
+            }
+            dataasahhapus1.push(data)
+            fs.writeFileSync("./src/data/asahotak.json", JSON.stringify(dataasahhapus1))
+          }
+        }
+
+        if (isAsahOtak && kalimat.toLowerCase() == "skip") {
+          reply(`Game asah otak::\nSoal: ${resAsahOtaak1[0].soal}\nJawaban: ${resAsahOtaak1[0].jawaban}\n\nNoob Gitu aja gabisa..`)
+          await new Promise(r => setTimeout(r, 2000))
+          if (indexkeberapa != null) {
+            asahotakk1.splice(indexkeberapa, 1)
+            fs.writeFileSync("./src/data/asahotak.json", JSON.stringify(asahotakk1))
+          }
+          sendButMessage(from, "Mau main lagi gak?.\n", `Bot Bahagia`, [{
             buttonId: `${prefix}asahotak`,
             buttonText: {
               displayText: `Ya`,
             },
             type: 1,
-          },
-        ], {
-          quoted: mek
-        })
+          }, ], {
+            quoted: mek
+          })
+        }
       }
+      asahotakhandler()
 
-      if(isSusuunkata && kalimat.toLowerCase() == "skip"){
-        reply(`Game susun kata::\nSoal: ${resSusuunKataa[0].soal}\nJawaban: ${resSusuunKataa[0].jawaban}\n\nNoob Gitu aja gabisa..`)
-        await new Promise(r => setTimeout(r, 1000));
-        sendButMessage(from, "Mau main lagi gak?.\n", `Bot Bahagia`, [{
+      // SUSUN KATA HANDLER
+      const susunkatahandler = async () => {
+        let datasusunnkata = JSON.parse(fs.readFileSync("./src/data/susunkata.json"))
+
+        let isSusuunkata = false
+        let resSusuunKataa = []
+        let indexkeberapa = null
+
+        // cek apakah pengirim sedang mengerjakan susun kata
+        datasusunnkata.forEach((i, el) => {
+          if (from == i.from) {
+            isSusuunkata = true
+            isOnGame = true
+            resSusuunKataa.push(i)
+            indexkeberapa = el
+          }
+        })
+
+        if (isSusuunkata && kalimat.toLowerCase() != "skip") { // kondisi jika pengirim sedang mengerjakan susun kata
+          let jawab = kalimat.toLowerCase()
+          if (jawab == resSusuunKataa[0].jawaban.toLowerCase()) { // kondisi jika jawaban benar
+            sendButMessage(from, "Yes, jawaban kamu bener.\n", `Mau main lagi???`, [{
+              buttonId: `${prefix}susunkata`,
+              buttonText: {
+                displayText: `Ya`,
+              },
+              type: 1,
+            }, ], {
+              quoted: mek
+            })
+            let dataakanhapus = JSON.parse(fs.readFileSync("./src/data/susunkata.json"))
+            let indexx
+            dataakanhapus.forEach((i, el) => {
+              if (from == i.from) {
+                indexx = el
+              }
+            })
+            dataakanhapus.splice(indexx, 1)
+            fs.writeFileSync("./src/data/susunkata.json", JSON.stringify(dataakanhapus))
+          } else { // kondisi jika jawaban salah
+            if (resSusuunKataa[0].percobaan == 1) {
+              reply("salah")
+            } else if (resSusuunKataa[0].percobaan == 2) {
+              reply("masih salah")
+            } else if (resSusuunKataa[0].percobaan == 3) {
+              reply("masih salah.\n_Petunjuk:_ ada *" + resSusuunKataa[0].jawaban.length + "* huruf")
+            } else if (resSusuunKataa[0].percobaan == 4) {
+              reply("ayo coba lagi, masih salah tuh")
+            } else if (resSusuunKataa[0].percobaan <= 5) {
+              reply("masih salah haha")
+            } else if (resSusuunKataa[0].percobaan == 6) {
+              reply("ayo dong, usaha, jangan ngasal gini..")
+            } else if (resSusuunKataa[0].percobaan == 7) {
+              reply(`salah, petunjuknya 2 huruf awal adalah *${resSusuunKataa[0].jawaban.slice(0, 2)}*`)
+            } else if (resSusuunKataa[0].percobaan == 8) {
+              reply("bego, udah berapa kali coba masih salah aja")
+            } else if (resSusuunKataa[0].percobaan <= 10) {
+              reply("dahlah.. skip aja")
+            } else if (resSusuunKataa[0].percobaan < 13) {
+              reply("DIBILANG SKIP AJA UDAH")
+            } else if (resSusuunKataa[0].percobaan <= 15) {
+              reply("TULIS AJA \"skip\" BIAR GUA KASIH TAU JAWABANYA")
+            } else if (resSusuunKataa[0].percobaan > 15) {
+              reply("MASIH NGEYEL...")
+            }
+
+            let dataakanhapus1 = JSON.parse(fs.readFileSync("./src/data/susunkata.json"))
+            let indexx1
+            // Hapus dulu data lama
+            dataakanhapus1.forEach((i, el) => {
+              if (from == i.from) {
+                indexx1 = el
+              }
+            })
+            dataakanhapus1.splice(indexx1, 1)
+
+            // terus masukin deh data baru
+            let data = {
+              from: resSusuunKataa[0].from,
+              percobaan: resSusuunKataa[0].percobaan + 1,
+              soal: resSusuunKataa[0].soal,
+              jawaban: resSusuunKataa[0].jawaban,
+              tipe: resSusuunKataa[0].tipe,
+              status: 0
+            }
+            dataakanhapus1.push(data)
+            fs.writeFileSync("./src/data/susunkata.json", JSON.stringify(dataakanhapus1))
+          }
+        }
+
+        if (isSusuunkata && kalimat.toLowerCase() == "skip") {
+          reply(`Game susun kata::\nSoal: ${resSusuunKataa[0].soal}\nJawaban: ${resSusuunKataa[0].jawaban}\n\nNoob Gitu aja gabisa..`)
+          await new Promise(r => setTimeout(r, 2000));
+          if (indexkeberapa != null) {
+            datasusunnkata.splice(indexkeberapa, 1)
+            fs.writeFileSync("./src/data/susunkata.json", JSON.stringify(datasusunnkata))
+          }
+          sendButMessage(from, "Mau main lagi gak?.\n", `Bot Bahagia`, [{
             buttonId: `${prefix}susunkata`,
             buttonText: {
               displayText: `Ya`,
             },
             type: 1,
-          },
-        ], {
-          quoted: mek
-        })
+          }, ], {
+            quoted: mek
+          })
+        }
       }
+      susunkatahandler()
 
-      if (isOnGame && kalimat != 'skip') {
+      // TEBAK KATA HANDLER
+      const tebakkatahandler = async () => {
+        let datatebaakkata = JSON.parse(fs.readFileSync("./src/data/tebakkata.json"))
+
+        let isTebakkataa = false
+        let resTebakKaata = []
+        let indexkeberapa = null
+
+        // cek apakah pengirim sedang mengerjakan tebak kata
+        datatebaakkata.forEach((i, el) => {
+          if (from == i.from) {
+            isTebakkataa = true
+            isOnGame = true
+            resTebakKaata.push(i)
+            indexkeberapa = el
+          }
+        })
+
+        if (isTebakkataa && kalimat.toLowerCase() != "skip") { // kondisi jika pengirim sedang mengerjakan tebak kata
+          let jawab = kalimat.toLowerCase()
+          if (jawab == resTebakKaata[0].jawaban.toLowerCase()) { // kondisi jika jawaban benar
+            sendButMessage(from, "Yes, jawaban kamu bener.\n", `Mau main lagi???`, [{
+              buttonId: `${prefix}tebakkata`,
+              buttonText: {
+                displayText: `Ya`,
+              },
+              type: 1,
+            }, ], {
+              quoted: mek
+            })
+            let datayangdihapuss = JSON.parse(fs.readFileSync("./src/data/tebakkata.json"))
+            let indHapus
+            datayangdihapuss.forEach((i, el) => {
+              if (from == i.from) {
+                indHapus = el
+              }
+            })
+            datayangdihapuss.splice(indHapus, 1)
+            fs.writeFileSync("./src/data/tebakkata.json", JSON.stringify(datayangdihapuss))
+          } else { // kondisi jika jawaban salah
+            if (resTebakKaata[0].percobaan == 1) {
+              reply("salah")
+            } else if (resTebakKaata[0].percobaan == 2) {
+              reply("masih salah")
+            } else if (resTebakKaata[0].percobaan == 3) {
+              reply("masih salah.\n_Petunjuk:_ ada *" + resTebakKaata[0].jawaban.length + "* huruf")
+            } else if (resTebakKaata[0].percobaan == 4) {
+              reply("ayo coba lagi, masih salah tuh")
+            } else if (resTebakKaata[0].percobaan <= 5) {
+              reply("masih salah haha")
+            } else if (resTebakKaata[0].percobaan == 6) {
+              reply("ayo dong, usaha, jangan ngasal gini..")
+            } else if (resTebakKaata[0].percobaan == 7) {
+              reply(`salah, petunjuknya 2 huruf awal adalah *${resTebakKaata[0].jawaban.slice(0, 2)}*...`)
+            } else if (resTebakKaata[0].percobaan == 8) {
+              reply("bego, udah berapa kali coba masih salah aja")
+            } else if (resTebakKaata[0].percobaan <= 10) {
+              reply("dahlah.. skip aja")
+            } else if (resTebakKaata[0].percobaan < 13) {
+              reply("DIBILANG SKIP AJA UDAH")
+            } else if (resTebakKaata[0].percobaan <= 15) {
+              reply("TULIS AJA \"skip\" BIAR GUA KASIH TAU JAWABANYA")
+            } else if (resTebakKaata[0].percobaan > 15) {
+              reply("MASIH NGEYEL...")
+            }
+
+            let dataakanhapus1 = JSON.parse(fs.readFileSync("./src/data/tebakkata.json"))
+            let indexx1
+            // Hapus dulu data lama
+            dataakanhapus1.forEach((i, el) => {
+              if (from == i.from) {
+                indexx1 = el
+              }
+            })
+            dataakanhapus1.splice(indexx1, 1)
+
+            // terus masukin deh data baru
+            let data = {
+              from: resTebakKaata[0].from,
+              percobaan: resTebakKaata[0].percobaan + 1,
+              soal: resTebakKaata[0].soal,
+              jawaban: resTebakKaata[0].jawaban,
+              status: 0
+            }
+            dataakanhapus1.push(data)
+            fs.writeFileSync("./src/data/tebakkata.json", JSON.stringify(dataakanhapus1))
+          }
+        }
+
+        if (isTebakkataa && kalimat.toLowerCase() == "skip") {
+          reply(`Game tebak kata::\n\nSoal: ${resTebakKaata[0].soal}\nJawaban: ${resTebakKaata[0].jawaban}\n\nNoob Gitu aja gabisa..`)
+          await new Promise(r => setTimeout(r, 2000));
+          if (indexkeberapa != null) {
+            datatebaakkata.splice(indexkeberapa, 1)
+            fs.writeFileSync("./src/data/tebakkata.json", JSON.stringify(datatebaakkata))
+          }
+          sendButMessage(from, "Mau main lagi gak?.\n", `Bot Bahagia`, [{
+            buttonId: `${prefix}tebakkata`,
+            buttonText: {
+              displayText: `Ya`,
+            },
+            type: 1,
+          }, ], {
+            quoted: mek
+          })
+        }
+      }
+      tebakkatahandler()
+
+      // SIAPAKAH AKU HANDLER
+      const siapakahakuhandler = async () => {
+        let datatebaakkata = JSON.parse(fs.readFileSync("./src/data/siapakahaku.json"))
+
+        let isTebakkataa = false
+        let resTebakKaata = []
+        let indexkeberapa = null
+
+        // cek apakah pengirim sedang mengerjakan tebak kata
+        datatebaakkata.forEach((i, el) => {
+          if (from == i.from) {
+            isTebakkataa = true
+            isOnGame = true
+            resTebakKaata.push(i)
+            indexkeberapa = el
+          }
+        })
+
+        if (isTebakkataa && kalimat.toLowerCase() != "skip") { // kondisi jika pengirim sedang mengerjakan siapakah aku
+          let jawab = kalimat.toLowerCase()
+          if (jawab == resTebakKaata[0].jawaban.toLowerCase()) { // kondisi jika jawaban benar
+            sendButMessage(from, "Yes, jawaban kamu bener.\n", `Mau main lagi???`, [{
+              buttonId: `${prefix}siapakahaku`,
+              buttonText: {
+                displayText: `Ya`,
+              },
+              type: 1,
+            }, ], {
+              quoted: mek
+            })
+            let datayangdihapuss = JSON.parse(fs.readFileSync("./src/data/siapakahaku.json"))
+            let indHapus
+            datayangdihapuss.forEach((i, el) => {
+              if (from == i.from) {
+                indHapus = el
+              }
+            })
+            datayangdihapuss.splice(indHapus, 1)
+            fs.writeFileSync("./src/data/siapakahaku.json", JSON.stringify(datayangdihapuss))
+          } else { // kondisi jika jawaban salah
+            if (resTebakKaata[0].percobaan == 1) {
+              reply("salah")
+            } else if (resTebakKaata[0].percobaan == 2) {
+              reply("masih salah")
+            } else if (resTebakKaata[0].percobaan == 3) {
+              reply("masih salah.\n_Petunjuk:_ ada *" + resTebakKaata[0].jawaban.length + "* huruf")
+            } else if (resTebakKaata[0].percobaan == 4) {
+              reply("ayo coba lagi, masih salah tuh")
+            } else if (resTebakKaata[0].percobaan <= 5) {
+              reply("masih salah haha")
+            } else if (resTebakKaata[0].percobaan == 6) {
+              reply("ayo dong, usaha, jangan ngasal gini..")
+            } else if (resTebakKaata[0].percobaan == 7) {
+              reply(`salah, petunjuknya 2 huruf awal adalah *${resTebakKaata[0].jawaban.slice(0, 2)}*...`)
+            } else if (resTebakKaata[0].percobaan == 8) {
+              reply("bego, udah berapa kali coba masih salah aja")
+            } else if (resTebakKaata[0].percobaan <= 10) {
+              reply("dahlah.. skip aja")
+            } else if (resTebakKaata[0].percobaan < 13) {
+              reply("DIBILANG SKIP AJA UDAH")
+            } else if (resTebakKaata[0].percobaan <= 15) {
+              reply("TULIS AJA \"skip\" BIAR GUA KASIH TAU JAWABANYA")
+            } else if (resTebakKaata[0].percobaan > 15) {
+              reply("MASIH NGEYEL...")
+            }
+
+            let dataakanhapus1 = JSON.parse(fs.readFileSync("./src/data/siapakahaku.json"))
+            let indexx1
+            // Hapus dulu data lama
+            dataakanhapus1.forEach((i, el) => {
+              if (from == i.from) {
+                indexx1 = el
+              }
+            })
+            dataakanhapus1.splice(indexx1, 1)
+
+            // terus masukin deh data baru
+            let data = {
+              from: resTebakKaata[0].from,
+              percobaan: resTebakKaata[0].percobaan + 1,
+              soal: resTebakKaata[0].soal,
+              jawaban: resTebakKaata[0].jawaban,
+              status: 0
+            }
+            dataakanhapus1.push(data)
+            fs.writeFileSync("./src/data/siapakahaku.json", JSON.stringify(dataakanhapus1))
+          }
+        }
+
+        if (isTebakkataa && kalimat.toLowerCase() == "skip") {
+          reply(`Game tebak kata::\n\nSoal: ${resTebakKaata[0].soal}\nJawaban: ${resTebakKaata[0].jawaban}\n\nNoob Gitu aja gabisa..`)
+          await new Promise(r => setTimeout(r, 2000));
+          if (indexkeberapa != null) {
+            datatebaakkata.splice(indexkeberapa, 1)
+            fs.writeFileSync("./src/data/siapakahaku.json", JSON.stringify(datatebaakkata))
+          }
+          sendButMessage(from, "Mau main lagi gak?.\n", `Bot Bahagia`, [{
+            buttonId: `${prefix}siapakahaku`,
+            buttonText: {
+              displayText: `Ya`,
+            },
+            type: 1,
+          }, ], {
+            quoted: mek
+          })
+        }
+      }
+      siapakahakuhandler()
+
+      // CAK LONTONG HANDLER
+      const caklontonghandler = async () => {
+        let datatebaakkata = JSON.parse(fs.readFileSync("./src/data/caklontong.json"))
+
+        let isTebakkataa = false
+        let resTebakKaata = []
+        let indexkeberapa = null
+
+        // cek apakah pengirim sedang mengerjakan tebak kata
+        datatebaakkata.forEach((i, el) => {
+          if (from == i.from) {
+            isTebakkataa = true
+            isOnGame = true
+            resTebakKaata.push(i)
+            indexkeberapa = el
+          }
+        })
+
+        if (isTebakkataa && kalimat.toLowerCase() != "skip") { // kondisi jika pengirim sedang mengerjakan siapakah aku
+          let jawab = kalimat.toLowerCase()
+          if (jawab == resTebakKaata[0].jawaban.toLowerCase()) { // kondisi jika jawaban benar
+            sendButMessage(from, `Yes, jawaban kamu bener.\n\nPenjelasan: ${resTebakKaata[0].deskripsi}`, `Mau main lagi???`, [{
+              buttonId: `${prefix}caklontong`,
+              buttonText: {
+                displayText: `Ya`,
+              },
+              type: 1,
+            }, ], {
+              quoted: mek
+            })
+            let datayangdihapuss = JSON.parse(fs.readFileSync("./src/data/caklontong.json"))
+            let indHapus
+            datayangdihapuss.forEach((i, el) => {
+              if (from == i.from) {
+                indHapus = el
+              }
+            })
+            datayangdihapuss.splice(indHapus, 1)
+            fs.writeFileSync("./src/data/caklontong.json", JSON.stringify(datayangdihapuss))
+          } else { // kondisi jika jawaban salah
+            if (resTebakKaata[0].percobaan == 1) {
+              reply("salah")
+            } else if (resTebakKaata[0].percobaan == 2) {
+              reply("masih salah")
+            } else if (resTebakKaata[0].percobaan == 3) {
+              reply("masih salah.\n_Petunjuk:_ ada *" + resTebakKaata[0].jawaban.length + "* huruf")
+            } else if (resTebakKaata[0].percobaan == 4) {
+              reply("ayo coba lagi, masih salah tuh")
+            } else if (resTebakKaata[0].percobaan <= 5) {
+              reply("masih salah haha")
+            } else if (resTebakKaata[0].percobaan == 6) {
+              reply("ayo dong, usaha, jangan ngasal gini..")
+            } else if (resTebakKaata[0].percobaan == 7) {
+              reply(`salah, petunjuknya 2 huruf awal adalah *${resTebakKaata[0].jawaban.slice(0, 2)}*...`)
+            } else if (resTebakKaata[0].percobaan == 8) {
+              reply("bego, udah berapa kali coba masih salah aja")
+            } else if (resTebakKaata[0].percobaan <= 10) {
+              reply("dahlah.. skip aja")
+            } else if (resTebakKaata[0].percobaan < 13) {
+              reply("DIBILANG SKIP AJA UDAH")
+            } else if (resTebakKaata[0].percobaan <= 15) {
+              reply("TULIS AJA \"skip\" BIAR GUA KASIH TAU JAWABANYA")
+            } else if (resTebakKaata[0].percobaan > 15) {
+              reply("MASIH NGEYEL...")
+            }
+
+            let dataakanhapus1 = JSON.parse(fs.readFileSync("./src/data/caklontong.json"))
+            let indexx1
+            // Hapus dulu data lama
+            dataakanhapus1.forEach((i, el) => {
+              if (from == i.from) {
+                indexx1 = el
+              }
+            })
+            dataakanhapus1.splice(indexx1, 1)
+
+            // terus masukin deh data baru
+            let data = {
+              from: resTebakKaata[0].from,
+              percobaan: resTebakKaata[0].percobaan + 1,
+              soal: resTebakKaata[0].soal,
+              jawaban: resTebakKaata[0].jawaban,
+              deskripsi: resTebakKaata[0].deskripsi,
+              status: 0
+            }
+            dataakanhapus1.push(data)
+            fs.writeFileSync("./src/data/caklontong.json", JSON.stringify(dataakanhapus1))
+          }
+        }
+
+        if (isTebakkataa && kalimat.toLowerCase() == "skip") {
+          reply(`Game tebak kata::\n\nSoal: ${resTebakKaata[0].soal}\nJawaban: ${resTebakKaata[0].jawaban}\nPenjelasan: ${resTebakKaata[0].deskripsi}\n\nNoob Gitu aja gabisa..`)
+          await new Promise(r => setTimeout(r, 2000));
+          if (indexkeberapa != null) {
+            datatebaakkata.splice(indexkeberapa, 1)
+            fs.writeFileSync("./src/data/caklontong.json", JSON.stringify(datatebaakkata))
+          }
+          sendButMessage(from, "Mau main lagi gak?.\n", `Bot Bahagia`, [{
+            buttonId: `${prefix}caklontong`,
+            buttonText: {
+              displayText: `Ya`,
+            },
+            type: 1,
+          }, ], {
+            quoted: mek
+          })
+        }
+      }
+      caklontonghandler()
+
+      if(isOnGame){
         return
       }
 
@@ -1126,7 +1486,7 @@ async function main() {
           conn.groupLeave(from)
           break
 
-        /////////////// USERS COMMANDS \\\\\\\\\\\\\\\
+          /////////////// USERS COMMANDS \\\\\\\\\\\\\\\
 
         case 'st':
         case 'stic':
@@ -1290,7 +1650,7 @@ async function main() {
           }
 
           const dlyt = await dl.yotube(args[0])
-          let tamnel = await getBuffer(dlyt.thumbnail)
+          // let tamnel = await getBuffer(dlyt.thumbnail)
           await sendButImage(
             from,
             `📜 *Title*: ${dlyt.title}\n\nSilahkan pilih salah satu format yg ingin didownload`, "Bahagia-Bot",
@@ -1412,7 +1772,7 @@ async function main() {
           }
           await dl.ttdl(args[0]).then(async (res) => {
             await dl.ttdl2(args[0]).then(async (ress) => {
-              let tamnel = await getBuffer(ress.tumb)
+              // let tamnel = await getBuffer(ress.tumb)
               await sendButImage(
                 from,
                 `📜 *Title*: ${ress.text}\n\nSilahkan pilih salah satu format yg ingin didownload`, "Bahagia-Bot",
@@ -1458,7 +1818,7 @@ async function main() {
             return
           }
           await dl.twdl2(args[0]).then(async (res) => {
-            let tamnel = await getBuffer(res.thumbnail)
+            // let tamnel = await getBuffer(res.thumbnail)
             await sendButImage(
               from,
               `📜 *Title*: ${res.desc}\n\nSilahkan pilih salah satu format yg ingin didownload`,
@@ -1531,7 +1891,7 @@ async function main() {
           }).catch((e) => reply(e))
           break
 
-        // https://github.com/tesseract-ocr/tesseract
+          // https://github.com/tesseract-ocr/tesseract
         case "ocr":
           if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
             const media = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
@@ -1701,7 +2061,7 @@ async function main() {
           break
 
         case 'bucin':
-          if(args.join(" ").includes("<") || args.join(" ").includes(">")){
+          if (args.join(" ").includes("<") || args.join(" ").includes(">")) {
             reply(`Tanpa "< >" Bro, Langsung kasih nama aja \nContoh: ${prefix} Ayunda`)
             return
           }
@@ -1821,13 +2181,12 @@ async function main() {
 
                     if (tedd++ == 120) { // kondisi jika sudah 2 menit belum terjawab
                       sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + jawaban + "*.\nPenjelasan: " + res.deskripsi, `Mau main lagi???`, [{
-                          buttonId: `${prefix}tebakgambar`,
-                          buttonText: {
-                            displayText: `Ya`,
-                          },
-                          type: 1,
-                        }
-                      ], {
+                        buttonId: `${prefix}tebakgambar`,
+                        buttonText: {
+                          displayText: `Ya`,
+                        },
+                        type: 1,
+                      }], {
                         quoted: resp
                       })
                       let datatsdebakgambar = JSON.parse(fs.readFileSync("./src/data/tebakgambar.json"))
@@ -1848,13 +2207,12 @@ async function main() {
                   await sendToOwner(txt)
                   console.error(e)
                   sendButMessage(from, "maaf terjadi kesalahan saat mengirim gambar.", `Ulangi lagi..???`, [{
-                      buttonId: `${prefix}tebakgambar`,
-                      buttonText: {
-                        displayText: `Ya`,
-                      },
-                      type: 1,
-                    }
-                  ], {
+                    buttonId: `${prefix}tebakgambar`,
+                    buttonText: {
+                      displayText: `Ya`,
+                    },
+                    type: 1,
+                  }], {
                     quoted: mek
                   })
                 })
@@ -1868,14 +2226,14 @@ async function main() {
         case 'tebakpribahasa':
           await tebakpribahasa()
             .then(async (res) => {
-              if(res.jawaban.length <= 3){
+              if (res.jawaban.length <= 3) {
                 res = await tebakpribahasa()
               }
-              if(res.jawaban.length <= 3){
+              if (res.jawaban.length <= 3) {
                 res = await tebakpribahasa()
               }
               await conn.sendMessage(from, res.soal, text).then((resp) => {
-                
+
                   // buat perintah bahwa si x sedang mengerjakan tebak pribahasa
                   data = {
                     from: from,
@@ -1913,13 +2271,12 @@ async function main() {
 
                     if (tedd++ == 120) { // kondisi jika sudah 2 menit belum terjawab
                       sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*.\n_" + res.soal.replace("....", res.jawaban) + "_\n\nArti: " + res.arti, `Mau main lagi???`, [{
-                          buttonId: `${prefix}tebakpribahasa`,
-                          buttonText: {
-                            displayText: `Ya`,
-                          },
-                          type: 1,
-                        }
-                      ], {
+                        buttonId: `${prefix}tebakpribahasa`,
+                        buttonText: {
+                          displayText: `Ya`,
+                        },
+                        type: 1,
+                      }], {
                         quoted: resp
                       })
                       let datatsdebakpribahasa = JSON.parse(fs.readFileSync("./src/data/tebakpribahasa.json"))
@@ -1938,13 +2295,12 @@ async function main() {
                 .catch(async (e) => {
                   console.error(e)
                   sendButMessage(from, "maaf terjadi kesalahan saat mengirim data.", `Ulangi lagi..???`, [{
-                      buttonId: `${prefix}tebakpribahasa`,
-                      buttonText: {
-                        displayText: `Ya`,
-                      },
-                      type: 1,
-                    }
-                  ], {
+                    buttonId: `${prefix}tebakpribahasa`,
+                    buttonText: {
+                      displayText: `Ya`,
+                    },
+                    type: 1,
+                  }], {
                     quoted: mek
                   })
                 })
@@ -1995,13 +2351,12 @@ async function main() {
 
                     if (tedd++ == 120) { // kondisi jika sudah 2 menit belum terjawab
                       sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*.", `Mau main lagi???`, [{
-                          buttonId: `${prefix}asahotak`,
-                          buttonText: {
-                            displayText: `Ya`,
-                          },
-                          type: 1,
-                        }
-                      ], {
+                        buttonId: `${prefix}asahotak`,
+                        buttonText: {
+                          displayText: `Ya`,
+                        },
+                        type: 1,
+                      }], {
                         quoted: resp
                       })
                       let datatsdebakpribahasa = JSON.parse(fs.readFileSync("./src/data/asahotak.json"))
@@ -2020,13 +2375,12 @@ async function main() {
                 .catch(async (e) => {
                   console.error(e)
                   sendButMessage(from, "maaf terjadi kesalahan saat mengirim data.", `Ulangi lagi..???`, [{
-                      buttonId: `${prefix}asahotak`,
-                      buttonText: {
-                        displayText: `Ya`,
-                      },
-                      type: 1,
-                    }
-                  ], {
+                    buttonId: `${prefix}asahotak`,
+                    buttonText: {
+                      displayText: `Ya`,
+                    },
+                    type: 1,
+                  }], {
                     quoted: mek
                   })
                 })
@@ -2037,6 +2391,7 @@ async function main() {
           break
 
         case 'suskat':
+        case 'suska':
         case 'susunkata':
           await susun()
             .then(async (res) => {
@@ -2079,13 +2434,12 @@ async function main() {
 
                     if (tedd++ == 120) { // kondisi jika sudah 2 menit belum terjawab
                       sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*.", `Mau main lagi???`, [{
-                          buttonId: `${prefix}susunkata`,
-                          buttonText: {
-                            displayText: `Ya`,
-                          },
-                          type: 1,
-                        }
-                      ], {
+                        buttonId: `${prefix}susunkata`,
+                        buttonText: {
+                          displayText: `Ya`,
+                        },
+                        type: 1,
+                      }], {
                         quoted: resp
                       })
                       let datatsdebakpribahasa = JSON.parse(fs.readFileSync("./src/data/susunkata.json"))
@@ -2104,13 +2458,12 @@ async function main() {
                 .catch(async (e) => {
                   console.error(e)
                   sendButMessage(from, "maaf terjadi kesalahan saat mengirim data.", `Ulangi lagi..???`, [{
-                      buttonId: `${prefix}susunkata`,
-                      buttonText: {
-                        displayText: `Ya`,
-                      },
-                      type: 1,
-                    }
-                  ], {
+                    buttonId: `${prefix}susunkata`,
+                    buttonText: {
+                      displayText: `Ya`,
+                    },
+                    type: 1,
+                  }], {
                     quoted: mek
                   })
                 })
@@ -2120,62 +2473,249 @@ async function main() {
             })
           break
 
-        case 'skip':
-          (() => {
-            let tebakgambar = JSON.parse(fs.readFileSync("./src/data/tebakgambar.json"))
-            let tebakpribahasa = JSON.parse(fs.readFileSync("./src/data/tebakpribahasa.json"))
-            let asahotak = JSON.parse(fs.readFileSync("./src/data/asahotak.json"))
-            let susunkata = JSON.parse(fs.readFileSync("./src/data/susunkata.json"))
-            let index_priba = null,
-              index_gamb = null,
-              index_asah = null,
-              index_susun = null
+        case 'tebka':
+        case 'tebkat':
+        case 'tebakkata':
+          await tebka()
+            .then(async (res) => {
+              let soall = "Petunjuk:\n\n*" + res.soal + "*\n\nKami tunggu 2 menit mulai dari sekarang..."
+              await conn.sendMessage(from, soall, text).then((resp) => {
+                  // buat perintah bahwa si x sedang mengerjakan games asahotak
+                  data = {
+                    from: from,
+                    percobaan: 1,
+                    soal: res.soal,
+                    jawaban: res.jawaban,
+                    status: 0
+                  }
+                  let tebakpribahasabaru = JSON.parse(fs.readFileSync("./src/data/tebakkata.json"))
+                  tebakpribahasabaru.push(data)
+                  fs.writeFileSync("./src/data/tebakkata.json", JSON.stringify(tebakpribahasabaru))
 
-            susunkata.forEach((i, el) => {
-              if (from == i.from) {
-                index_susun = el
-              }
+                  // mulai hitung mundur 2 menit dari sekarang, kalo belum terjawab, munculin jawabanya
+                  let tedd = 1
+                  const intervRemind = setInterval(async () => {
+                    let datatebakpribahasa = JSON.parse(fs.readFileSync("./src/data/tebakkata.json"))
+                    let isTebakPribahasa = false
+
+                    datatebakpribahasa.forEach((i, el) => {
+                      if (from == i.from) {
+                        isTebakPribahasa = true
+                      }
+                    })
+
+                    if (!isTebakPribahasa) { // kondisi jika terjawab
+                      clearInterval(intervRemind)
+                    }
+
+                    if (tedd == 60) {
+                      conn.sendMessage(from, "Udah satu menit nih, belum juga kejawab..", text, {
+                        quoted: resp
+                      })
+                    }
+
+                    if (tedd++ == 120) { // kondisi jika sudah 2 menit belum terjawab
+                      sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*.", `Mau main lagi???`, [{
+                        buttonId: `${prefix}tebakkata`,
+                        buttonText: {
+                          displayText: `Ya`,
+                        },
+                        type: 1,
+                      }], {
+                        quoted: resp
+                      })
+                      let datatsdebakpribahasa = JSON.parse(fs.readFileSync("./src/data/tebakkata.json"))
+                      let inddfx
+                      datatebakpribahasa.forEach((i, el) => {
+                        if (from == i.from) {
+                          inddfx = el
+                        }
+                      })
+                      datatsdebakpribahasa.splice(inddfx, 1)
+                      fs.writeFileSync("./src/data/tebakkata.json", JSON.stringify(datatsdebakpribahasa))
+                      clearInterval(intervRemind)
+                    }
+                  }, 1000);
+                })
+                .catch(async (e) => {
+                  console.error(e)
+                  sendButMessage(from, "maaf terjadi kesalahan saat mengirim data.", `Ulangi lagi..???`, [{
+                    buttonId: `${prefix}tebakkata`,
+                    buttonText: {
+                      displayText: `Ya`,
+                    },
+                    type: 1,
+                  }], {
+                    quoted: mek
+                  })
+                })
             })
-            if (index_susun != null) {
-              susunkata.splice(index_susun, 1)
-              fs.writeFileSync("./src/data/susunkata.json", JSON.stringify(susunkata))
-            }
-
-            tebakpribahasa.forEach((i, el) => {
-              if (from == i.from) {
-                index_priba = el
-
-              }
+            .catch((e) => {
+              reply(e)
             })
-            if (index_priba != null) {
-              tebakpribahasa.splice(index_priba, 1)
-              fs.writeFileSync("./src/data/tebakpribahasa.json", JSON.stringify(tebakpribahasa))
-            }
+          break
 
-            tebakgambar.forEach((i, el) => {
-              if (from == i.from) {
-                index_gamb = el
+        case 'siapaaku':
+        case 'siapakahaku':
+          await siapakahaku()
+            .then(async (res) => {
+              let soall = "Petunjuk:\n\n*" + res.soal + "*\n\nKami tunggu 2 menit mulai dari sekarang..."
+              await conn.sendMessage(from, soall, text).then((resp) => {
+                  // buat perintah bahwa si x sedang mengerjakan games asahotak
+                  data = {
+                    from: from,
+                    percobaan: 1,
+                    soal: res.soal,
+                    jawaban: res.jawaban,
+                    status: 0
+                  }
+                  let tebakpribahasabaru = JSON.parse(fs.readFileSync("./src/data/siapakahaku.json"))
+                  tebakpribahasabaru.push(data)
+                  fs.writeFileSync("./src/data/siapakahaku.json", JSON.stringify(tebakpribahasabaru))
 
-              }
+                  // mulai hitung mundur 2 menit dari sekarang, kalo belum terjawab, munculin jawabanya
+                  let tedd = 1
+                  const intervRemind = setInterval(async () => {
+                    let datatebakpribahasa = JSON.parse(fs.readFileSync("./src/data/siapakahaku.json"))
+                    let isTebakPribahasa = false
+
+                    datatebakpribahasa.forEach((i, el) => {
+                      if (from == i.from) {
+                        isTebakPribahasa = true
+                      }
+                    })
+
+                    if (!isTebakPribahasa) { // kondisi jika terjawab
+                      clearInterval(intervRemind)
+                    }
+
+                    if (tedd == 60) {
+                      conn.sendMessage(from, "Udah satu menit nih, belum juga kejawab..", text, {
+                        quoted: resp
+                      })
+                    }
+
+                    if (tedd++ == 120) { // kondisi jika sudah 2 menit belum terjawab
+                      sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*.", `Mau main lagi???`, [{
+                        buttonId: `${prefix}siapakahaku`,
+                        buttonText: {
+                          displayText: `Ya`,
+                        },
+                        type: 1,
+                      }], {
+                        quoted: resp
+                      })
+                      let datatsdebakpribahasa = JSON.parse(fs.readFileSync("./src/data/siapakahaku.json"))
+                      let inddfx
+                      datatebakpribahasa.forEach((i, el) => {
+                        if (from == i.from) {
+                          inddfx = el
+                        }
+                      })
+                      datatsdebakpribahasa.splice(inddfx, 1)
+                      fs.writeFileSync("./src/data/siapakahaku.json", JSON.stringify(datatsdebakpribahasa))
+                      clearInterval(intervRemind)
+                    }
+                  }, 1000);
+                })
+                .catch(async (e) => {
+                  console.error(e)
+                  sendButMessage(from, "maaf terjadi kesalahan saat mengirim data.", `Ulangi lagi..???`, [{
+                    buttonId: `${prefix}siapakahaku`,
+                    buttonText: {
+                      displayText: `Ya`,
+                    },
+                    type: 1,
+                  }], {
+                    quoted: mek
+                  })
+                })
             })
-            if (index_gamb != null) {
-              tebakgambar.splice(index_gamb, 1)
-              fs.writeFileSync("./src/data/tebakgambar.json", JSON.stringify(tebakgambar))
-            }
-
-            asahotak.forEach((i, el) => {
-              if (from == i.from) {
-                index_asah = el
-
-              }
+            .catch((e) => {
+              reply(e)
             })
-            if (index_asah != null) {
-              asahotak.splice(index_asah, 1)
-              fs.writeFileSync("./src/data/asahotak.json", JSON.stringify(asahotak))
-            }
-            // reply("Kamu telah keluar dari semua games.")
-          })()
+          break
 
+        case 'caklontong':
+        case 'kuiscaklontong':
+          await caklontong()
+            .then(async (res) => {
+              let soall = "Soal:\n\n*" + res.soal + "*\n\nKami tunggu 2 menit mulai dari sekarang..."
+              await conn.sendMessage(from, soall, text).then((resp) => {
+                  // buat perintah bahwa si x sedang mengerjakan games asahotak
+                  data = {
+                    from: from,
+                    percobaan: 1,
+                    soal: res.soal,
+                    jawaban: res.jawaban,
+                    deskripsi: res.deskripsi,
+                    status: 0
+                  }
+                  let tebakpribahasabaru = JSON.parse(fs.readFileSync("./src/data/caklontong.json"))
+                  tebakpribahasabaru.push(data)
+                  fs.writeFileSync("./src/data/caklontong.json", JSON.stringify(tebakpribahasabaru))
+
+                  // mulai hitung mundur 2 menit dari sekarang, kalo belum terjawab, munculin jawabanya
+                  let tedd = 1
+                  const intervRemind = setInterval(async () => {
+                    let datatebakpribahasa = JSON.parse(fs.readFileSync("./src/data/caklontong.json"))
+                    let isTebakPribahasa = false
+
+                    datatebakpribahasa.forEach((i, el) => {
+                      if (from == i.from) {
+                        isTebakPribahasa = true
+                      }
+                    })
+
+                    if (!isTebakPribahasa) { // kondisi jika terjawab
+                      clearInterval(intervRemind)
+                    }
+
+                    if (tedd == 60) {
+                      conn.sendMessage(from, "Udah satu menit nih, belum juga kejawab..", text, {
+                        quoted: resp
+                      })
+                    }
+
+                    if (tedd++ == 120) { // kondisi jika sudah 2 menit belum terjawab
+                      sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*.\n\nPenjelasan:" + res.deskripsi, `Mau main lagi???`, [{
+                        buttonId: `${prefix}caklontong`,
+                        buttonText: {
+                          displayText: `Ya`,
+                        },
+                        type: 1,
+                      }], {
+                        quoted: resp
+                      })
+                      let datatsdebakpribahasa = JSON.parse(fs.readFileSync("./src/data/caklontong.json"))
+                      let inddfx
+                      datatebakpribahasa.forEach((i, el) => {
+                        if (from == i.from) {
+                          inddfx = el
+                        }
+                      })
+                      datatsdebakpribahasa.splice(inddfx, 1)
+                      fs.writeFileSync("./src/data/caklontong.json", JSON.stringify(datatsdebakpribahasa))
+                      clearInterval(intervRemind)
+                    }
+                  }, 1000);
+                })
+                .catch(async (e) => {
+                  console.error(e)
+                  sendButMessage(from, "maaf terjadi kesalahan saat mengirim data.", `Ulangi lagi..???`, [{
+                    buttonId: `${prefix}caklontong`,
+                    buttonText: {
+                      displayText: `Ya`,
+                    },
+                    type: 1,
+                  }], {
+                    quoted: mek
+                  })
+                })
+            })
+            .catch((e) => {
+              reply(e)
+            })
           break
 
         case 'sms':

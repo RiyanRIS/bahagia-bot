@@ -209,6 +209,17 @@ _Tulis *skip* untuk keluar dari game_
 *${prefix}suskat* [NEW]
 *${prefix}susunkata*
     _Game Menyusun Kata dari huruf yang diberikan_
+
+*${prefix}tebka* [NEW]
+*${prefix}tebakkata*
+    _Game menebak kata dari clue yang diberikan_
+
+*${prefix}siapaaku* [NEW]
+*${prefix}siapakahaku*
+    _Coba tebak siapa aku_
+
+*${prefix}caklontong* [NEW]
+    _Permainan kata Khas Cak Lontong, Mikirr..._
          
 ${menu.footer}`
 }
