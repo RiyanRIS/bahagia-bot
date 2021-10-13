@@ -21,7 +21,7 @@ module.exports.mmenu = (prefix) => {
         *${prefix}help downloader*
         *${prefix}help maker*
         *${prefix}help deepai*
-        *${prefix}help games*
+        *${prefix}help games* [NEW]
         *${prefix}help foto*
         *${prefix}help audio*
         *${prefix}help other*
@@ -202,9 +202,14 @@ _Tulis *skip* untuk keluar dari game_
 *${prefix}tebakpribahasa*
     _Game Tebak Peribahasa_
 
+*${prefix}asot* [NEW]
 *${prefix}asahotak*
     _Game Tebak Tebakan yang mengasah pengetahuan_
-        
+
+*${prefix}suskat* [NEW]
+*${prefix}susunkata*
+    _Game Menyusun Kata dari huruf yang diberikan_
+         
 ${menu.footer}`
 }
 

@@ -14,7 +14,7 @@ const {spawn} = require('child_process');
 const {exec} = require('child_process');
 
 // GAMES PENGETAHUAN UMUM
-pengumum().then(({jawaban}) => console.log(jawaban.trim())).catch((e) => console.log(e))
+// pengumum().then(({jawaban}) => console.log(jawaban.trim())).catch((e) => console.log(e))
 
 // TES TWITTER DOWNLOADER
 // const url = "https://twitter.com/eddystwn/status/1447109838471790595?s=20"
