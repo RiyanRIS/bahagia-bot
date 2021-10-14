@@ -202,6 +202,22 @@ _Tulis *skip* untuk keluar dari game_
 *${prefix}tebakpribahasa*
     _Game Tebak Peribahasa_
 
+*${prefix}tebka* [NEW]
+*${prefix}tebakkata*
+    _Game menebak kata dari clue yang diberikan_
+
+*${prefix}teblir* [NEW]
+*${prefix}tebaklirik*
+    _Melengkapi lirik lagu_
+
+*${prefix}tebteb* [NEW]
+*${prefix}tebaktebakan*
+    _Game tebak-tebakan ala bapak bapak_
+
+*${prefix}siapaaku* [NEW]
+*${prefix}siapakahaku*
+    _Coba tebak siapa aku_
+
 *${prefix}asot* [NEW]
 *${prefix}asahotak*
     _Game Tebak Tebakan yang mengasah pengetahuan_
@@ -209,14 +225,6 @@ _Tulis *skip* untuk keluar dari game_
 *${prefix}suskat* [NEW]
 *${prefix}susunkata*
     _Game Menyusun Kata dari huruf yang diberikan_
-
-*${prefix}tebka* [NEW]
-*${prefix}tebakkata*
-    _Game menebak kata dari clue yang diberikan_
-
-*${prefix}siapaaku* [NEW]
-*${prefix}siapakahaku*
-    _Coba tebak siapa aku_
 
 *${prefix}caklontong* [NEW]
     _Permainan kata Khas Cak Lontong, Mikirr..._
