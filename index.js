@@ -116,7 +116,8 @@ const {
   getBuffer,
   isUrl,
   fetchJson,
-  contains
+  contains,
+  sleep
 } = require("./helpers/function")
 const {
   gtts
@@ -645,7 +646,7 @@ async function main() {
 
         if (isTebakgambar && kalimat.toLowerCase() == "skip") {
           reply(`Game tebak gambar::\nJawaban: ${resTebakgambar[0].jawaban}\nPenjelasan: ${resTebakgambar[0].penjelasan}\n\nNoob Gitu aja gabisa..`)
-          await new Promise(r => setTimeout(r, 2000));
+          await sleep(2)
           if (indexkeberapa != null) {
             datatebakgambar.splice(indexkeberapa, 1)
             fs.writeFileSync("./src/data/tebakgambar.json", JSON.stringify(datatebakgambar))
@@ -756,7 +757,7 @@ async function main() {
 
         if (isTebakPribahasa && kalimat.toLowerCase() == "skip") {
           reply(`Game tebak pribahasa::\nSoal: ${resTebakPribahasa[0].soal}\nJawaban: ${resTebakPribahasa[0].jawaban}\n\nNoob Gitu aja gabisa..`)
-          await new Promise(r => setTimeout(r, 2000));
+          await sleep(2)
           if (indexkeberapa != null) {
             datatebakpribahasa.splice(indexkeberapa, 1)
             fs.writeFileSync("./src/data/tebakpribahasa.json", JSON.stringify(datatebakpribahasa))
@@ -1193,7 +1194,7 @@ async function main() {
 
         if (isSusuunkata && kalimat.toLowerCase() == "skip") {
           reply(`Game susun kata::\nSoal: ${resSusuunKataa[0].soal}\nJawaban: ${resSusuunKataa[0].jawaban}\n\nNoob Gitu aja gabisa..`)
-          await new Promise(r => setTimeout(r, 2000));
+          await sleep(2)
           if (indexkeberapa != null) {
             datasusunnkata.splice(indexkeberapa, 1)
             fs.writeFileSync("./src/data/susunkata.json", JSON.stringify(datasusunnkata))
@@ -1302,7 +1303,7 @@ async function main() {
 
         if (isTebakkataa && kalimat.toLowerCase() == "skip") {
           reply(`Game tebak kata::\n\nSoal: ${resTebakKaata[0].soal}\nJawaban: ${resTebakKaata[0].jawaban}\n\nNoob Gitu aja gabisa..`)
-          await new Promise(r => setTimeout(r, 2000));
+          await sleep(2)
           if (indexkeberapa != null) {
             datatebaakkata.splice(indexkeberapa, 1)
             fs.writeFileSync("./src/data/tebakkata.json", JSON.stringify(datatebaakkata))
@@ -1411,7 +1412,7 @@ async function main() {
 
         if (isTebakkataa && kalimat.toLowerCase() == "skip") {
           reply(`Game tebak kata::\n\nSoal: ${resTebakKaata[0].soal}\nJawaban: ${resTebakKaata[0].jawaban}\n\nNoob Gitu aja gabisa..`)
-          await new Promise(r => setTimeout(r, 2000));
+          await sleep(2)
           if (indexkeberapa != null) {
             datatebaakkata.splice(indexkeberapa, 1)
             fs.writeFileSync("./src/data/siapakahaku.json", JSON.stringify(datatebaakkata))
@@ -1521,7 +1522,7 @@ async function main() {
 
         if (isTebakkataa && kalimat.toLowerCase() == "skip") {
           reply(`Game tebak kata::\n\nSoal: ${resTebakKaata[0].soal}\nJawaban: ${resTebakKaata[0].jawaban}\nPenjelasan: ${resTebakKaata[0].deskripsi}\n\nNoob Gitu aja gabisa..`)
-          await new Promise(r => setTimeout(r, 2000));
+          await sleep(2)
           if (indexkeberapa != null) {
             datatebaakkata.splice(indexkeberapa, 1)
             fs.writeFileSync("./src/data/caklontong.json", JSON.stringify(datatebaakkata))
@@ -4301,6 +4302,8 @@ async function main() {
           }
           break;
       }
+
+      await sleep(1)
       await conn.updatePresence(from, Presence.paused)
 
     } catch (e) {
