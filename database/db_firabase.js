@@ -22,7 +22,6 @@ const firebaseConfig = {
   messagingSenderId: MESSAGING_SENDER_ID,
   appId: APP_ID
 }
-
 const db = firebase.initializeApp(firebaseConfig);
 
 module.exports = db;

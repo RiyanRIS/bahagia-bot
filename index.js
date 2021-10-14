@@ -49,6 +49,7 @@ deepai.setApiKey('2f488865-1a7b-498c-8fe4-01c15a402c9a')
 const clientAlgo = Algorithmia.client("sim0fQz4awLwB0OwNDifIxJLGgt1")
 
 // LOAD LIBRARY
+const {addtotal, addtoday} = require("./database/hit")
 const {
   aksara
 } = require('./lib/aksara')
@@ -150,11 +151,8 @@ const tamnel = fs.readFileSync("./src/logo.png")
 const prefix = '/'
 const time = moment.tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss")
 
-let hit_today = []
-
 // MAIN FUNCTION
 async function main() {
-
   const conn = new WAConnection()
   conn.logger.level = 'warn'
   const dotenv = require('dotenv')
@@ -512,6 +510,10 @@ async function main() {
       if (!isGroup) {
         await conn.updatePresence(from, Presence.composing)
       }
+
+      // Hitung total chat harian dan full
+      addtotal()
+      addtoday()
       /////////////// GAMES \\\\\\\\\\\\\\\
 
       let isOnGame = false
