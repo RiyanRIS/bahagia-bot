@@ -6,6 +6,11 @@ const got = require('got')
 const FormData = require('form-data')
 const ttscrp = require("tiktok-scraper")
 
+const {
+  download, 
+  getRandom
+} = require("../helpers/function")
+
 module.exports.igdl = (url) => {
   return new Promise(async (resolve, reject) => {
     axios.request({
@@ -254,74 +259,39 @@ module.exports.twdl = (link) => {
       }) => {
         const $ = cheerio.load(data)
 
-        const thumbnail = $('div:nth-child(1) > img').attr('src')
+        let thumbnail = $('div:nth-child(1) > img').attr('src')
         const desc = $('div:nth-child(1) > div:nth-child(2) > p').text().trim()
-        let ksd
-        let khd
 
-        // Coba SD
-        try {
-          const sd = $('tr:nth-child(2) > td:nth-child(4) > a').attr('href')
-          let streamsd = got.stream(sd)
-          let sizesd
+        let link, kual, kump, video = []
 
-          streamsd
-            .on("downloadProgress", ({
-              transferred,
-              total,
-              percent
-            }) => {
-              sizesd = total
-            })
-
-          const filetypesd = await FileType.fromStream(streamsd)
-          ksd = {
-            ext: filetypesd.ext,
-            mime: filetypesd.mime,
-            size: sizesd,
-            url: sd,
+        try{
+          link = $('tbody > tr:nth-child(2) > td:nth-child(4) > a').attr('href')
+          kual = $('tbody > tr:nth-child(2) > td:nth-child(2)').text()
+          kump = {
+            kualitas: kual,
+            link: link
           }
-        } catch (e) {
-          ksd = {
-            msg: "kualitas sd tidak tersedia"
-          }
+          video.push(kump)
+        } catch(e) {
+          console.log(e)
         }
 
-        // Coba HD
-        try {
-          const hd = $('tbody > tr:nth-child(1) > td:nth-child(4) > a').attr('href')
-          let streamhd = got.stream(hd)
-          let sizehd
-
-          streamhd
-            .on("downloadProgress", ({
-              transferred,
-              total,
-              percent
-            }) => {
-              sizehd = total
-            })
-
-          const filetypehd = await FileType.fromStream(streamhd)
-          khd = {
-            ext: filetypehd.ext,
-            mime: filetypehd.mime,
-            size: sizehd,
-            url: hd,
+        try{
+          link = $('tbody > tr:nth-child(1) > td:nth-child(4) > a').attr('href')
+          kual = $('tbody > tr:nth-child(1) > td:nth-child(2)').text()
+          kump = {
+            kualitas: kual,
+            link: link
           }
-        } catch (e) {
-          khd = {
-            msg: "kualitas hd tidak tersedia"
-          }
+          video.push(kump)
+        } catch(e) {
+          console.log(e)
         }
 
         let result = {
           thumbnail: thumbnail,
           desc: desc,
-          data: {
-            ksd,
-            khd
-          }
+          video: video
         }
         resolve(result)
       })

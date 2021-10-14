@@ -1,4 +1,6 @@
 const axios = require("axios")
+const request = require('request')
+const fs = require('fs')
 
 module.exports.getGroupAdmins = (participants) => {
   admins = []
@@ -58,8 +60,20 @@ module.exports.sleep = (second) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-module.exports.getRandom = (ext) => {
-  return `${Math.floor(Math.random() * 1000000)}${ext}`
+module.exports.download = function (uri, filename) {
+  return new Promise((resolve, reject) => {
+    try {
+      request(uri)
+        .pipe(fs.createWriteStream(filename))
+        .on("close", resolve)
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
+module.exports.getRandom = (ext = "") => {
+  return `${Math.floor(Math.random() * 1000000000)}${ext}`
 }
 
 module.exports.randomString = (length) => {

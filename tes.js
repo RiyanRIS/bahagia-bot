@@ -16,16 +16,29 @@ const {exec} = require('child_process');
 // GAMES PENGETAHUAN UMUM
 // pengumum().then(({jawaban}) => console.log(jawaban.trim())).catch((e) => console.log(e))
 
+const hh = () => {
+  return new Promise((resolve, reject) => {
+    reject()
+  })
+}
+
+let h = 2;
+
+(async () => {
+  h = await hh().catch((e) => {
+    h = 3
+    return h
+  });
+  console.log(h)
+})()
+
 // TES TWITTER DOWNLOADER
 // const url = "https://twitter.com/eddystwn/status/1447109838471790595?s=20"
 
 // dl.twdl(url).then((res) => {
-//   console.log("twdl1" ,res)
+//   console.log(res.video[0].kualitas)
 // }).catch((e) => {
-//   console.log("masuk kedua", e)
-//   dl.twdl2(url).then((res) => {
-//     console.log("twdl2", res)
-//   })
+//   console.log(e)
 // })
 
 // SIMI

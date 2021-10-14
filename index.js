@@ -117,7 +117,8 @@ const {
   isUrl,
   fetchJson,
   contains,
-  sleep
+  sleep,
+  download
 } = require("./helpers/function")
 const {
   gtts
@@ -232,7 +233,6 @@ async function main() {
         audio,
         product
       } = MessageType
-      // const body = (type === 'conversation' && mek.message.conversation.startsWith(prefix)) ? mek.message.conversation : (type == 'imageMessage') && mek.message.imageMessage.caption.startsWith(prefix) ? mek.message.imageMessage.caption : (type == 'videoMessage') && mek.message.videoMessage.caption.startsWith(prefix) ? mek.message.videoMessage.caption : (type == 'extendedTextMessage') && mek.message.extendedTextMessage.text.startsWith(prefix) ? mek.message.extendedTextMessage.text : ''
       const kalimat = type === 'conversation' ? mek.message.conversation : (type == 'imageMessage') ? mek.message.imageMessage.caption : (type == 'videoMessage') ? mek.message.videoMessage.caption : (type == 'extendedTextMessage') ? mek.message.extendedTextMessage.text : ''
 
       let prefixRegEx = /^[!&z?=#.+\/]/gi;
@@ -453,8 +453,12 @@ async function main() {
         but = [],
         options = {}
       ) => {
-        kma = gam1;
-        mediaa = await conn.prepareMessage(from, kma, image)
+        let mediaa
+        mediaa = await conn.prepareMessage(from, gam1, image).catch(async (e) => {
+          return await conn.prepareMessage(from, {url: gam1}, image).catch(async (e) => {
+            return await conn.prepareMessage(from, tamnel, image)
+          })
+        })
         const buttonMessages = {
           imageMessage: mediaa.message.imageMessage,
           contentText: text1,
@@ -467,40 +471,8 @@ async function main() {
           buttonMessages,
           MessageType.buttonsMessage,
           options
-        ).catch(async (e) => {
-          mediaa = await conn.prepareMessage(from, kma, image, {
-            thumbnail: kma.toString('base64')
-          })
-          const buttonMessages = {
-            imageMessage: mediaa.message.imageMessage,
-            contentText: text1,
-            footerText: desc1,
-            buttons: but,
-            headerType: 4,
-          };
-          conn.sendMessage(
-            id,
-            buttonMessages,
-            MessageType.buttonsMessage,
-            options
-          ).catch(async (e) => {
-            mediaa = await conn.prepareMessage(from, kma, image, {
-              thumbnail: null
-            })
-            const buttonMessages = {
-              imageMessage: mediaa.message.imageMessage,
-              contentText: text1,
-              footerText: desc1,
-              buttons: but,
-              headerType: 4,
-            };
-            conn.sendMessage(
-              id,
-              buttonMessages,
-              MessageType.buttonsMessage,
-              options
-            ).catch((e) => reply("Ulangi beberapa saat lagi.."))
-          })
+        ).catch((e) => {
+          return e
         })
       }
 
@@ -1993,11 +1965,10 @@ async function main() {
           }
           await dl.ttdl(args[0]).then(async (res) => {
             await dl.ttdl2(args[0]).then(async (ress) => {
-              // let tamnel = await getBuffer(ress.tumb)
               await sendButImage(
                 from,
-                `📜 *Title*: ${ress.text}\n\nSilahkan pilih salah satu format yg ingin didownload`, "Bahagia-Bot",
-                tamnel, [{
+                `📜 *Title*: ${ress.text}\n\nSilahkan pilih salah satu format yg ingin didownload`, "Bahagia-Bot", ress.tumb, 
+                [{
                     buttonId: `${prefix}sndmediaa ${res.nowm}`,
                     buttonText: {
                       displayText: `NO WM`,
@@ -2038,31 +2009,31 @@ async function main() {
             await reply("_Link tidak valid_")
             return
           }
-          await dl.twdl2(args[0]).then(async (res) => {
-            // let tamnel = await getBuffer(res.thumbnail)
+          await dl.twdl(args[0]).then(async (res) => {
             await sendButImage(
               from,
-              `📜 *Title*: ${res.desc}\n\nSilahkan pilih salah satu format yg ingin didownload`,
+              `📜 *Title*: ${res.desc}\n\nSilahkan pilih kualitas yg ingin didownload`,
               "Bahagia-Bot",
-              tamnel,
+              res.thumbnail,
               [{
-                  buttonId: `${prefix}sndmediaa ${res.data.khd.url}`,
+                  buttonId: `${prefix}sndmediaa ${res.video[0].link}`,
                   buttonText: {
-                    displayText: `HD (${formatBytes(res.data.khd.size)})`,
+                    displayText: res.video[0].kualitas,
                   },
                   type: 1,
                 },
                 {
-                  buttonId: `${prefix}sndmediaa ${res.data.ksd.url}`,
+                  buttonId: `${prefix}sndmediaa ${res.video[1].link}`,
                   buttonText: {
-                    displayText: `SD (${formatBytes(res.data.ksd.size)})`,
+                    displayText: res.video[1].kualitas,
                   },
                   type: 1,
                 },
               ]).then((resp) => {
               console.log("done")
             }).catch((e) => {
-              reply(e.message)
+              console.log(e)
+              reply("roooor", e.message)
             })
           }).catch((e) => {
             reply(e)
