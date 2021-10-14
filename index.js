@@ -66,7 +66,7 @@ const {
 } = require("./lib/game")
 const {
   carbon
-} = require("./lib/carbon")   
+} = require("./lib/carbon")  
 const {
   removebg
 } = require("./lib/removebg")
