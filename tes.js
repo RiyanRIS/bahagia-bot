@@ -14,38 +14,43 @@ const {spawn} = require('child_process');
 const {exec} = require('child_process');
 const hit = require('./database/hit')
 const {lirik, search} = require('./lib/liriklagu')
+const {sms_matahari} = require('./lib/bombsms')
 const { title } = require("process")
 
 // hit.addtoday().catch((e) => console.log(e))
 
-// SCRAPING LIRIK LAGU
-let param = "Semua tentang kita"
-const BASE = "https://www.musixmatch.com"
-const link = `${BASE}/search/${encodeURI(param)}`
+// SPAM TRAVELOKA
+const no = "85162656460"
+sms_matahari(no).then((res) => console.log(res)).catch((e) => console.log(e))
 
-axios(link, {
-  method: 'get'
-}).then(({data}) => {
-  const $ = cheerio.load(data)
-  let url = $("a.title").attr("href")
-  if(url == undefined){
-    console.log(false)
-  } else {
-    axios.get(BASE + url).then(({data}) => {
-      const $ = cheerio.load(data)
-      let judul = $(".mxm-track-title__track").text().replace("Lyrics", " ").replace("\"", "").trim()
-      let band = $("a.mxm-track-title__artist").text()
-      let lirik = $(".lyrics__content__ok").first().text()
-      let lirik2 = $(".lyrics__content__ok").last().text()
-      let result = {
-        judul: judul,
-        nama_lagu: judul,
-        band: band,
-        lirik: lirik +"\n"+ lirik2,
-      }
-    })
-  }
-})
+// SCRAPING LIRIK LAGU
+// let param = "Semua tentang kita"
+// const BASE = "https://www.musixmatch.com"
+// const link = `${BASE}/search/${encodeURI(param)}`
+
+// axios(link, {
+//   method: 'get'
+// }).then(({data}) => {
+//   const $ = cheerio.load(data)
+//   let url = $("a.title").attr("href")
+//   if(url == undefined){
+//     console.log(false)
+//   } else {
+//     axios.get(BASE + url).then(({data}) => {
+//       const $ = cheerio.load(data)
+//       let judul = $(".mxm-track-title__track").text().replace("Lyrics", " ").replace("\"", "").trim()
+//       let band = $("a.mxm-track-title__artist").text()
+//       let lirik = $(".lyrics__content__ok").first().text()
+//       let lirik2 = $(".lyrics__content__ok").last().text()
+//       let result = {
+//         judul: judul,
+//         nama_lagu: judul,
+//         band: band,
+//         lirik: lirik +"\n"+ lirik2,
+//       }
+//     })
+//   }
+// })
 
 
 // SCRAPING LIRIK LAGU
