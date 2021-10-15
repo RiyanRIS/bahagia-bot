@@ -54,7 +54,7 @@ const db_users = require("./database/users")
 const {
   aksara
 } = require('./lib/aksara')
-const {lirik, lirik2, search} = require('./lib/liriklagu')
+const {kapanlagi, musixmatch} = require('./lib/liriklagu')
 const {
   tebakgambar,
   tebakgambar2,
@@ -3226,16 +3226,15 @@ async function main() {
           break
 
         case 'lirik':
-          search(args.join(" ")).then((res) => {
-            lirik(res[0].link).then((res) => {
-              let hasil = `*${res.judul}*\n\n${res.lirik}`
-              reply(hasil)
-            }).catch((e) => reply(e))
+        case 'lirik1':
+          kapanlagi(args.join(" ")).then((res) => {
+            let hasil = `*${res.judul}*\n\n${res.lirik}`
+            reply(hasil)
           }).catch((e) => reply(e))
           break
 
         case 'lirik2':
-          lirik2(args.join(" ")).then((res) => {
+          musixmatch(args.join(" ")).then((res) => {
             let hasil = `*${res.judul}*\n\n${res.lirik}`
             reply(hasil)
           }).catch((e) => reply(e))
