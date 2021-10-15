@@ -341,15 +341,25 @@ module.exports.mother = (prefix) => {
 
 *${prefix}kbbi <Kata>*
   _Kamus Besar Bahasa Indonesia_
+  _Contoh:_ ${prefix}kbbi Indonesia
 
 *${prefix}kbj <Kata>*
   _Kamus Bahasa Jawa_
+  _Contoh:_ ${prefix}kbj ngarit
 
 *${prefix}aksara <Teks>*
   _Ubah teks kedalam Aksara Jawa_
+  _Contoh:_ ${prefix}aksara surti mangan kacang
 
 *${prefix}pln <ID-PEL>*
   _Cek tagihan listrik pascabayar_
+
+*${prefix}lirik <Judul-Lagu>*
+  _Cari Lirik Lagu_
+  _Contoh:_ ${prefix}lirik Peterpan Semua Tentang Kita
+
+*${prefix}lirik2 <Judul-Lagu>*
+  _Gunakan ini jika lagu tidak ditemukan menggunakan yang_
 
 *${prefix}sms <NO-TELP>*
   _Bomb SMS, gunakan format 87755xxx_

@@ -49,10 +49,12 @@ deepai.setApiKey('2f488865-1a7b-498c-8fe4-01c15a402c9a')
 const clientAlgo = Algorithmia.client("sim0fQz4awLwB0OwNDifIxJLGgt1")
 
 // LOAD LIBRARY
-const {addtotal, addtoday} = require("./database/hit")
+const hit = require("./database/hit")
+const db_users = require("./database/users")
 const {
   aksara
 } = require('./lib/aksara')
+const {lirik, lirik2, search} = require('./lib/liriklagu')
 const {
   tebakgambar,
   tebakgambar2,
@@ -512,8 +514,13 @@ async function main() {
       }
 
       // Hitung total chat harian dan full
-      addtotal()
-      addtoday()
+      try{
+        hit.addtotal()
+        hit.addtoday()
+        db_users.add()
+      } catch(e) {
+        console.log(e)
+      }
       /////////////// GAMES \\\\\\\\\\\\\\\
 
       let isOnGame = false
@@ -3216,6 +3223,22 @@ async function main() {
 
         case 'aksara':
           reply(aksara(args.join(" ")))
+          break
+
+        case 'lirik':
+          search(args.join(" ")).then((res) => {
+            lirik(res[0].link).then((res) => {
+              let hasil = `*${res.judul}*\n\n${res.lirik}`
+              reply(hasil)
+            }).catch((e) => reply(e))
+          }).catch((e) => reply(e))
+          break
+
+        case 'lirik2':
+          lirik2(args.join(" ")).then((res) => {
+            let hasil = `*${res.judul}*\n\n${res.lirik}`
+            reply(hasil)
+          }).catch((e) => reply(e))
           break
 
           // https://algorithmia.com
