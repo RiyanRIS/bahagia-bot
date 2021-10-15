@@ -3224,7 +3224,7 @@ async function main() {
         case 'aksara':
           reply(aksara(args.join(" ")))
           break
-  
+
         case 'lirik':
         case 'lirik1':
           kapanlagi(args.join(" ")).then((res) => {
