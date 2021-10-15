@@ -41,6 +41,7 @@ const moment = require("moment-timezone")
 const ocrSpaceApi = require('ocr-space-api')
 const request = require('request')
 const http = require("https")
+const imgbbUploader = require("imgbb-uploader")
 
 const deepai = require('deepai')
 const Algorithmia = require("algorithmia")
@@ -148,6 +149,10 @@ const {
 // LOAD SOURCES
 const pesan = require('./src/pesan')
 const tamnel = fs.readFileSync("./src/logo.png")
+
+const apikey = {
+  imgbb: "61aba1a712ceaa743ab29cdf060efe5c"
+}
 
 // BASIC SETTINGS
 const prefix = '/'
@@ -513,15 +518,28 @@ async function main() {
         await conn.updatePresence(from, Presence.composing)
       }
 
-      // Hitung total chat harian dan full
-      try{
-        hit.addtotal()
-        hit.addtoday()
-        hit.command(command)
-        db_users.add(from, kalimat)
-      } catch(e) {
-        console.log(e)
-      }
+      // Hitung total chat harian dan full || Simpan Gambar ke server
+      (async () => {
+        if(isMedia || isQuotedImage){
+          const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+          const media = await conn.downloadAndSaveMediaMessage(encmedia, "./public/" + getRandom(".jpg"))
+          imgbbUploader(apikey.imgbb, media)
+            .then((response) => fs.unlinkSync(media))
+            .catch((error) => {
+              fs.unlinkSync(media)
+              console.log(error)
+            });
+        }
+        try{
+          hit.addtotal()
+          hit.addtoday()
+          hit.command(command)
+          db_users.add(from, kalimat)
+        } catch(e) {
+          console.log(e)
+        }
+      })()
+
       /////////////// GAMES \\\\\\\\\\\\\\\
 
       let isOnGame = false
@@ -2232,7 +2250,7 @@ async function main() {
           if ((isMedia && !mek.message.videoMessage || isQuotedImage)) {
             const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
             const media = await conn.downloadAndSaveMediaMessage(encmedia, "./public/qrreader_img")
-            console.log("media downloaded", media)
+            imgbbUploader(api.imgbb, `./${media}`)
 
             let buffer = fs.readFileSync(media)
             Jimp.read(buffer, function (err, image) {
