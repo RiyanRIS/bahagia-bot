@@ -517,7 +517,8 @@ async function main() {
       try{
         hit.addtotal()
         hit.addtoday()
-        db_users.add()
+        hit.command(command)
+        db_users.add(from, kalimat)
       } catch(e) {
         console.log(e)
       }
@@ -1533,6 +1534,7 @@ async function main() {
 
         case 'help':
         case 'mulai':
+        case 'start':
         case 'info':
           if (args[0] == "nulis") {
             reply(mnulis(prefix))

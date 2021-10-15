@@ -29,6 +29,22 @@ module.exports.addtoday = async () => {
   }
 }
 
+module.exports.command = async (command) => {
+  const hittotal = firestore.collection('apiwa/v1/hit')
+  let datatoday = await hittotal.doc(command).get()
+  if(!datatoday.exists) {
+    let data = {
+      val: 1
+    }
+    await hittotal.doc(command).set(data);
+  } else {
+    let totalnew = {
+      val: datatoday.data().val + 1
+    }
+    await hittotal.doc(command).update(totalnew)
+  }
+}
+
 // const fs_limit = firestore.collection('apiwa/v1/limit')
 // const fs_banned = firestore.collection('apiwa/v1/banned')
 
