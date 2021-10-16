@@ -566,7 +566,7 @@ async function main() {
           console.log(e)
         }
       })()
-  
+
       /////////////// GAMES \\\\\\\\\\\\\\\
 
       let isOnGame = false
