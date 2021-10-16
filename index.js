@@ -483,7 +483,12 @@ async function main() {
             console.log("masuk sini", e)
             return await conn.prepareMessage(from, {url: gam1}, image).catch(async (e) => {
               console.log("maasuk:: ", e)
-              return await conn.prepareMessage(from, tamnel, image)
+              return await conn.prepareMessage(from, {url: gam1}, image, {
+                thumbnail: null
+              }).catch(async (e) => {
+                console.log("maasuk:: ", e)
+                return await conn.prepareMessage(from, tamnel, image)
+              })
             })
           })
           const buttonMessages = {
@@ -510,22 +515,6 @@ async function main() {
 
       const sendToOwner = async (text) => {
         await conn.sendMessage(conn.user.jid, text, MessageType.text)
-      }
-
-      const sendFileFromUrl = async (link, type, options) => {
-        hasil = await getBuffer(link)
-        conn.sendMessage(from, hasil, type, options).catch(e => {
-          fetch(link).then((hasil) => {
-            conn.sendMessage(from, hasil, type, options).catch(e => {
-              conn.sendMessage(from, {
-                url: link
-              }, type, options).catch(e => {
-                reply('_[ ! ] Error_')
-                console.log(e)
-              })
-            })
-          })
-        })
       }
 
       const isMedia = (type === 'imageMessage' || type === 'videoMessage')
