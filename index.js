@@ -259,7 +259,8 @@ async function main() {
         getCmd(mek.message[type].fileSha256.toString("base64")) :
         ""
 
-      let prefix = _chats.match(prefixRegEx) ? prefixRegEx.exec(_chats)[0] : ""
+      // let prefix = _chats.match(prefixRegEx) ? prefixRegEx.exec(_chats)[0] : ""
+      let prefix = _chats.match(prefixRegEx) ? prefixRegEx.exec(_chats)[0] : "/"
       let body =
         type === "conversation" && mek.message.conversation.startsWith(prefix) ?
         mek.message.conversation :
@@ -341,13 +342,23 @@ async function main() {
                 .on("close", callback)
             })
           } catch (error) {
-            reply("Maaf, terjadi kesalahan saat mendownload media, coba cek url yang kamu lampirkan atau gunakan format yang lain.")
-            return
+            try {
+              request.head(uri, function (err, res, body) {
+                mime = res.headers["content-type"]
+                request(uri)
+                  .pipe(fs.createWriteStream(filename))
+                  .on("close", callback)
+              })
+            } catch (error) {
+              reply("Maaf, terjadi kesalahan saat mendownload media, coba cek url yang kamu lampirkan atau gunakan format yang lain.\n\nLink yang kami terima: " + uri)
+              return
+            }
           }
         }
         download(url, filename, async function () {
           let media, type
           try {
+            // PERIKSA TIPE DAN MIME MEDIA
             media = fs.readFileSync(filename)
             type = mime.split("/")[0] + "Message"
             if (mime === "image/gif") {
@@ -361,6 +372,14 @@ async function main() {
             // reply(e.message)
           }
           console.log("sending")
+          // CEK UKURAN FILE
+          let stats = fs.statSync(filename)
+          let fileSizeInBytes = stats.size
+          if(fileSizeInBytes > 99000000){
+            console.log("Ukuran file: " + fileSizeInBytes)
+            reply("Max kirim media di whatsapp adalah 90mb, silahkan download sendiri melalui link berikut: \n\n" + url + "\n\n\n_Botnya males kak, kasian ngga ada yang donasi tapi disuruh-suruh.._")
+            return
+          }
           await conn.sendMessage(from, media, type, {
               quoted: mek,
               mimetype: mime,
@@ -371,7 +390,7 @@ async function main() {
               return res
             })
             .catch(async (e) => {
-              console.log("gagal pertama")
+              console.log("gagal pertama", e)
 
               function base64_encode(file) {
                 var bitmap = fs.readFileSync(file);
@@ -389,7 +408,8 @@ async function main() {
                   return res
                 })
                 .catch((e) => {
-                  reply("Maaf terjadi kesalahan saat mengirim file ke kamu, silahkan download sendiri secara manual melalui link berikut atau gunakan format yang lain \n\n" + url + "\n\n-------------------\n" + e.message)
+                  console.log("masih error:: ", e)
+                  reply("Maaf terjadi kesalahan saat mengirim file ke kamu, silahkan download sendiri secara manual melalui link berikut atau gunakan format yang lain \n\n" + url + "\n\n-------------------" + "\n\n\n_Botnya males kak, kasian ngga ada yang donasi tapi disuruh-suruh.._")
                   return
                 })
             })
@@ -458,26 +478,33 @@ async function main() {
         but = [],
         options = {}
       ) => {
-        let mediaa
-        mediaa = await conn.prepareMessage(from, gam1, image).catch(async (e) => {
-          return await conn.prepareMessage(from, {url: gam1}, image).catch(async (e) => {
-            return await conn.prepareMessage(from, tamnel, image)
+        return new Promise(async (resolve, reject) => {
+          let mediaa = await conn.prepareMessage(from, gam1, image).catch(async (e) => {
+            console.log("masuk sini", e)
+            return await conn.prepareMessage(from, {url: gam1}, image).catch(async (e) => {
+              console.log("maasuk:: ", e)
+              return await conn.prepareMessage(from, tamnel, image)
+            })
           })
-        })
-        const buttonMessages = {
-          imageMessage: mediaa.message.imageMessage,
-          contentText: text1,
-          footerText: desc1,
-          buttons: but,
-          headerType: 4,
-        };
-        conn.sendMessage(
-          id,
-          buttonMessages,
-          MessageType.buttonsMessage,
-          options
-        ).catch((e) => {
-          return e
+          const buttonMessages = {
+            imageMessage: mediaa.message.imageMessage,
+            contentText: text1,
+            footerText: desc1,
+            buttons: but,
+            headerType: 4,
+          };
+          conn.sendMessage(
+            id,
+            buttonMessages,
+            MessageType.buttonsMessage,
+            options
+          ).then((res) => {
+            console.log("erra", res)
+            resolve(res)
+          }).catch((e) => {
+            console.log("errass", e)
+            reject(e)
+          })
         })
       }
 
@@ -1876,7 +1903,7 @@ async function main() {
           await sendButImage(
             from,
             `📜 *Title*: ${dlyt.title}\n\nSilahkan pilih salah satu format yg ingin didownload`, "Bahagia-Bot",
-            tamnel,
+            dlyt.thumbnail,
             [{
                 buttonId: `${prefix}youtubedownhahaha ${dlyt.id}|${dlyt.url_id}|${dlyt.kualitas_au}|${dlyt.ext_au}`,
                 buttonText: {
@@ -1899,7 +1926,17 @@ async function main() {
                 type: 1,
               },
             ]
-          )
+          ).then((resp) => {
+            console.log("done")
+          }).catch(async (e) => {
+            await dl.yotube_download(dlyt.id, dlyt.url_id, dlyt.ext_sd, dlyt.kualitas_sd)
+            .then(async (res) => {
+              await sendMediaURL(res, "Bot-Bahagia")
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          })
           break
 
         case "youtubedownhahaha":
@@ -2018,10 +2055,12 @@ async function main() {
                     },
                     type: 1,
                   }
-                ]).then((resp) => {
+                ]
+              ).then((resp) => {
                 console.log("done")
               }).catch((e) => {
-                reply(e.message)
+                let mesage = `*${ress.text}*\n\n*NO WM:*  _${res.nowm}_\n\n*WITH WM:* _${res.wm}_\n\n*AUDIO:* _${res.audio}_\n\n\n_Download sendiri ya, aku lagi mager._`
+                reply(mesage)
               })
             }).catch((e) => {
               reply(e.message)
@@ -2058,11 +2097,10 @@ async function main() {
                   },
                   type: 1,
                 },
-              ]).then((resp) => {
-              console.log("done")
-            }).catch((e) => {
-              console.log(e)
-              reply("roooor", e.message)
+            ]).then((res) => console.log("done"))
+            .catch((e) => {
+              let mesage = `*${res.desc}*\n\n*${res.video[0].kualitas}:* _${res.video[0].link}_\n\n*${res.video[1].kualitas}:* _${res.video[1].link}_\n\n\n_Download sendiri ya, aku lagi mager._`
+              reply(mesage)
             })
           }).catch((e) => {
             reply(e)
@@ -4276,9 +4314,9 @@ async function main() {
             .then(async ({
               data
             }) => {
-              const buffer = await getBuffer(data.url)
-              await sendButImage(from, data.title, data.subreddit, buffer, [{
-                buttonId: `${prefix}ls`,
+              // const buffer = await getBuffer(data.url)
+              await sendButImage(from, data.title, data.subreddit, data.url, [{
+                buttonId: `${prefix}lsse`,
                 buttonText: {
                   displayText: `💋 Lagi dong`,
                 },
@@ -4290,9 +4328,9 @@ async function main() {
                 .then(async ({
                   data
                 }) => {
-                  const buffer1 = await getBuffer(data.url)
-                  sendButImage(from, data.title, data.subreddit, buffer1, [{
-                    buttonId: `${prefix}ls`,
+                  // const buffer1 = await getBuffer(data.url)
+                  sendButImage(from, data.title, data.subreddit, data.url, [{
+                    buttonId: `${prefix}lsse`,
                     buttonText: {
                       displayText: `💋 Lagi dong`,
                     },
