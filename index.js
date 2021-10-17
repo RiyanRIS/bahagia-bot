@@ -3299,7 +3299,7 @@ async function main() {
             const media = await conn.downloadAndSaveMediaMessage(encmedia, "./public/colorize")
             console.log("media downloaded", media)
             let base64str = base64_encode(media)
-
+ 
             var input = {
               "image": "data:image/png;base64," + base64str
             };
