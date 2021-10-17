@@ -934,7 +934,7 @@ module.exports.pln = async (id) => {
   })
 }
 
-module.exports.ttdl = (url) => { 
+module.exports.ttdl = (url) => {  
   return new Promise(async (resolve, reject) => {
     axios.get('https://ttdownloader.com/', {
         headers: {
