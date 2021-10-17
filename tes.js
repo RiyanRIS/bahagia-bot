@@ -19,9 +19,12 @@ const { title } = require("process")
 
 // hit.addtoday().catch((e) => console.log(e))
 
-// SPAM TRAVELOKA
-const no = "85162656460"
-sms_matahari(no).then((res) => console.log(res)).catch((e) => console.log(e))
+// YT DOWNLOADER
+dl.yotube("https://www.youtube.com/watch?v=f7P3mwEcuEg").then((res) => {
+  dl.yotube_download(res.id, res.url_id, res.ext_hd, res.kualitas_hd).then((res) => {
+    console.log(res)
+  })
+})
 
 // SCRAPING LIRIK LAGU
 // let param = "Semua tentang kita"

@@ -350,7 +350,7 @@ async function main() {
                   .on("close", callback)
               })
             } catch (error) {
-              reply("Maaf, terjadi kesalahan saat mendownload media, coba cek url yang kamu lampirkan atau gunakan format yang lain.\n\nLink yang kami terima: " + uri)
+              reply("Maaf, terjadi kesalahan saat mendownload media, coba cek url yang kamu lampirkan atau gunakan format yang lain.\n\nLink yang kami terima: " + url + "\n\n" + uri)
               return
             }
           }
@@ -486,7 +486,7 @@ async function main() {
               return await conn.prepareMessage(from, {url: gam1}, image, {
                 thumbnail: null
               }).catch(async (e) => {
-                console.log("maasuk:: ", e)
+                console.log("dah, ga bisa", e)
                 return await conn.prepareMessage(from, tamnel, image)
               })
             })
