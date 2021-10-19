@@ -147,7 +147,7 @@ const {
 } = require("./helpers/menu")
 
 // LOAD SOURCES
-const pesan = require('./src/pesan')
+const {pesan} = require('./helpers/pesan')
 const tamnel = fs.readFileSync("./src/logo.png")
 
 const apikey = {
@@ -581,7 +581,7 @@ async function main() {
         if (isTebakgambar && kalimat.toLowerCase() != "skip") { // kondisi jika pengirim sedang mengerjakan tebak gambar
           let jawab = kalimat.toLowerCase()
           if (jawab == resTebakgambar[0].jawaban) { // kondisi jika jawaban benar
-            sendButMessage(from, "Yes, jawaban kamu bener.\nPenjelasan: " + resTebakgambar[0].penjelasan, `Mau main lagi???`, [{
+            sendButMessage(from, "Yes, jawaban kamu bener.\nPenjelasan: " + resTebakgambar[0].penjelasan + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`, `Mau main lagi???`, [{
               buttonId: `${prefix}tg`,
               buttonText: {
                 displayText: `Ya`,
@@ -661,7 +661,7 @@ async function main() {
         }
 
         if (isTebakgambar && kalimat.toLowerCase() == "skip") {
-          reply(`Game tebak gambar::\nJawaban: ${resTebakgambar[0].jawaban}\nPenjelasan: ${resTebakgambar[0].penjelasan}\n\nNoob Gitu aja gabisa..`)
+          reply(`Game tebak gambar::\nJawaban: ${resTebakgambar[0].jawaban}\nPenjelasan: ${resTebakgambar[0].penjelasan}\n` + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`)
           await sleep(2)
           if (indexkeberapa != null) {
             datatebakgambar.splice(indexkeberapa, 1)
@@ -702,7 +702,7 @@ async function main() {
           let jawab = kalimat.toLowerCase()
           if (jawab == resTebakPribahasa[0].jawaban) { // kondisi jika jawaban benar
             // sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*.\n_" + res.soal.replace("....", res.jawaban) + "_\n\nArti: " + res.arti, `Mau main lagi???`, [{
-            sendButMessage(from, "Yes, jawaban kamu bener.\n_" + resTebakPribahasa[0].soal.replace("....", resTebakPribahasa[0].jawaban) + "_\n\nArti: " + resTebakPribahasa[0].arti, `Mau main lagi???`, [{
+            sendButMessage(from, "Yes, jawaban kamu bener.\n_" + resTebakPribahasa[0].soal.replace("....", resTebakPribahasa[0].jawaban) + "_\n\nArti: " + resTebakPribahasa[0].arti + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`, `Mau main lagi???`, [{
               buttonId: `${prefix}tp`,
               buttonText: {
                 displayText: `Ya`,
@@ -772,7 +772,7 @@ async function main() {
         }
 
         if (isTebakPribahasa && kalimat.toLowerCase() == "skip") {
-          reply(`Game tebak pribahasa::\nSoal: ${resTebakPribahasa[0].soal}\nJawaban: ${resTebakPribahasa[0].jawaban}\n\nNoob Gitu aja gabisa..`)
+          reply(`Game tebak pribahasa::\nSoal: ${resTebakPribahasa[0].soal}\nJawaban: ${resTebakPribahasa[0].jawaban}\n` + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`)
           await sleep(2)
           if (indexkeberapa != null) {
             datatebakpribahasa.splice(indexkeberapa, 1)
@@ -812,7 +812,7 @@ async function main() {
         if (isAsahOtak && kalimat.toLowerCase() != "skip") { // kondisi jika pengirim sedang mengerjakan asah otak
           let jawab = kalimat.toLowerCase()
           if (jawab == resAsahOtaak1[0].jawaban.toLowerCase()) { // kondisi jika jawaban benar
-            sendButMessage(from, "Yes, jawaban kamu bener.\n", `Mau main lagi???`, [{
+            sendButMessage(from, "Yes, jawaban kamu bener." + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`, `Mau main lagi???`, [{
               buttonId: `${prefix}asahotak`,
               buttonText: {
                 displayText: `Ya`,
@@ -881,7 +881,7 @@ async function main() {
         }
 
         if (isAsahOtak && kalimat.toLowerCase() == "skip") {
-          reply(`Game asah otak::\nSoal: ${resAsahOtaak1[0].soal}\nJawaban: ${resAsahOtaak1[0].jawaban}\n\nNoob Gitu aja gabisa..`)
+          reply(`Game asah otak::\nSoal: ${resAsahOtaak1[0].soal}\nJawaban: ${resAsahOtaak1[0].jawaban}` + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`)
           await new Promise(r => setTimeout(r, 2000))
           if (indexkeberapa != null) {
             asahotakk1.splice(indexkeberapa, 1)
@@ -921,7 +921,7 @@ async function main() {
         if (isAsahOtak && kalimat.toLowerCase() != "skip") { // kondisi jika pengirim sedang mengerjakan tebak lirik
           let jawab = kalimat.toLowerCase()
           if (jawab == resAsahOtaak1[0].jawaban.toLowerCase()) { // kondisi jika jawaban benar
-            sendButMessage(from, "Yes, jawaban kamu bener.\n", `Mau main lagi???`, [{
+            sendButMessage(from, "Yes, jawaban kamu bener." + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`, `Mau main lagi???`, [{
               buttonId: `${prefix}tebaktebakan`,
               buttonText: {
                 displayText: `Ya`,
@@ -990,7 +990,7 @@ async function main() {
         }
 
         if (isAsahOtak && kalimat.toLowerCase() == "skip") {
-          reply(`Game tebak tebakan::\nSoal: ${resAsahOtaak1[0].soal}\nJawaban: ${resAsahOtaak1[0].jawaban}\n\nNoob Gitu aja gabisa..`)
+          reply(`Game tebak tebakan::\nSoal: ${resAsahOtaak1[0].soal}\nJawaban: ${resAsahOtaak1[0].jawaban}` + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`)
           await new Promise(r => setTimeout(r, 2000))
           if (indexkeberapa != null) {
             asahotakk1.splice(indexkeberapa, 1)
@@ -1030,7 +1030,7 @@ async function main() {
         if (isAsahOtak && kalimat.toLowerCase() != "skip") { // kondisi jika pengirim sedang mengerjakan tebak lirik
           let jawab = kalimat.toLowerCase()
           if (jawab == resAsahOtaak1[0].jawaban.toLowerCase()) { // kondisi jika jawaban benar
-            sendButMessage(from, "Yes, jawaban kamu bener.\n", `Mau main lagi???`, [{
+            sendButMessage(from, "Yes, jawaban kamu bener." + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`, `Mau main lagi???`, [{
               buttonId: `${prefix}tebaklirik`,
               buttonText: {
                 displayText: `Ya`,
@@ -1099,7 +1099,7 @@ async function main() {
         }
 
         if (isAsahOtak && kalimat.toLowerCase() == "skip") {
-          reply(`Game tebak lirik::\nSoal: ${resAsahOtaak1[0].soal}\nJawaban: ${resAsahOtaak1[0].jawaban}\n\nNoob Gitu aja gabisa..`)
+          reply(`Game tebak lirik::\nSoal: ${resAsahOtaak1[0].soal}\nJawaban: ${resAsahOtaak1[0].jawaban}` + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`)
           await new Promise(r => setTimeout(r, 2000))
           if (indexkeberapa != null) {
             asahotakk1.splice(indexkeberapa, 1)
@@ -1139,7 +1139,7 @@ async function main() {
         if (isSusuunkata && kalimat.toLowerCase() != "skip") { // kondisi jika pengirim sedang mengerjakan susun kata
           let jawab = kalimat.toLowerCase()
           if (jawab == resSusuunKataa[0].jawaban.toLowerCase()) { // kondisi jika jawaban benar
-            sendButMessage(from, "Yes, jawaban kamu bener.\n", `Mau main lagi???`, [{
+            sendButMessage(from, "Yes, jawaban kamu bener." + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`, `Mau main lagi???`, [{
               buttonId: `${prefix}susunkata`,
               buttonText: {
                 displayText: `Ya`,
@@ -1209,7 +1209,7 @@ async function main() {
         }
 
         if (isSusuunkata && kalimat.toLowerCase() == "skip") {
-          reply(`Game susun kata::\nSoal: ${resSusuunKataa[0].soal}\nJawaban: ${resSusuunKataa[0].jawaban}\n\nNoob Gitu aja gabisa..`)
+          reply(`Game susun kata::\nSoal: ${resSusuunKataa[0].soal}\nJawaban: ${resSusuunKataa[0].jawaban}` + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`)
           await sleep(2)
           if (indexkeberapa != null) {
             datasusunnkata.splice(indexkeberapa, 1)
@@ -1249,7 +1249,7 @@ async function main() {
         if (isTebakkataa && kalimat.toLowerCase() != "skip") { // kondisi jika pengirim sedang mengerjakan tebak kata
           let jawab = kalimat.toLowerCase()
           if (jawab == resTebakKaata[0].jawaban.toLowerCase()) { // kondisi jika jawaban benar
-            sendButMessage(from, "Yes, jawaban kamu bener.\n", `Mau main lagi???`, [{
+            sendButMessage(from, "Yes, jawaban kamu bener." + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`, `Mau main lagi???`, [{
               buttonId: `${prefix}tebakkata`,
               buttonText: {
                 displayText: `Ya`,
@@ -1318,7 +1318,7 @@ async function main() {
         }
 
         if (isTebakkataa && kalimat.toLowerCase() == "skip") {
-          reply(`Game tebak kata::\n\nSoal: ${resTebakKaata[0].soal}\nJawaban: ${resTebakKaata[0].jawaban}\n\nNoob Gitu aja gabisa..`)
+          reply(`Game tebak kata::\n\nSoal: ${resTebakKaata[0].soal}\nJawaban: ${resTebakKaata[0].jawaban}` + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`)
           await sleep(2)
           if (indexkeberapa != null) {
             datatebaakkata.splice(indexkeberapa, 1)
@@ -1358,7 +1358,7 @@ async function main() {
         if (isTebakkataa && kalimat.toLowerCase() != "skip") { // kondisi jika pengirim sedang mengerjakan siapakah aku
           let jawab = kalimat.toLowerCase()
           if (jawab == resTebakKaata[0].jawaban.toLowerCase()) { // kondisi jika jawaban benar
-            sendButMessage(from, "Yes, jawaban kamu bener.\n", `Mau main lagi???`, [{
+            sendButMessage(from, "Yes, jawaban kamu bener." + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`, `Mau main lagi???`, [{
               buttonId: `${prefix}siapakahaku`,
               buttonText: {
                 displayText: `Ya`,
@@ -1427,7 +1427,7 @@ async function main() {
         }
 
         if (isTebakkataa && kalimat.toLowerCase() == "skip") {
-          reply(`Game tebak kata::\n\nSoal: ${resTebakKaata[0].soal}\nJawaban: ${resTebakKaata[0].jawaban}\n\nNoob Gitu aja gabisa..`)
+          reply(`Game tebak kata::\n\nSoal: ${resTebakKaata[0].soal}\nJawaban: ${resTebakKaata[0].jawaban}` + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`)
           await sleep(2)
           if (indexkeberapa != null) {
             datatebaakkata.splice(indexkeberapa, 1)
@@ -1467,7 +1467,7 @@ async function main() {
         if (isTebakkataa && kalimat.toLowerCase() != "skip") { // kondisi jika pengirim sedang mengerjakan siapakah aku
           let jawab = kalimat.toLowerCase()
           if (jawab == resTebakKaata[0].jawaban.toLowerCase()) { // kondisi jika jawaban benar
-            sendButMessage(from, `Yes, jawaban kamu bener.\n\nPenjelasan: ${resTebakKaata[0].deskripsi}`, `Mau main lagi???`, [{
+            sendButMessage(from, `Yes, jawaban kamu bener.\n\nPenjelasan: ${resTebakKaata[0].deskripsi}` + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`, `Mau main lagi???`, [{
               buttonId: `${prefix}caklontong`,
               buttonText: {
                 displayText: `Ya`,
@@ -1537,7 +1537,7 @@ async function main() {
         }
 
         if (isTebakkataa && kalimat.toLowerCase() == "skip") {
-          reply(`Game tebak kata::\n\nSoal: ${resTebakKaata[0].soal}\nJawaban: ${resTebakKaata[0].jawaban}\nPenjelasan: ${resTebakKaata[0].deskripsi}\n\nNoob Gitu aja gabisa..`)
+          reply(`Game tebak kata::\n\nSoal: ${resTebakKaata[0].soal}\nJawaban: ${resTebakKaata[0].jawaban}\nPenjelasan: ${resTebakKaata[0].deskripsi}` + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`)
           await sleep(2)
           if (indexkeberapa != null) {
             datatebaakkata.splice(indexkeberapa, 1)
@@ -2218,9 +2218,9 @@ async function main() {
           await sendMediaURL(args[0], "")
           break
 
-        case "nulis":
+        case 'nulis':
           nulis(args).then(async (res) => {
-            sendMedPath(res, "Nulis Berhasil!\n\nJangan lupa follow ig: https://s.id/botbahagia-ig", image)
+            sendMedPath(res, `Nulis Berhasil!\n\n${pesan.gabung_group}\n${pesan.donasi}`, image)
               .catch((e) => reply(e.message))
           }).catch((e) => reply(e.message))
           break
@@ -2228,7 +2228,7 @@ async function main() {
         case "bka":
         case "bukukanan":
           nulis(args).then(async (res) => {
-            sendMedPath(res, "Nulis Buku Kanan, Done!", image)
+            sendMedPath(res, `Nulis Buku Kanan, Done!\n\n${pesan.gabung_group}\n${pesan.donasi}`, image)
               .catch((e) => reply(e.message))
           }).catch((e) => reply(e.message))
           break
@@ -2236,7 +2236,7 @@ async function main() {
         case "bki":
         case "bukukiri":
           nulis(args, "bukukiri").then(async (res) => {
-            sendMedPath(res, "Nulis Buku Kiri, Done!", image)
+            sendMedPath(res, `Nulis Buku Kiri, Done!\n\n${pesan.gabung_group}\n${pesan.donasi}`, image)
               .catch((e) => reply(e.message))
           }).catch((e) => reply(e))
           break
@@ -2244,7 +2244,7 @@ async function main() {
         case "fka":
         case "foliokanan":
           nulis(args, "fka").then(async (res) => {
-            sendMedPath(res, "Nulis Folio Kanan, Done!", image)
+            sendMedPath(res, `Nulis Folio Kanan, Done!\n\n${pesan.gabung_group}\n${pesan.donasi}`, image)
               .catch((e) => reply(e.message))
           }).catch((e) => reply(e))
           break
@@ -2252,7 +2252,7 @@ async function main() {
         case "fki":
         case "foliokiri":
           nulis(args, "fki").then(async (res) => {
-            sendMedPath(res, "Nulis Folio Kiri, Done!", image)
+            sendMedPath(res, `Nulis Folio Kiri, Done!\n\n${pesan.gabung_group}\n${pesan.donasi}`, image)
               .catch((e) => reply(e.message))
           }).catch((e) => reply(e))
           break
@@ -2546,7 +2546,7 @@ async function main() {
                     }
 
                     if (tedd++ == 120) { // kondisi jika sudah 2 menit belum terjawab
-                      sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + jawaban + "*.\nPenjelasan: " + res.deskripsi, `Mau main lagi???`, [{
+                      sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + jawaban + "*.\nPenjelasan: " + res.deskripsi + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`, `Mau main lagi???`, [{
                         buttonId: `${prefix}tebakgambar`,
                         buttonText: {
                           displayText: `Ya`,
@@ -2636,7 +2636,7 @@ async function main() {
                     }
 
                     if (tedd++ == 120) { // kondisi jika sudah 2 menit belum terjawab
-                      sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*.\n_" + res.soal.replace("....", res.jawaban) + "_\n\nArti: " + res.arti, `Mau main lagi???`, [{
+                      sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*.\n_" + res.soal.replace("....", res.jawaban) + "_\n\nArti: " + res.arti + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`, `Mau main lagi???`, [{
                         buttonId: `${prefix}tebakpribahasa`,
                         buttonText: {
                           displayText: `Ya`,
@@ -2716,7 +2716,7 @@ async function main() {
                     }
 
                     if (tedd++ == 120) { // kondisi jika sudah 2 menit belum terjawab
-                      sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*.", `Mau main lagi???`, [{
+                      sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*." + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`, `Mau main lagi???`, [{
                         buttonId: `${prefix}asahotak`,
                         buttonText: {
                           displayText: `Ya`,
@@ -2797,7 +2797,7 @@ async function main() {
                     }
 
                     if (tedd++ == 120) { // kondisi jika sudah 2 menit belum terjawab
-                      sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*.", `Mau main lagi???`, [{
+                      sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*." + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`, `Mau main lagi???`, [{
                         buttonId: `${prefix}tebaklirik`,
                         buttonText: {
                           displayText: `Ya`,
@@ -2878,7 +2878,7 @@ async function main() {
                     }
 
                     if (tedd++ == 120) { // kondisi jika sudah 2 menit belum terjawab
-                      sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*.", `Mau main lagi???`, [{
+                      sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*." + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`, `Mau main lagi???`, [{
                         buttonId: `${prefix}tebaktebakan`,
                         buttonText: {
                           displayText: `Ya`,
@@ -2961,7 +2961,7 @@ async function main() {
                     }
 
                     if (tedd++ == 120) { // kondisi jika sudah 2 menit belum terjawab
-                      sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*.", `Mau main lagi???`, [{
+                      sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*." + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`, `Mau main lagi???`, [{
                         buttonId: `${prefix}susunkata`,
                         buttonText: {
                           displayText: `Ya`,
@@ -3043,7 +3043,7 @@ async function main() {
                     }
 
                     if (tedd++ == 120) { // kondisi jika sudah 2 menit belum terjawab
-                      sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*.", `Mau main lagi???`, [{
+                      sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*." + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`, `Mau main lagi???`, [{
                         buttonId: `${prefix}tebakkata`,
                         buttonText: {
                           displayText: `Ya`,
@@ -3124,7 +3124,7 @@ async function main() {
                     }
 
                     if (tedd++ == 120) { // kondisi jika sudah 2 menit belum terjawab
-                      sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*.", `Mau main lagi???`, [{
+                      sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*." + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`, `Mau main lagi???`, [{
                         buttonId: `${prefix}siapakahaku`,
                         buttonText: {
                           displayText: `Ya`,
@@ -3206,7 +3206,7 @@ async function main() {
                     }
 
                     if (tedd++ == 120) { // kondisi jika sudah 2 menit belum terjawab
-                      sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*.\n\nPenjelasan:" + res.deskripsi, `Mau main lagi???`, [{
+                      sendButMessage(from, "Kamu gagal menjawab, jawaban yang benar adalah *" + res.jawaban + "*.\n\nPenjelasan:" + res.deskripsi + `\n\nTerima kasih sudah main game ini.!\n${pesan.gabung_group}\n${pesan.donasi}`, `Mau main lagi???`, [{
                         buttonId: `${prefix}caklontong`,
                         buttonText: {
                           displayText: `Ya`,
