@@ -28,6 +28,8 @@ module.exports.mmenu = (prefix) => {
 
 _Tutorial?? Ada di masing-masing menu, atau cek Sosial Media Kami_
 
+_Link Group Diskusi: https://s.id/botbahagia-group_
+
 _Jika kamu masih bingung cara memakai bot ini, hubungi owner_
 _Pesan diluar perintah/command, akan auto dibalas oleh Simi_
 
