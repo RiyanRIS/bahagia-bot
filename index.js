@@ -2088,6 +2088,80 @@ async function main() {
                 },
             ]).then((res) => console.log("done"))
             .catch((e) => {
+              let mesage = `*${res.desc}*\n\n*${res.video[0].kualitas}:* _${res.video[0].link}_\n\n*${res.video[1].kualitas}:* _${res.video[1].link}_\n\n\n_Download sendiri ya, aku lagi mager, atau gunakan *${prefix}tw1*_`
+              reply(mesage)
+            })
+          }).catch((e) => {
+            reply(e)
+          })
+          break
+
+        case 'tw1':
+        case 'twdl1':
+        case 'twitter1':
+          if (!isUrl(args[0]) && !args[0].includes("twitter.com")) {
+            await reply("_Link tidak valid_")
+            return
+          }
+          await dl.twdl2(args[0]).then(async (res) => {
+            await sendButImage(
+              from,
+              `📜 *Title*: ${res.desc}\n\nSilahkan pilih kualitas yg ingin didownload`,
+              "Bahagia-Bot",
+              res.thumbnail,
+              [{
+                  buttonId: `${prefix}sndmediaa ${res.video[0].link}`,
+                  buttonText: {
+                    displayText: res.video[0].kualitas,
+                  },
+                  type: 1,
+                },
+                {
+                  buttonId: `${prefix}sndmediaa ${res.video[1].link}`,
+                  buttonText: {
+                    displayText: res.video[1].kualitas,
+                  },
+                  type: 1,
+                },
+            ]).then((res) => console.log("done"))
+            .catch((e) => {
+              let mesage = `*${res.desc}*\n\n*${res.video[0].kualitas}:* _${res.video[0].link}_\n\n*${res.video[1].kualitas}:* _${res.video[1].link}_\n\n\n_Download sendiri ya, aku lagi mager, atau gunakan *${prefix}tw2*_`
+              reply(mesage)
+            })
+          }).catch((e) => {
+            reply(e)
+          })
+          break
+
+        case 'tw2':
+        case 'twdl2':
+        case 'twitter2':
+          if (!isUrl(args[0]) && !args[0].includes("twitter.com")) {
+            await reply("_Link tidak valid_")
+            return
+          }
+          await dl.twdl3(args[0]).then(async (res) => {
+            await sendButImage(
+              from,
+              `📜 *Title*: ${res.desc}\n\nSilahkan pilih kualitas yg ingin didownload`,
+              "Bahagia-Bot",
+              res.thumbnail,
+              [{
+                  buttonId: `${prefix}sndmediaa ${res.video[0].link}`,
+                  buttonText: {
+                    displayText: res.video[0].kualitas,
+                  },
+                  type: 1,
+                },
+                {
+                  buttonId: `${prefix}sndmediaa ${res.video[1].link}`,
+                  buttonText: {
+                    displayText: res.video[1].kualitas,
+                  },
+                  type: 1,
+                },
+            ]).then((res) => console.log("done"))
+            .catch((e) => {
               let mesage = `*${res.desc}*\n\n*${res.video[0].kualitas}:* _${res.video[0].link}_\n\n*${res.video[1].kualitas}:* _${res.video[1].link}_\n\n\n_Download sendiri ya, aku lagi mager._`
               reply(mesage)
             })

@@ -326,73 +326,39 @@ module.exports.twdl2 = (url_media) => {
       let thumbnail = $('div.result_overlay > img').attr("src")
       let desc = $('div.result_overlay > p').text()
 
-      try {
-        let sd = $('div.result_overlay > a:nth-child(5)').attr("href")
-        let streamsd = got.stream(sd)
-        let sizesd
+      let link, kual, kump, video = []
 
-        streamsd
-          .on("downloadProgress", ({
-            transferred,
-            total,
-            percent
-          }) => {
-            sizesd = total
-          })
-
-        const filetypesd = await FileType.fromStream(streamsd)
-
-        ksd = {
-          ext: filetypesd.ext,
-          mime: filetypesd.mime,
-          size: sizesd,
-          url: sd,
+      try{
+        link = $('div.result_overlay > a:nth-child(5)').attr("href")
+        kual = $('div.result_overlay > a:nth-child(5)').text()
+        kump = {
+          kualitas: kual,
+          link: link
         }
-
-      } catch (error) {
-        ksd = {
-          msg: "kualitas sd tidak tersedia"
-        }
+        video.push(kump)
+      } catch(e) {
+        console.log(e)
       }
 
-      try {
-        let hd = $('div.result_overlay > a:nth-child(4)').attr("href")
-        let streamhd = got.stream(hd)
-        let sizehd
-
-        streamhd
-          .on("downloadProgress", ({
-            transferred,
-            total,
-            percent
-          }) => {
-            sizehd = total
-          })
-
-        const filetypehd = await FileType.fromStream(streamhd)
-
-        khd = {
-          ext: filetypehd.ext,
-          mime: filetypehd.mime,
-          size: sizehd,
-          url: hd,
+      try{
+        link = $('div.result_overlay > a:nth-child(4)').attr("href")
+        kual = $('div.result_overlay > a:nth-child(4)').text()
+        kump = {
+          kualitas: kual,
+          link: link
         }
-      } catch (error) {
-        khd = {
-          msg: "kualitas hd tidak tersedia"
-        }
+        video.push(kump)
+      } catch(e) {
+        console.log(e)
       }
 
       let result = {
-        status: true,
         thumbnail: thumbnail,
         desc: desc,
-        data: {
-          ksd,
-          khd
-        }
+        video: video
       }
       resolve(result)
+
     }).catch((e) => {
       reject(e.message)
     })
@@ -438,83 +404,42 @@ module.exports.twdl3 = (url) => {
             const $ = cheerio.load(data)
 
             let thumbnail = $('center > img:nth-child(4)').attr("src")
-            let desc = null
+            let desc = $('center > b:nth-child(7)').text()
 
-            try {
-              let sd = $("center > div:nth-child(18) > div > a").attr("href")
-              let streamsd = got.stream(sd)
-              let sizesd
+            let link, kual, kump, video = []
 
-              streamsd
-                .on("downloadProgress", ({
-                  transferred,
-                  total,
-                  percent
-                }) => {
-                  sizesd = total
-                })
-
-              const filetypesd = await FileType.fromStream(streamsd)
-
-              ksd = {
-                ext: filetypesd.ext,
-                mime: filetypesd.mime,
-                size: sizesd,
-                url: sd,
+            try{
+              link = $("center > div:nth-child(18) > div > a").attr("href")
+              kual = $("center > div:nth-child(18) > div:nth-child(2) > p").text()
+              kump = {
+                kualitas: kual,
+                link: link
               }
-
-            } catch (error) {
-              ksd = {
-                err: error.message,
-                sd: sd,
-                msg: "kualitas sd tidak tersedia"
-              }
+              video.push(kump)
+            } catch(e) {
+              console.log(e)
             }
 
-            try {
-              let hd = $("center > div:nth-child(17) > div > a").attr("href")
-              let streamhd = got.stream(hd)
-              let sizehd
-
-              streamhd
-                .on("downloadProgress", ({
-                  transferred,
-                  total,
-                  percent
-                }) => {
-                  sizehd = total
-                })
-
-              const filetypehd = await FileType.fromStream(streamhd)
-
-              khd = {
-                ext: filetypehd.ext,
-                mime: filetypehd.mime,
-                size: sizehd,
-                url: hd,
+            try{
+              link = $("center > div:nth-child(17) > div > a").attr("href")
+              kual = $("center > div:nth-child(17) > div:nth-child(2) > p").text()
+              kump = {
+                kualitas: kual,
+                link: link
               }
-            } catch (error) {
-              khd = {
-                err: error.message,
-                hd: hd,
-                msg: "kualitas hd tidak tersedia"
-              }
+              video.push(kump)
+            } catch(e) {
+              console.log(e)
             }
 
             let result = {
-              status: true,
               thumbnail: thumbnail,
               desc: desc,
-              data: {
-                ksd,
-                khd
-              }
+              video: video
             }
             resolve(result)
           })
           .catch(async (e) => {
-            // await new Promise(resolve => setTimeout(resolve, 3000));
-            // twdl3(url)
             reject({
               status: false,
               msg: e.message
@@ -522,8 +447,6 @@ module.exports.twdl3 = (url) => {
           })
       })
       .catch(async (e) => {
-        // await new Promise(resolve => setTimeout(resolve, 3000));
-        // twdl3(url)
         reject({
           status: false,
           msg: e.message

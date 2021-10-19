@@ -110,6 +110,8 @@ _Contoh Perintah:_
     *${prefix}ig <Link-Instagram>*
     *${prefix}igs <Link-Instagram-Story>*
     *${prefix}tw <Link-Twitter>*
+    *${prefix}tw1 <Link-Twitter>*
+    *${prefix}tw2 <Link-Twitter>*
     *${prefix}tt <Link-Tiktok>*
 
 *FAQ:*
