@@ -1,7 +1,10 @@
 const menu = {
   header: `🎀 *Bahagia-Bot* 🎀
 _By: RiyanRIS_`,
-  footer: `_Bantu Donasi: 085156929375 (OVO)_
+  footer: `_Link Group Diskusi: https://s.id/botbahagia-group_
+_Groupnya masih sepii, jangan malu gabung terus kenalan sesama user ya._
+
+_Bantu Donasi: 085156929375 (OVO)_
 _Kami akan sangat-sangat terbantu dengan donasi anda, berapapun nominalnya_`
 }
 
@@ -27,8 +30,6 @@ module.exports.mmenu = (prefix) => {
         *${prefix}help other*
 
 _Tutorial?? Ada di masing-masing menu, atau cek Sosial Media Kami_
-
-_Link Group Diskusi: https://s.id/botbahagia-group_
 
 _Jika kamu masih bingung cara memakai bot ini, hubungi owner_
 _Pesan diluar perintah/command, akan auto dibalas oleh Simi_
@@ -104,10 +105,15 @@ _Download media, video, audio atau photo dari YouTube, Instagram, Twitter atau y
 
 _Contoh Perintah:_
     ${prefix}yt https://youtu.be/ojNRfGNw18U
+    ${prefix}ig https://www.instagram.com/p/CUfG96TPTL-/
+    ${prefix}igs maudyayunda
+    ${prefix}tw https://twitter.com/maudyayunda/status/1211563785892184064?s=20
 
 *List Perintah:*
     *${prefix}yt <Link-YouTube>*
     *${prefix}ig <Link-Instagram>*
+    *${prefix}ig1 <Link-Instagram>*
+    *${prefix}ig2 <Link-Instagram>*
     *${prefix}igs <Link-Instagram-Story>*
     *${prefix}tw <Link-Twitter>*
     *${prefix}tw1 <Link-Twitter>*
@@ -117,6 +123,12 @@ _Contoh Perintah:_
 *FAQ:*
     Q: Kok Marker Not Found Mulu?
     A: Kirim ulang aja, karena bot lagi rame itu.
+
+    Q: Perintah igs pake username atau full link?
+    A: Sekarang bisa pake username aja, tapi pake full link juga bisa.
+    
+    Q: Buat download Twitter / Ig yang bagus yang mana?
+    A: Semua versi sama kok, kalau pake v1 ga work ya pake v2 atau v3.
         
 ${menu.footer}`
 }

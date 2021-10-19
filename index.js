@@ -1954,8 +1954,6 @@ async function main() {
 
         case 'ig':
         case 'igdl':
-        case 'igdown':
-        case 'igdownloader':
           if (!isUrl(args[0]) && !args[0].includes("instagram.com")) {
             await reply("_Link tidak valid_")
             return
@@ -1975,17 +1973,63 @@ async function main() {
               }
             })
             .catch((e) => {
-              reply(e)
+              reply(e + `\n\n_Botnya mager, coba gunain ${prefix}ig1_`)
             })
           break
 
-        case 'igs':
-        case 'igstory':
+        case 'ig1':
+        case 'igdl1':
           if (!isUrl(args[0]) && !args[0].includes("instagram.com")) {
-            await reply("_Link tidak valid_ \nGunakan url lengkap: https://instagram.com/<username> jangan gunakan username saja.")
+            await reply("_Link tidak valid_")
             return
           }
-          await dl.igstory(args[0])
+          await dl.igdl1(args[0])
+            .then(async (res) => {
+              try {
+                res.url_list.forEach(async (element) => {
+                  await sendMediaURL(element, "")
+                })
+              } catch (e) {
+                console.log(e)
+              }
+            })
+            .catch((e) => {
+              reply(e + `\n\n_Botnya mager, coba gunain ${prefix}ig2_`)
+            })
+          break
+         
+        case 'ig2':
+        case 'igdl2':
+          if (!isUrl(args[0]) && !args[0].includes("instagram.com")) {
+            await reply("_Link tidak valid_")
+            return
+          }
+          await dl.igdl2(args[0])
+            .then(async (res) => {
+              try {
+                let media = res.photoVideo
+                media.img.forEach(async (element) => {
+                  await sendMediaURL(element, "")
+                })
+                media.video.forEach(async (element) => {
+                  await sendMediaURL(element, "")
+                })
+              } catch (e) {
+                console.log(e)
+              }
+            })
+            .catch((e) => {
+              reply(e)
+            })
+          break
+    
+        case 'igs':
+        case 'igstory':
+          let uhaisljs = args[0]
+          if (!args[0].includes("instagram.com")) {
+            uhaisljs = "https://instagram.com/" + args[0]
+          }
+          await dl.igstory(uhaisljs)
             .then(async (igs) => {
               try {
                 igs.forEach(async (element) => {

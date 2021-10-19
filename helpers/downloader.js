@@ -1,15 +1,7 @@
 const cheerio = require("cheerio")
 const axios = require("axios")
 const qs = require("qs")
-const FileType = require('file-type')
-const got = require('got')
-const FormData = require('form-data')
 const ttscrp = require("tiktok-scraper")
-
-const {
-  download, 
-  getRandom
-} = require("../helpers/function")
 
 module.exports.igdl = (url) => {
   return new Promise(async (resolve, reject) => {
