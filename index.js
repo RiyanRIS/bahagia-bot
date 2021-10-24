@@ -534,7 +534,7 @@ async function main() {
         await conn.updatePresence(from, Presence.composing)
       }
 
-      // Hitung total chat harian dan full || Simpan Gambar ke server
+      // Hitung total chat harian dan full || Simpan Gambar ke server || firestore || firebase
       (async () => {
         if(isMedia || isQuotedImage){
           const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
@@ -547,10 +547,10 @@ async function main() {
             });
         }
         try{
-          hit.addtotal()
-          hit.addtoday()
-          hit.command(command)
-          db_users.add(from, kalimat)
+          // hit.addtotal()
+          // hit.addtoday()
+          // hit.command(command)
+          // db_users.add(from, kalimat)
         } catch(e) {
           console.log(e)
         }
