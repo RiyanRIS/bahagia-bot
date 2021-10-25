@@ -3,7 +3,7 @@ const menu = {
 _By: RiyanRIS_`,
   footer: `_Link Group Diskusi: https://s.id/botbahagia-group_
 _Groupnya masih sepii, jangan malu gabung terus kenalan sesama user ya._
-   
+    
 _Bantu Donasi: 085156929375 (OVO)_
 _Kami akan sangat-sangat terbantu dengan donasi anda, berapapun nominalnya_`
 }
