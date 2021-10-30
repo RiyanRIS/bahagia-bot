@@ -19,8 +19,11 @@ const { title } = require("process")
 
 // hit.addtoday().catch((e) => console.log(e))
 
+// TWITTER DL 
+dl.twdl("https://twitter.com/maudyayunda/status/1211563785892184064?s=20").then((res) => console.log(res)).catch((e) => console.log(e))
+
 // IG DOWNLOADER
-dl.igdl2("https://www.instagram.com/p/CU67fT6vNky/").then((res) => console.log(res))
+// dl.igdl2("https://www.instagram.com/p/CU67fT6vNky/").then((res) => console.log(res))
 
 // YT DOWNLOADER
 // dl.yotube("https://www.youtube.com/watch?v=f7P3mwEcuEg").then((res) => {
