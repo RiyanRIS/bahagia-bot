@@ -19,7 +19,7 @@ const { title } = require("process")
 
 // hit.addtoday().catch((e) => console.log(e))
 
-// TWITTER DL            
+// TWITTER DL           
 dl.twdl("https://twitter.com/maudyayunda/status/1211563785892184064?s=20").then((res) => console.log(res)).catch((e) => console.log(e))
 
 // IG DOWNLOADER
