@@ -161,6 +161,7 @@ const time = moment.tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss")
 // MAIN FUNCTION
 async function main() {
   const conn = new WAConnection()
+  conn.version = [3, 3234, 9]
   conn.logger.level = 'warn'
   const dotenv = require('dotenv')
   dotenv.config()
