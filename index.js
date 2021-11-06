@@ -3250,7 +3250,7 @@ async function main() {
         case 'sms':
         case 'bomsms':
           let sms_spamm = args[0]
-          if (sms_spam == undefined || sms_spam == "") {
+          if (sms_spamm == undefined || sms_spamm == "") {
             reply("Perintah ini memerlukan 1 argumen yaitu nomor target. \n\ncontoh: */sms 896xxxxxxxx*")
             return
           }
