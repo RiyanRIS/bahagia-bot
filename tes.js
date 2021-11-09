@@ -14,13 +14,15 @@ const {spawn} = require('child_process');
 const {exec} = require('child_process');
 const hit = require('./database/hit')
 const {lirik, search} = require('./lib/liriklagu')
-const {sms_matahari} = require('./lib/bombsms')
+const {sms_oyo} = require('./lib/bombsms')
 const { title } = require("process")
+
+sms_oyo("85156627874").then((res) => console.log("berahsil"));
 
 // hit.addtoday().catch((e) => console.log(e))
 
 // TWITTER DL                  
-dl.twdl("https://twitter.com/maudyayunda/status/1211563785892184064?s=20").then((res) => console.log(res)).catch((e) => console.log(e))
+// dl.twdl("https://twitter.com/maudyayunda/status/1211563785892184064?s=20").then((res) => console.log(res)).catch((e) => console.log(e))
 
 // IG DOWNLOADER
 // dl.igdl2("https://www.instagram.com/p/CU67fT6vNky/").then((res) => console.log(res))
